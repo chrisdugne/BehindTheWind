@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------------------------
 
-APP_NAME 			= "Atmosphere"
+APP_NAME 			= "Behind The Wind"
 APP_VERSION 		= "1.0"
 
 -----------------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ gameCenter		= require "src.libs.GameCenter"
 
 touchController = require "src.libs.TouchController"
 levelDrawer 	= require "src.libs.LevelDrawer"
+character		= require "src.libs.Character"
 
 -----------------------------------------------------------------------------------------
 -- Translations
@@ -94,8 +95,8 @@ end
 ------------------------------------------
 
 --router.openAppHome()
---router.openPlayground()
-router.openLevelEditor()
+router.openPlayground()
+--router.openLevelEditor()
 
 -----------------------------------------------------------------------------------------
 --- iOS Status Bar

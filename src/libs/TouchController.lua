@@ -4,6 +4,61 @@ module(..., package.seeall)
 
 -------------------------------------
 
+NONE 			= 0
+SWIPE_RIGHT = 1
+SWIPE_LEFT 	= 2
+SWIPE_UP 	= 3
+
+-------------------------------------
+
+local touchState
+local lastX
+local lastY
+
+-------------------------------------
+
+function touchScreen( event )
+	
+	if event.phase == "began" then
+
+	elseif event.phase == "ended" then
+		character.stop()
+		
+	elseif event.phase == "moved" then
+	
+		if(event.y + 10 < event.yStart) then
+			touchState = SWIPE_UP
+			swipeUp()
+
+		elseif(event.x - 10 > event.xStart) then
+			touchState = SWIPE_RIGHT
+			swipeRight()
+
+		elseif(event.x + 10 < event.xStart) then
+			touchState = SWIPE_LEFT
+			swipeLeft()
+		end
+	end
+
+	return true
+end
+
+-------------------------------------
+
+function swipeLeft()
+	character.startMoveLeft()
+end
+
+function swipeRight()
+	character.startMoveRight()
+end
+
+function swipeUp()
+	character.jump()
+end
+
+-------------------------------------
+
 function drag( tile, event )
 	
 	if event.phase == "began" then

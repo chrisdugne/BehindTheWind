@@ -25,7 +25,7 @@ function scene:refreshScene()
 	
 	---------------------
 
-	local level = require "src.game.levels.level1"
+	local level = require "src.game.levels.Level1"
 	
 	---------------------
 
@@ -36,60 +36,65 @@ function scene:refreshScene()
 	-- require camera
 	---------------------
 	
-	local playerWalk = require("src.game.graphics.playerWalk")
 	local camera = require("camera")
 	local physics = require("physics")
 	physics.start()
-	physics.setGravity( 0, 9.8 )
-	print(physics.getGravity())
+	physics.setGravity( 0, 20 )
 	
 	-----------------------------
 	-- objects
 	------------------------------
-
-	local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
-
-	local character = display.newSprite( playerSheet, playerWalk.sequence )
-	character.x = 100
-	character.y = 19
-	physics.addBody( character, { density = 1.0, friction = 1, bounce = 0.17} )
-	character.isFixedRotation = true
---	animation:play()
+	
+	character.init()
 	
 	------------------------------
 
 	display.getCurrentStage():addEventListener( "touch", function(event)
-		print("touch screen !")
+		touchController.touchScreen(event)
 	end)
 	
 	------------------------------
+
+	local groups = {}
 	
 	for i=1, #level do
+
+		--------------------
+
    	local tile = levelDrawer.drawTile( self.view, level[i].num, level[i].x, level[i].y )
+		tile.group = level[i].group
+
 		physics.addBody( tile, "static", { friction=0.5, bounce=0 } )
+   	tile.isFixedRotation = true
+		
+		--------------------
+   
+   	if(not groups[tile.group]) then
+   		groups[tile.group] = {}
+   	end
+
+		table.insert(groups[tile.group], tile)
+
+		--------------------
 		
 		tile:addEventListener( "touch", function(event)
-			touchController.translateUpDown(tile, event)
-			character.y = character.y + 0.1
+		
+      	if(tile.group) then
+      		for i=1, #groups[tile.group] do
+      			touchController.translateUpDown(groups[tile.group][i], event)
+      			
+      			if(groups[tile.group][i].icon) then 
+      				touchController.translateUpDown(groups[tile.group][i].icon, event)
+      			end 
+      		end
+      	else
+      		touchController.translateUpDown(tile, event)
+      	end
+			
+			character.checkIfLift()
 		end)
 	end 
 	
-	-------------------------------------
-	-- Here is the important part
-	-- for moving the camera
-	----------------------------------------
-	-- you must insert all objects you created in camera like so:
---	camera:insert(ball)
---	camera:insert(object1)
---	camera:insert(ground)
-
---	--now to move the camera:
---	local function moveCamera(event)
---		camera.x = camera.x +2
---	end
---	
---	Runtime:addEventListener("enterFrame", moveCamera)
-
 end
 
 ------------------------------------------

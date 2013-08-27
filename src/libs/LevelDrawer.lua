@@ -11,8 +11,6 @@ local tilesSheet = graphics.newImageSheet( "assets/images/game/tiles.png", tiles
 
 function drawTile(view, num, x, y)
 	
-	print("draw tile " .. num .. " x : " .. x .. " y : " .. y)
-	
 	local tile = display.newImage( view, tilesSheet, num )
 
 	tile.x = x

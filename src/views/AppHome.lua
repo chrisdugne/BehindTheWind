@@ -53,7 +53,7 @@ function scene:intro()
    
       timer.performWithDelay(2500, function()
       	light2()
-         displayIntroText("Atmopshere", display.contentWidth/2, 45, false)
+         displayIntroText(APP_NAME, display.contentWidth/2, 45, false)
 
          timer.performWithDelay(2000, function()
          	utils.emptyGroup(screen)
@@ -72,7 +72,7 @@ function scene:refreshScene()
 	viewManager.initView(self.view);
 	viewManager.initBack()
 	
-	title = display.newText( "Atmosphere", 0, 0, FONT, 45 )
+	title = display.newText( APP_NAME, 0, 0, FONT, 45 )
 	title:setTextColor( 255 )	
 	title.x = display.contentWidth/2
 	title.y = 45
