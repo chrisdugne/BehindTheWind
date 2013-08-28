@@ -119,6 +119,21 @@ end
 
 -----------------------------------------------------------------------------------------
 
+function removeFromTable(t, object)
+	local index = 1
+	for k,v in pairs(t) do
+		if(t[k] == object) then
+			break
+		end
+		
+		index = index + 1 
+	end 
+	
+	table.remove(t, index)
+end
+
+-----------------------------------------------------------------------------------------
+
 function imageName( url )
 	local index = string.find(url,"/")
 

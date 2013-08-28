@@ -95,8 +95,8 @@ end
 ------------------------------------------
 
 --router.openAppHome()
-router.openPlayground()
---router.openLevelEditor()
+--router.openPlayground()
+router.openLevelEditor()
 
 -----------------------------------------------------------------------------------------
 --- iOS Status Bar
