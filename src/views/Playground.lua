@@ -25,7 +25,7 @@ function scene:refreshScene()
 	
 	---------------------
 
-	local level = require "src.game.levels.Level1"
+	local tiles = GLOBALS.level1.tiles
 	
 	---------------------
 
@@ -57,12 +57,12 @@ function scene:refreshScene()
 
 	local groups = {}
 	
-	for i=1, #level do
+	for i=1, #tiles do
 
 		--------------------
 
-   	local tile = levelDrawer.drawTile( self.view, level[i].num, level[i].x, level[i].y )
-		tile.group = level[i].group
+   	local tile = levelDrawer.drawTile( self.view, tiles[i].num, tiles[i].x, tiles[i].y )
+		tile.group = tiles[i].group
 
 		physics.addBody( tile, "static", { friction=0.5, bounce=0 } )
    	tile.isFixedRotation = true
@@ -78,20 +78,7 @@ function scene:refreshScene()
 		--------------------
 		
 		tile:addEventListener( "touch", function(event)
-		
-      	if(tile.group) then
-      		for i=1, #groups[tile.group] do
-      			touchController.translateUpDown(groups[tile.group][i], event)
-      			
-      			if(groups[tile.group][i].icon) then 
-      				touchController.translateUpDown(groups[tile.group][i].icon, event)
-      			end 
-      		end
-      	else
-      		touchController.translateUpDown(tile, event)
-      	end
-			
-			character.checkIfLift()
+			touchController.dragTile(tile, groups, event)
 		end)
 	end 
 	

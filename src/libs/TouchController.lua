@@ -9,6 +9,8 @@ SWIPE_RIGHT = 1
 SWIPE_LEFT 	= 2
 SWIPE_UP 	= 3
 
+DRAGGING_TILE 	= 4
+
 -------------------------------------
 
 local touchState
@@ -19,6 +21,8 @@ local lastY
 
 function touchScreen( event )
 	
+	if(state == DRAGGING_TILE) then return end
+	
 	if event.phase == "began" then
 
 	elseif event.phase == "ended" then
@@ -26,7 +30,7 @@ function touchScreen( event )
 		
 	elseif event.phase == "moved" then
 	
-		if(event.y + 10 < event.yStart) then
+		if(event.y + 40 < event.yStart) then
 			touchState = SWIPE_UP
 			swipeUp()
 
@@ -55,6 +59,32 @@ end
 
 function swipeUp()
 	character.jump()
+end
+
+-------------------------------------
+
+function dragTile( tile, groups, event )
+	
+	if event.phase == "began" then
+		state = DRAGGING_TILE
+	elseif event.phase == "ended" then
+		state = NONE
+	end
+	
+	if(tile.group) then
+		for i=1, #groups[tile.group] do
+			translateUpDown(groups[tile.group][i], event)
+			
+			if(groups[tile.group][i].icon) then 
+				translateUpDown(groups[tile.group][i].icon, event)
+			end 
+		end
+	else
+		translateUpDown(tile, event)
+	end
+	
+	character.checkIfLift()
+	
 end
 
 -------------------------------------

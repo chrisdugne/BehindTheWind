@@ -68,9 +68,9 @@ game				= require "src.game.Game"
 ---- App globals
 
 GLOBALS = {
-	savedData 	= utils.loadTable("savedData.json"),
-	levels 		= utils.loadTable("levels.json"),
-	levelEditor = utils.loadTable("levelEditor.json")
+	savedData 		= utils.loadUserData("savedData.json"),
+	level1 			= utils.loadFile("levelEditor/level1.json"),
+	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
 }
 
 -----------------------------------------------------------------------------------------

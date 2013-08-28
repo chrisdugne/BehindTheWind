@@ -115,7 +115,7 @@ function scene:refreshScene()
 		if(event.phase == "began") then
 			
 			GLOBALS.levelEditor = {}
-			GLOBALS.levelEditor.level = {}
+			GLOBALS.levelEditor.tiles = {}
 			
 			local num = 1
 			for i=editor.numChildren,1,-1 do
@@ -127,7 +127,7 @@ function scene:refreshScene()
    				tile.x 			= editor[i].x
    				tile.y 			= editor[i].y
    				
-   				GLOBALS.levelEditor.level[num] = tile
+   				GLOBALS.levelEditor.tiles[num] = tile
    				num = num + 1
 				end
 				
@@ -136,7 +136,7 @@ function scene:refreshScene()
 			GLOBALS.levelEditor.lastGroup = currentGroup
 			
 			utils.tprint(GLOBALS.levelEditor)
-			utils.saveTable(GLOBALS.levelEditor, "levelEditor.json")
+			utils.saveTable(GLOBALS.levelEditor, "levelEditor/levelEditor.json", system.ResourceDirectory)
 			
 		end 
 	end )
@@ -149,18 +149,17 @@ function scene:refreshScene()
 		if(event.phase == "began") then
 			utils.emptyGroup(editor)
 			
-			local levelEditor = utils.loadTable("levelEditor.json")
-			local level = levelEditor.level
+			local tiles = GLOBALS.levelEditor.tiles
 			
-			for i=1, #level do
-				local tile = self:addTile(level[i].num, level[i].x, level[i].y)
-				if(level[i].group) then
-					tile.group = level[i].group
+			for i=1, #tiles do
+				local tile = self:addTile(tiles[i].num, tiles[i].x, tiles[i].y)
+				if(tiles[i].group) then
+					tile.group = tiles[i].group
    	 			drawIcon(tile)
    	 		end
    		end 
 			
-			currentGroup = levelEditor.lastGroup
+			currentGroup = GLOBALS.levelEditor.lastGroup
 			selectedTile = nil
 		end 
 	end )

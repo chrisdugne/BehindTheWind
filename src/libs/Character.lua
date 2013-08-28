@@ -19,9 +19,10 @@ local speed = 6
 
 local playerWalk = require("src.game.graphics.PlayerWalk")
 local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
-local character = display.newSprite( playerSheet, playerWalk.sequence )
+local character
 
 function init()
+   character = display.newSprite( playerSheet, playerWalk.sequence )
    character.x = 120
    character.y = 19
    physics.addBody( character, { 
@@ -91,5 +92,5 @@ end
 -------------------------------------
 
 function checkIfLift()
-	character.y = character.y - 0.1
+	character.y = character.y - 0.4
 end
