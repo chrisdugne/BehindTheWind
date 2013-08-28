@@ -204,15 +204,35 @@ end
 function scene:import()
 
 	utils.emptyGroup(editor)
+	groups = {}
 
 	local tiles = GLOBALS.levelEditor.tiles
 
 	for i=1, #tiles do
 		local tile = self:addTile(tiles[i].num, tiles[i].x, tiles[i].y)
+		
 		if(tiles[i].group) then
+			--- add to group
 			currentGroup = tiles[i].group
 			self:addToGroup(tile)
+			
+			--- just set the boolean movable to be check by group after groups is formed
+			tile.movable = tiles[i].movable
+		
+		else
+			--- unique tile : check movable now
+			if(tiles[i].movable) then
+   			self:setMovable(tile)
+			end
+		
 		end
+	end 
+
+	--- now the groups are ready : check movable for each group now
+	for k,v in pairs(groups) do
+		if(groups[k][1].movable) then
+			self:setMovable(groups[k][1])
+   	end 
 	end 
 
 	currentGroup = GLOBALS.levelEditor.lastGroup
@@ -228,12 +248,13 @@ function scene:export()
 	GLOBALS.levelEditor.tiles = {}
 
 	local num = 1
-	for i=editor.numChildren,1,-1 do
+	for i=1, editor.numChildren,1 do
 
 		if(not editor[i].isIcon) then
 			local tile = {}
 			tile.num 		= editor[i].num
 			tile.group 		= editor[i].group
+			tile.movable 	= editor[i].movable
 			tile.x 			= editor[i].x
 			tile.y 			= editor[i].y
 
@@ -302,10 +323,12 @@ function scene:touchTile(tile, event)
 		if(isDragging) then return end
 	end
 
-	isDragging = true
-	selectedTile = tile
-
-	self:dragTile(tile, event) 
+	if(state == DRAWING) then
+   	isDragging = true
+   	selectedTile = tile
+   
+   	self:dragTile(tile, event) 
+	end
 
 	if(event.phase == "ended") then
 		isDragging = false
@@ -362,6 +385,8 @@ end
 
 function scene:changeGroup(tile)
 
+	self:unsetMovable(tile) -- unset le group
+	
 	if(tile.group) then
 		self:removeFromGroup(tile)
 	else
@@ -373,6 +398,7 @@ end
 ------------------------------------------
 
 function scene:addToGroup(tile)
+	
 	tile.group = currentGroup
 	tile.iconGroup = levelDrawer.drawTile( editor, tile.group, tile.x, tile.y )
 	tile.iconGroup:scale(0.3,0.3)

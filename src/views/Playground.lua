@@ -69,11 +69,13 @@ function scene:refreshScene()
 		
 		--------------------
    
-   	if(not groups[tile.group]) then
-   		groups[tile.group] = {}
+   	if(tile.group) then
+      	if(not groups[tile.group]) then
+      		groups[tile.group] = {}
+      	end
+   
+   		table.insert(groups[tile.group], tile)
    	end
-
-		table.insert(groups[tile.group], tile)
 
 		--------------------
 		
