@@ -11,7 +11,11 @@ local scene = storyboard.newScene()
 local tileSelection = display.newGroup()
 local editor = display.newGroup()
 local selectedTile
-local groups = {}
+local selectedGroup
+
+local groups 		= {}
+local groupMotions  	= {} -- contient la liste des lines pour chaque group movable. pour les tiles uniques : tile.motion
+local autoMoves  	= {}
 
 -----------------------------------------------------------------------------------------
 
@@ -25,6 +29,10 @@ local ENABLING_MOVE 	= 4
 local state = DRAWING
 local erase, grouping, enableMove
 local currentGroup = 0
+
+-----------------------------------------------------------------------------------------
+
+local dontListenThisTouchScreen = false
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -45,6 +53,12 @@ function scene:refreshScene()
 	
 	viewManager.initView(self.view);
 	
+	------------------------------
+
+	display.getCurrentStage():addEventListener( "touch", function(event)
+		self:touchScreen(event)
+	end)
+
 	------------------------------
 	
    for num = 1, 110 do
@@ -128,6 +142,7 @@ function scene:refreshScene()
 	export:scale(0.5,0.5)
 	export:addEventListener( "touch", function(event) 
 		if(event.phase == "began") then
+   		dontListenThisTouchScreen = true
 			self:export()
 		end 
 	end )
@@ -138,6 +153,7 @@ function scene:refreshScene()
 	import:scale(0.5,0.5)
 	import:addEventListener( "touch", function(event) 
 		if(event.phase == "began") then
+   		dontListenThisTouchScreen = true
 			self:import()
 		end 
 	end )
@@ -194,6 +210,7 @@ function stateEnablingMove()
    	resetStates()
    	state = ENABLING_MOVE
    	enableMove:scale(2,2)
+		dontListenThisTouchScreen = true
    else
    	stateDrawing()
    end
@@ -203,8 +220,14 @@ end
 
 function scene:import()
 
+	-----------------------------
+	
 	utils.emptyGroup(editor)
-	groups = {}
+	groups 		= {}
+	groupMotions 	= {}
+	autoMoves 	= {}
+
+	-----------------------------
 
 	local tiles = GLOBALS.levelEditor.tiles
 
@@ -228,6 +251,8 @@ function scene:import()
 		end
 	end 
 
+	-----------------------------
+
 	--- now the groups are ready : check movable for each group now
 	for k,v in pairs(groups) do
 		if(groups[k][1].movable) then
@@ -235,8 +260,19 @@ function scene:import()
    	end 
 	end 
 
-	currentGroup = GLOBALS.levelEditor.lastGroup
-	selectedTile = nil
+	-----------------------------
+
+	for k,groupMotion in pairs(GLOBALS.levelEditor.groupMotions) do
+		if(groupMotion) then
+			self:drawGroupMotion(k, groupMotion.x1, groupMotion.y1, groupMotion.x2, groupMotion.y2)
+   	end 
+	end 
+	
+	-----------------------------
+
+	currentGroup 	= GLOBALS.levelEditor.lastGroup
+	selectedTile 	= nil
+	selectedGroup 	= nil
 
 end
 
@@ -244,19 +280,33 @@ end
 
 function scene:export()
 
+	--------------------------------------
+
 	GLOBALS.levelEditor = {}
 	GLOBALS.levelEditor.tiles = {}
+
+	--------------------------------------
 
 	local num = 1
 	for i=1, editor.numChildren,1 do
 
-		if(not editor[i].isIcon) then
+		if(editor[i].isTile) then
 			local tile = {}
 			tile.num 		= editor[i].num
 			tile.group 		= editor[i].group
 			tile.movable 	= editor[i].movable
 			tile.x 			= editor[i].x
 			tile.y 			= editor[i].y
+			
+			if(editor[i].motion) then
+				local line = editor[i].motion
+				tile.motion = {
+					x1 = line.x1,
+					y1 = line.y1,
+					x2 = line.x2,
+					y2 = line.y2
+				}
+			end
 
 			GLOBALS.levelEditor.tiles[num] = tile
 			num = num + 1
@@ -264,9 +314,29 @@ function scene:export()
 
 	end
 
-	GLOBALS.levelEditor.lastGroup = currentGroup
+	--------------------------------------
+	
+	GLOBALS.levelEditor.groupMotions = {}
+	
+	for k,groupMotion in pairs(groupMotions) do
 
-	utils.tprint(GLOBALS.levelEditor)
+		local line = groupMotion
+
+		GLOBALS.levelEditor.groupMotions[k]  = {
+			x1 = line.x1,
+			y1 = line.y1,
+			x2 = line.x2,
+			y2 = line.y2
+		}
+
+	end
+
+	--------------------------------------
+	
+	GLOBALS.levelEditor.lastGroup = currentGroup
+	
+	--------------------------------------
+
 	utils.saveTable(GLOBALS.levelEditor, "levelEditor/levelEditor.json", system.ResourceDirectory)
 
 end
@@ -290,6 +360,7 @@ function scene:addTile(num, x, y)
 	end
 	
 	local tile = levelDrawer.drawTile(editor, num, x, y)
+	tile.isTile = true
 	
    tile:addEventListener( "touch", function(event)
    	self:touchTile(tile, event)
@@ -355,12 +426,26 @@ function scene:dragTile(tile, event)
 			touchController.drag(groups[tile.group][1].iconMovable, event)
 		end 
 		
+		if(groupMotions[tile.group]) then
+			local line = groupMotions[tile.group]
+			local previousX = line.x
+			local previousY = line.y
+			touchController.drag(line, event)
+			line.x1 = line.x
+			line.y1 = line.y
+			line.x2 = line.x2 + line.x - previousX
+			line.y2 = line.y2 + line.y - previousY
+		end
 	else
 		touchController.drag(tile, event)
 
 		if(tile.movable) then 
 			touchController.drag(tile.iconMovable, event)
 		end 
+		
+		if(tile.motion) then
+			touchController.drag(tile.motion, event)
+		end
 	end
 
 end
@@ -372,13 +457,17 @@ function scene:deleteTile(tile)
 	selectedTile.x = tile.x - tile.width
 	selectedTile.y = tile.y
 	selectedTile.width = tile.width
-	display.remove(tile.iconGroup)
-	display.remove(tile.iconMovable)
+	
+	self:unsetMovable(tile)
+
+	if(tile.group) then
+		self:removeFromGroup(tile)
+	end
+
 	display.remove(tile)
 	
-	tile.isInGroup 	= false
-	tile.isMovable 	= false
-	tile 					= nil
+	tile = nil
+	
 end
 
 ------------------------------------------
@@ -402,7 +491,6 @@ function scene:addToGroup(tile)
 	tile.group = currentGroup
 	tile.iconGroup = levelDrawer.drawTile( editor, tile.group, tile.x, tile.y )
 	tile.iconGroup:scale(0.3,0.3)
-	tile.iconGroup.isIcon = true
 
 	tile.isInGroup = true
 	
@@ -434,6 +522,7 @@ function scene:changeMoveAbility(tile)
 		self:setMovable(tile)
 	end
 
+	dontListenThisTouchScreen = true
 end
 
 function scene:setMovable(tile)
@@ -444,9 +533,12 @@ function scene:setMovable(tile)
 		end 
 		
 		self:drawMovableIcon(groups[tile.group][1])
+		selectedGroup = tile.group
 	else
 		tile.movable = true
 		self:drawMovableIcon(tile)
+		selectedGroup = nil
+		selectedTile = tile
 	end
 	
 end
@@ -459,12 +551,50 @@ function scene:unsetMovable(tile)
 		end 
 		
 		display.remove(groups[tile.group][1].iconMovable)
+		self:deleteGroupMotion(tile.group)
 	else
 		tile.movable = false
+		self:deleteTileMotion(tile)
+
 		display.remove(tile.iconMovable)
 		tile.iconMovable = nil
 	end
 	
+	selectedGroup = nil
+end
+
+--- delete the motion line
+function scene:deleteGroupMotion(group)
+	if(groupMotions[group]) then
+		display.remove(groupMotions[group])
+		groupMotions[group] = nil
+		table.remove(groupMotions, group)
+	end
+end
+
+function scene:deleteTileMotion(tile)
+	if(tile.motion) then
+		display.remove(tile.motion)
+		tile.motion = nil
+	end
+end
+
+------------------------------------------
+
+function scene:drawGroupMotion(group, x1,y1, x2,y2)
+	self:deleteGroupMotion(group)
+	local line = self:drawMotionLine(x1,y1, x2,y2)
+	groupMotions[group] = line
+end
+
+function scene:drawMotionLine(x1,y1, x2,y2)
+	local line = display.newLine( editor, x1,y1, x2,y2)
+	line.x1 = x1
+	line.y1 = y1
+	line.x2 = x2
+	line.y2 = y2
+	
+	return line
 end
 
 ------------------------------------------
@@ -472,8 +602,43 @@ end
 function scene:drawMovableIcon(tile)
 	tile.iconMovable = levelDrawer.drawTile( editor, 65, tile.x - 20 , tile.y - 20 )
 	tile.iconMovable:scale(0.4,0.4)
-	tile.iconMovable.isIcon = true
 end
+
+-------------------------------------
+
+function scene:touchScreen( event )
+
+	if(event.phase == "began") then
+		
+		if(dontListenThisTouchScreen) then
+			dontListenThisTouchScreen = false
+			return
+		end
+		
+		if(state == ENABLING_MOVE) then
+
+   		if(selectedGroup) then
+				local x1 = (groups[selectedGroup][1].x + groups[selectedGroup][#groups[selectedGroup]].x  )/2
+				local y1 = (groups[selectedGroup][1].y + groups[selectedGroup][#groups[selectedGroup]].y  )/2
+				local x2 = event.x
+				local y2 = event.y
+				self:drawGroupMotion(selectedGroup, x1,y1, x2,y2)
+			
+			elseif(selectedTile) then
+				self:deleteTileMotion(selectedTile)
+
+   			local line = display.newLine( editor, selectedTile.x,selectedTile.y, event.x, event.y )
+   			line.x1 = selectedTile.x
+   			line.y1 = selectedTile.y
+   			line.x2 = event.x
+   			line.y2 = event.y
+
+				selectedTile.motion = line
+      	end
+
+   	end
+	end
+end	
 
 ------------------------------------------
 --	local options =
@@ -483,7 +648,6 @@ end
 --		body = "I scored over 9000!!! Can you do better?"
 --	}
 --	native.showPopup("mail", options)
-
 
 ------------------------------------------
 
