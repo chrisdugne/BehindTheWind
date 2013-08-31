@@ -21,3 +21,13 @@ function drawTile(view, num, x, y)
 end
 
 ---------------------------------------------------------------------
+
+function addGroupMotion(group, motion)
+
+	
+
+	for i = 1, #group do
+		group[i].bodyType = "kinematic"
+		group[i]:setLinearVelocity( -55, 0 )
+	end
+end

@@ -210,6 +210,8 @@ function stateEnablingMove()
    	resetStates()
    	state = ENABLING_MOVE
    	enableMove:scale(2,2)
+   	selectedTile = nil
+   	selectedGroup = nil
 		dontListenThisTouchScreen = true
    else
    	stateDrawing()
@@ -274,6 +276,7 @@ function scene:import()
 	selectedTile 	= nil
 	selectedGroup 	= nil
 
+	print("set slectedtile  to nil")
 end
 
 ------------------------------------------
@@ -396,8 +399,6 @@ function scene:touchTile(tile, event)
 
 	if(state == DRAWING) then
    	isDragging = true
-   	selectedTile = tile
-   
    	self:dragTile(tile, event) 
 	end
 
@@ -560,7 +561,8 @@ function scene:unsetMovable(tile)
 		tile.iconMovable = nil
 	end
 	
-	selectedGroup = nil
+	selectedGroup 	= nil
+	selectedTile 	= nil
 end
 
 --- delete the motion line
@@ -568,7 +570,6 @@ function scene:deleteGroupMotion(group)
 	if(groupMotions[group]) then
 		display.remove(groupMotions[group])
 		groupMotions[group] = nil
-		table.remove(groupMotions, group)
 	end
 end
 
@@ -588,6 +589,7 @@ function scene:drawGroupMotion(group, x1,y1, x2,y2)
 end
 
 function scene:drawMotionLine(x1,y1, x2,y2)
+
 	local line = display.newLine( editor, x1,y1, x2,y2)
 	line.x1 = x1
 	line.y1 = y1
@@ -620,8 +622,8 @@ function scene:touchScreen( event )
    		if(selectedGroup) then
 				local x1 = (groups[selectedGroup][1].x + groups[selectedGroup][#groups[selectedGroup]].x  )/2
 				local y1 = (groups[selectedGroup][1].y + groups[selectedGroup][#groups[selectedGroup]].y  )/2
-				local x2 = event.x
-				local y2 = event.y
+				local x2 = event.x - editor.x
+				local y2 = event.y - editor.y
 				self:drawGroupMotion(selectedGroup, x1,y1, x2,y2)
 			
 			elseif(selectedTile) then
@@ -630,8 +632,8 @@ function scene:touchScreen( event )
    			local line = display.newLine( editor, selectedTile.x,selectedTile.y, event.x, event.y )
    			line.x1 = selectedTile.x
    			line.y1 = selectedTile.y
-   			line.x2 = event.x
-   			line.y2 = event.y
+   			line.x2 = event.x - editor.x
+   			line.y2 = event.y - editor.y
 
 				selectedTile.motion = line
       	end

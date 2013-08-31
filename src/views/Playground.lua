@@ -25,7 +25,8 @@ function scene:refreshScene()
 	
 	---------------------
 
-	local tiles = GLOBALS.level1.tiles
+	local tiles 			= GLOBALS.level1.tiles
+	local groupMotions 	= GLOBALS.level1.groupMotions
 	
 	---------------------
 
@@ -63,6 +64,7 @@ function scene:refreshScene()
 
    	local tile = levelDrawer.drawTile( self.view, tiles[i].num, tiles[i].x, tiles[i].y )
 		tile.group = tiles[i].group
+		tile.movable = tiles[i].movable
 
 		physics.addBody( tile, "static", { friction=0.5, bounce=0 } )
    	tile.isFixedRotation = true
@@ -84,6 +86,13 @@ function scene:refreshScene()
 		end)
 	end 
 	
+	------------------------------
+	
+	for k,groupMotion in pairs(groupMotions) do
+		if(groupMotion) then
+			levelDrawer.addGroupMotion(groups[k], groupMotion)
+		end
+	end
 end
 
 ------------------------------------------
