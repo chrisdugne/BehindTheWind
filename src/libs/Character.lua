@@ -4,45 +4,49 @@ module(..., package.seeall)
 
 -------------------------------------
 
-NOT_MOVING 	= 0
-GOING_LEFT 	= 1
-GOING_RIGHT = 2
+local CHARACTER_SPEED = 135
+local NOT_MOVING 	= 0
+local GOING_LEFT 	= 1
+local GOING_RIGHT = 2
 
-JUMPING 	= false 
+local JUMPING 	= false 
 
 -------------------------------------
 
-local state = NOT_MOVING
-local CHARACTER_SPEED = 135
+state = NOT_MOVING
 
-local floor = nil
+floor 	= nil
+sprite 	= nil
 
 -------------------------------------
 
 local playerWalk = require("src.game.graphics.PlayerWalk")
 local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
-local character
 
 function init()
-   character = display.newSprite( playerSheet, playerWalk.sequence )
-   character.x = 120
-   character.y = 19
-   physics.addBody( character, { 
+   sprite = display.newSprite( playerSheet, playerWalk.sequence )
+   sprite.x = 120
+   sprite.y = 19
+   physics.addBody( sprite, { 
    	density = 0.1, 
    	friction = 1, 
    	bounce = 0.12,
    	shape = { -7,-22,  7,-22,  7,17,  3,22,  -3,22,  -7,17 }
    })
-   character.isFixedRotation = true
-	character.collision = touchTile
-	character:addEventListener( "collision", character )
+   sprite.isFixedRotation = true
+	sprite.collision = touchTile
+	sprite:addEventListener( "collision", sprite )
 end
 
 -------------------------------------
 
-function touchTile( character, event )
-	local vx, vy = character:getLinearVelocity()
-	floor = event.other
+function touchTile( sprite, event )
+	local vx, vy = sprite:getLinearVelocity()
+	
+	if(event.other.y > sprite.y) then
+		floor = event.other
+	-- else : collision from sides or top : not the floor !
+	end
 	
 	if(state == JUMPING and vy > 0) then
 		state = NOT_MOVING 
@@ -56,48 +60,44 @@ function stop()
    	state = NOT_MOVING
  	end
  	
-	character:pause()
-	character:setFrame(1)
-	local vx, vy = character:getLinearVelocity()
-	character:setLinearVelocity( 0 , vy )
+	sprite:pause()
+	sprite:setFrame(1)
+	local vx, vy = sprite:getLinearVelocity()
+	sprite:setLinearVelocity( 0 , vy )
 end
 
 
 function startMoveLeft()
 	if(state == JUMPING) then return end
-	local vx, vy = character:getLinearVelocity()
+	local vx, vy = sprite:getLinearVelocity()
 	local floorVx, floorVy = floor:getLinearVelocity()
 	
 	state = GOING_LEFT	
-	character.xScale = -1
-	character:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
-	character:play()
+	sprite.xScale = -1
+	sprite:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
+	sprite:play()
 end
 
 function startMoveRight()
 	if(state == JUMPING) then return end
-	local vx, vy = character:getLinearVelocity()
+	local vx, vy = sprite:getLinearVelocity()
 	local floorVx, floorVy = floor:getLinearVelocity()
 
 	state = GOING_RIGHT
-	character.xScale = 1
-	character:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )
-	character:play()
+	sprite.xScale = 1
+	sprite:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )
+	sprite:play()
 end
 
 function jump()
 	if(state == JUMPING) then return end
 	
 	state = JUMPING
-	character:pause()
-	character:setFrame(5)
+	sprite:pause()
+	sprite:setFrame(5)
 	
-	local vx, vy = character:getLinearVelocity()
-	character:setLinearVelocity( vx, -280 )
+	local vx, vy = sprite:getLinearVelocity()
+	sprite:setLinearVelocity( vx, -280 )
 end
 
 -------------------------------------
-
-function checkIfLift()
-	character.y = character.y - 0.4
-end

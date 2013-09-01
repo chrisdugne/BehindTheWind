@@ -29,28 +29,22 @@ function addGroupMotion(group, motion)
 	local motionStart 	= vector2D:new(motion.x1, motion.y1)
 	local motionEnd		= vector2D:new(motion.x2, motion.y2)
 	local direction 		= vector2D:Sub(motionEnd, motionStart)
+	local distance			= direction:magnitude()
+	local duration			= distance/MOTION_SPEED * 1000
 
-	local motionForward 	= vector2D:Normalize(direction)
-	motionForward:mult(MOTION_SPEED)
+	local motionVector 	= vector2D:Normalize(direction)
+	motionVector:mult(MOTION_SPEED)
 	
 	for i = 1, #group do
 		group[i].bodyType = "kinematic"
-		moveForward(group[i], motionForward)
+		moveTile(group[i], motionVector, 1, duration)
 	end
 end
 
-function moveForward(tile, motionForward)
-	tile:setLinearVelocity( motionForward.x, motionForward.y )
+function moveTile(tile, motionVector, way, duration)
+	tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
 
-	timer.performWithDelay(2000, function()
-		moveBackward(tile, motionForward)
-	end)
-end
-
-function moveBackward(tile, motionForward)
-	tile:setLinearVelocity( -motionForward.x, -motionForward.y )
-
-	timer.performWithDelay(2000, function()
-		moveForward(tile, motionForward)
+	timer.performWithDelay(duration, function()
+		moveTile(tile, motionVector, -way, duration)
 	end)
 end

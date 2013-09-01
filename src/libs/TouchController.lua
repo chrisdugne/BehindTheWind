@@ -92,12 +92,19 @@ function dragTile( tile, groups, event )
 				translateUpDown(groups[tile.group][i].icon, event)
 			end 
 		end
+
+   	if(character.floor.group == tile.group) then
+   		translateUpDown(character.sprite, event)
+   	end
+   	
 	else
 		translateUpDown(tile, event)
+
+   	if(character.floor == tile) then
+   		translateUpDown(character.sprite, event)
+   	end
+   	
 	end
-	
-	character.checkIfLift()
-	
 end
 
 -------------------------------------
