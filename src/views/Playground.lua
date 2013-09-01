@@ -5,13 +5,17 @@
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
-
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless storyboard.removeScene() is called.
 -- 
+
+-----------------------------------------------------------------------------------------
+
+local camera = display.newGroup()
+
 -----------------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
@@ -33,15 +37,13 @@ function scene:refreshScene()
 	viewManager.initView(self.view);
 	viewManager.initBack()
 	
+	utils.emptyGroup(camera)
+	
 	---------------------
 
 	local physics = require("physics")
 	physics.start()
 	physics.setGravity( 0, 20 )
-	
-	-----------------------------
-
-	character.init()
 	
 	------------------------------
 
@@ -57,7 +59,7 @@ function scene:refreshScene()
 
 		--------------------
 
-   	local tile = levelDrawer.drawTile( self.view, tiles[i].num, tiles[i].x, tiles[i].y )
+   	local tile = levelDrawer.drawTile( camera, tiles[i].num, tiles[i].x, tiles[i].y )
 		tile.group = tiles[i].group
 		tile.movable = tiles[i].movable
 
@@ -87,6 +89,28 @@ function scene:refreshScene()
 		if(groupMotion) then
 			levelDrawer.addGroupMotion(groups[k], groupMotion)
 		end
+	end
+
+	------------------------------
+
+	character.init(camera)
+	
+	-----------------------------
+	
+	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+end
+
+------------------------------------------
+
+function scene:refreshCamera( )
+
+	local leftDistance = character.sprite.x + camera.x
+	local rightDistance = display.contentWidth - leftDistance
+	
+	if(rightDistance < display.contentWidth*0.38) then
+		camera.x = - character.sprite.x + display.contentWidth*0.62
+	elseif(leftDistance < display.contentWidth*0.38) then
+		camera.x = - character.sprite.x + display.contentWidth*0.38
 	end
 end
 

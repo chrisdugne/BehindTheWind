@@ -23,8 +23,8 @@ sprite 	= nil
 local playerWalk = require("src.game.graphics.PlayerWalk")
 local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
 
-function init()
-   sprite = display.newSprite( playerSheet, playerWalk.sequence )
+function init(camera)
+   sprite = display.newSprite( camera, playerSheet, playerWalk.sequence )
    sprite.x = 120
    sprite.y = 19
    physics.addBody( sprite, { 
