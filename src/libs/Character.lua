@@ -13,7 +13,9 @@ JUMPING 	= false
 -------------------------------------
 
 local state = NOT_MOVING
-local speed = 6
+local CHARACTER_SPEED = 135
+
+local floor = nil
 
 -------------------------------------
 
@@ -27,7 +29,7 @@ function init()
    character.y = 19
    physics.addBody( character, { 
    	density = 0.1, 
-   	friction = 0, 
+   	friction = 1, 
    	bounce = 0.12,
    	shape = { -7,-22,  7,-22,  7,17,  3,22,  -3,22,  -7,17 }
    })
@@ -39,8 +41,9 @@ end
 -------------------------------------
 
 function touchTile( character, event )
-
 	local vx, vy = character:getLinearVelocity()
+	floor = event.other
+	
 	if(state == JUMPING and vy > 0) then
 		state = NOT_MOVING 
 	end
@@ -62,19 +65,23 @@ end
 
 function startMoveLeft()
 	if(state == JUMPING) then return end
-	state = GOING_LEFT	
 	local vx, vy = character:getLinearVelocity()
-	character:setLinearVelocity( -175, vy )
+	local floorVx, floorVy = floor:getLinearVelocity()
+	
+	state = GOING_LEFT	
 	character.xScale = -1
+	character:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
 	character:play()
 end
 
 function startMoveRight()
 	if(state == JUMPING) then return end
-	state = GOING_RIGHT
 	local vx, vy = character:getLinearVelocity()
-	character:setLinearVelocity( 175, vy )
+	local floorVx, floorVy = floor:getLinearVelocity()
+
+	state = GOING_RIGHT
 	character.xScale = 1
+	character:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )
 	character:play()
 end
 

@@ -13,10 +13,21 @@ DRAGGING_TILE 	= 4
 
 -------------------------------------
 
+local hold = false
 local touchState
 local lastX
 local lastY
 
+-------------------------------------
+
+function repeatCurrentAction( event )
+	if(touchState == SWIPE_LEFT) then
+		swipeLeft()
+	elseif(touchState == SWIPE_RIGHT) then
+		swipeRight()
+	end
+end
+	
 -------------------------------------
 
 function touchScreen( event )
@@ -24,8 +35,12 @@ function touchScreen( event )
 	if(state == DRAGGING_TILE) then return end
 	
 	if event.phase == "began" then
+		hold = true	
+   	Runtime:addEventListener( "enterFrame", repeatCurrentAction )
 
 	elseif event.phase == "ended" then
+		hold = false
+   	Runtime:removeEventListener( "enterFrame", repeatCurrentAction )
 		character.stop()
 		
 	elseif event.phase == "moved" then
@@ -36,11 +51,9 @@ function touchScreen( event )
 
 		elseif(event.x - 10 > event.xStart) then
 			touchState = SWIPE_RIGHT
-			swipeRight()
 
 		elseif(event.x + 10 < event.xStart) then
 			touchState = SWIPE_LEFT
-			swipeLeft()
 		end
 	end
 

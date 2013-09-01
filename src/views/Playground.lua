@@ -34,18 +34,13 @@ function scene:refreshScene()
 	viewManager.initBack()
 	
 	---------------------
-	-- require camera
-	---------------------
-	
-	local camera = require("camera")
+
 	local physics = require("physics")
 	physics.start()
 	physics.setGravity( 0, 20 )
 	
 	-----------------------------
-	-- objects
-	------------------------------
-	
+
 	character.init()
 	
 	------------------------------
@@ -66,7 +61,7 @@ function scene:refreshScene()
 		tile.group = tiles[i].group
 		tile.movable = tiles[i].movable
 
-		physics.addBody( tile, "static", { friction=0.5, bounce=0 } )
+		physics.addBody( tile, "static", { friction=0.3, bounce=0 } )
    	tile.isFixedRotation = true
 		
 		--------------------
