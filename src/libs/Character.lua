@@ -43,7 +43,7 @@ end
 function touchTile( sprite, event )
 	local vx, vy = sprite:getLinearVelocity()
 	
-	if(event.other.y > sprite.y) then
+	if(event.other.y > sprite.y and vy > 0) then
 		floor = event.other
 	-- else : collision from sides or top : not the floor !
 	end
@@ -92,6 +92,7 @@ end
 function jump()
 	if(state == JUMPING) then return end
 	
+	floor = nil
 	state = JUMPING
 	sprite:pause()
 	sprite:setFrame(5)
