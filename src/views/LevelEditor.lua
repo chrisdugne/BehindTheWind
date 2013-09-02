@@ -8,14 +8,14 @@ local scene = storyboard.newScene()
 
 -----------------------------------------------------------------------------------------
 
-local tileSelection = display.newGroup()
-local editor = display.newGroup()
+local tileSelection 			= display.newGroup()
+local editor 					= display.newGroup()
 local selectedTile
 local selectedGroup
 
-local groups 		= {}
-local groupMotions  	= {} -- contient la liste des lines pour chaque group movable. pour les tiles uniques : tile.motion
-local autoMoves  	= {}
+local groups 					= {}
+local groupMotions  			= {} -- contient la liste des lines pour chaque group movable. pour les tiles uniques : tile.motion
+local groupDragLines  		= {}
 
 -----------------------------------------------------------------------------------------
 
@@ -23,11 +23,12 @@ local DRAWING 			= 1
 local ERASING 			= 2
 local GROUPING 		= 3
 local ENABLING_MOVE 	= 4
+local ENABLING_DRAG 	= 5
 
 -----------------------------------------------------------------------------------------
 
 local state = DRAWING
-local erase, grouping, enableMove
+local erase, grouping, enableMove, enableDrag
 local currentGroup = 0
 
 -----------------------------------------------------------------------------------------
@@ -70,38 +71,38 @@ function scene:refreshScene()
 
 	local down = display.newImage( "assets/images/tutorial/arrow.down.png" )
 	down.x = 20
-	down.y = 70
-	down:scale(0.1,0.1)
-   down:addEventListener( "touch", function(event) if(event.phase == "began") then editor.y = editor.y + 50 end end )
+	down.y = 80
+	down:scale(0.12,0.12)
+   down:addEventListener( "touch", function(event) if(event.phase == "began") then editor.y = editor.y + 100 end end )
 
 	local up = display.newImage( "assets/images/tutorial/arrow.top.png" )
 	up.x = 20
 	up.y = 55
-	up:scale(0.1,0.1)
-   up:addEventListener( "touch", function(event) if(event.phase == "began") then editor.y = editor.y - 50 end end )
+	up:scale(0.12,0.12)
+   up:addEventListener( "touch", function(event) if(event.phase == "began") then editor.y = editor.y - 100 end end )
 
 	local left = display.newImage( "assets/images/tutorial/arrow.left.png" )
-	left.x = 13
-	left.y = 62
-	left:scale(0.1,0.1)
-   left:addEventListener( "touch", function(event) if(event.phase == "began") then editor.x = editor.x - 50 end end )
+	left.x = 8
+	left.y = 67
+	left:scale(0.12,0.12)
+   left:addEventListener( "touch", function(event) if(event.phase == "began") then editor.x = editor.x - 190 end end )
 
 	local right = display.newImage( "assets/images/tutorial/arrow.right.png" )
-	right.x = 27
-	right.y = 62
-	right:scale(0.1,0.1)
-   right:addEventListener( "touch", function(event) if(event.phase == "began") then editor.x = editor.x + 50 end end )
+	right.x = 32
+	right.y = 67
+	right:scale(0.12,0.12)
+   right:addEventListener( "touch", function(event) if(event.phase == "began") then editor.x = editor.x + 190 end end )
 
 	-------------------------------------
 
 	local selectionLeft = display.newImage( "assets/images/tutorial/arrow.left.png" )
-	selectionLeft.x = 50
+	selectionLeft.x = 60
 	selectionLeft.y = 62
 	selectionLeft:scale(0.1,0.1)
    selectionLeft:addEventListener( "touch", function(event) if(event.phase == "began") then tileSelection.x = tileSelection.x + 300 end end )
 
 	local selectionRight = display.newImage( "assets/images/tutorial/arrow.right.png" )
-	selectionRight.x = 65
+	selectionRight.x = 75
 	selectionRight.y = 62
 	selectionRight:scale(0.1,0.1)
    selectionRight:addEventListener( "touch", function(event) if(event.phase == "began") then tileSelection.x = tileSelection.x - 300 end end )
@@ -137,6 +138,16 @@ function scene:refreshScene()
   	end )
 
 	-------------------------------------
+	
+	enableDrag = levelDrawer.drawTile( self.view, 83, 175, 62 )
+	enableDrag:scale(0.5,0.5)
+   enableDrag:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		stateEnablingDrag()
+   	end 
+  	end )
+
+	-------------------------------------
 
 	local export = levelDrawer.drawTile( self.view, 4, display.contentWidth - 15, 62 )
 	export:scale(0.5,0.5)
@@ -157,6 +168,7 @@ function scene:refreshScene()
 			self:import()
 		end 
 	end )
+	
 end
 
 ------------------------------------------
@@ -168,6 +180,8 @@ function resetStates()
 		grouping:scale(0.5,0.5)
 	elseif(state == ENABLING_MOVE) then
 		enableMove:scale(0.5,0.5)
+	elseif(state == ENABLING_DRAG) then
+		enableDrag:scale(0.5,0.5)
 	end
 end
 
@@ -220,14 +234,30 @@ end
 
 ------------------------------------------
 
+function stateEnablingDrag()
+	if(state ~= ENABLING_DRAG) then
+   	resetStates()
+   	state = ENABLING_DRAG
+   	enableDrag:scale(2,2)
+   	selectedTile = nil
+   	selectedGroup = nil
+		dontListenThisTouchScreen = true
+   else
+   	stateDrawing()
+   end
+end
+
+------------------------------------------
+
 function scene:import()
 
 	-----------------------------
 	
 	utils.emptyGroup(editor)
-	groups 		= {}
-	groupMotions 	= {}
-	autoMoves 	= {}
+	groups 				= {}
+	groupMotions 		= {}
+	groupDragLines 	= {}
+	editor.dragLines 	= {}
 
 	-----------------------------
 
@@ -243,11 +273,16 @@ function scene:import()
 			
 			--- just set the boolean movable to be check by group after groups is formed
 			tile.movable = tiles[i].movable
+			tile.draggable = tiles[i].draggable
 		
 		else
 			--- unique tile : check movable now
 			if(tiles[i].movable) then
    			self:setMovable(tile)
+			end
+
+			if(tiles[i].draggable) then
+   			self:setDraggable(tile)
 			end
 		
 		end
@@ -259,6 +294,9 @@ function scene:import()
 	for k,v in pairs(groups) do
 		if(groups[k][1].movable) then
 			self:setMovable(groups[k][1])
+   	end 
+		if(groups[k][1].draggable) then
+			self:setDraggable(groups[k][1])
    	end 
 	end 
 
@@ -272,11 +310,20 @@ function scene:import()
 	
 	-----------------------------
 
+	for k,groupDraggable in pairs(GLOBALS.levelEditor.groupDragLines) do
+		if(groupDraggable) then
+			self:drawGroupDragLine(k, groupDraggable)
+   	end 
+	end 
+	
+	-----------------------------
+
 	currentGroup 	= GLOBALS.levelEditor.lastGroup
 	selectedTile 	= nil
 	selectedGroup 	= nil
-
-	print("set slectedtile  to nil")
+	
+	print("import")
+	utils.tprint(GLOBALS.levelEditor.groupDragLines)
 end
 
 ------------------------------------------
@@ -285,8 +332,10 @@ function scene:export()
 
 	--------------------------------------
 
+	local groupDragLines = GLOBALS.levelEditor.groupDragLines or {}
 	GLOBALS.levelEditor = {}
 	GLOBALS.levelEditor.tiles = {}
+	GLOBALS.levelEditor.groupDragLines = groupDragLines
 
 	--------------------------------------
 
@@ -298,11 +347,22 @@ function scene:export()
 			tile.num 		= editor[i].num
 			tile.group 		= editor[i].group
 			tile.movable 	= editor[i].movable
+			tile.draggable = editor[i].draggable
 			tile.x 			= editor[i].x
 			tile.y 			= editor[i].y
 			
 			if(editor[i].motion) then
 				local line = editor[i].motion
+				tile.motion = {
+					x1 = line.x1,
+					y1 = line.y1,
+					x2 = line.x2,
+					y2 = line.y2
+				}
+			end
+
+			if(editor[i].dragLine) then
+				local line = editor[i].dragLine
 				tile.motion = {
 					x1 = line.x1,
 					y1 = line.y1,
@@ -335,6 +395,12 @@ function scene:export()
 	end
 
 	--------------------------------------
+
+	if(not GLOBALS.levelEditor.groupDragLines) then
+		GLOBALS.levelEditor.groupDragLines = {}
+	end
+	
+	--------------------------------------
 	
 	GLOBALS.levelEditor.lastGroup = currentGroup
 	
@@ -353,8 +419,8 @@ function scene:addTile(num, x, y)
 	if(not x) then
    	if(not selectedTile) then
    	   selectedTile = {}
-      	selectedTile.x = display.contentWidth/2
-      	selectedTile.y = display.contentHeight/2
+      	selectedTile.x = display.contentWidth/2 - editor.x
+      	selectedTile.y = display.contentHeight/2 - editor.y
       	selectedTile.width = 0
    	end
    	
@@ -372,83 +438,6 @@ function scene:addTile(num, x, y)
 	selectedTile = tile
 
 	return tile
-end
-
-------------------------------------------
-
-function scene:touchTile(tile, event)
-
-	if(event.phase == "began") then
-
-		if(state == ERASING) then
-			self:deleteTile(tile)
-			return
-
-		elseif(state == GROUPING) then
-			self:changeGroup(tile)
-			return
-
-		elseif(state == ENABLING_MOVE) then
-			self:changeMoveAbility(tile)
-			return
-
-		end
-
-		if(isDragging) then return end
-	end
-
-	if(state == DRAWING) then
-   	isDragging = true
-   	self:dragTile(tile, event) 
-	end
-
-	if(event.phase == "ended") then
-		isDragging = false
-	end
-	
-end
-
-------------------------------------------
-
-function scene:dragTile(tile, event)
-
-	if(tile.group) then
-		for i=1, #groups[tile.group] do
-
-			touchController.drag(groups[tile.group][i], event)
-
-			if(groups[tile.group][i].isInGroup) then 
-				touchController.drag(groups[tile.group][i].iconGroup, event)
-			end 
-
-		end
-
-		if(groups[tile.group][1].movable) then 
-			touchController.drag(groups[tile.group][1].iconMovable, event)
-		end 
-		
-		if(groupMotions[tile.group]) then
-			local line = groupMotions[tile.group]
-			local previousX = line.x
-			local previousY = line.y
-			touchController.drag(line, event)
-			line.x1 = line.x
-			line.y1 = line.y
-			line.x2 = line.x2 + line.x - previousX
-			line.y2 = line.y2 + line.y - previousY
-		end
-	else
-		touchController.drag(tile, event)
-
-		if(tile.movable) then 
-			touchController.drag(tile.iconMovable, event)
-		end 
-		
-		if(tile.motion) then
-			touchController.drag(tile.motion, event)
-		end
-	end
-
 end
 
 ------------------------------------------
@@ -513,7 +502,11 @@ function scene:removeFromGroup(tile)
 	tile.isInGroup = false
 end
 
-------------------------------------------
+
+-------------------------------------------------------------------------------------
+-- 				MOVABLE PART
+-------------------------------------------------------------------------------------
+
 
 function scene:changeMoveAbility(tile)
 
@@ -606,7 +599,112 @@ function scene:drawMovableIcon(tile)
 	tile.iconMovable:scale(0.4,0.4)
 end
 
--------------------------------------
+
+
+-------------------------------------------------------------------------------------
+-- 	DRAGGABLE PART : TODO : factoriser movable + draggable
+-------------------------------------------------------------------------------------
+
+
+
+function scene:changeDragAbility(tile)
+
+	if(tile.draggable) then
+		self:unsetDraggable(tile)
+	else
+		self:setDraggable(tile)
+	end
+
+	dontListenThisTouchScreen = true
+end
+
+function scene:setDraggable(tile)
+
+	if(tile.group) then
+		for k,v in pairs(groups[tile.group]) do
+			groups[tile.group][k].draggable = true
+		end 
+		
+		if(not GLOBALS.levelEditor.groupDragLines[tile.group]) then
+			GLOBALS.levelEditor.groupDragLines[tile.group] = {}
+		end
+		
+		self:drawDraggableIcon(groups[tile.group][1])
+		selectedGroup = tile.group
+	else
+		tile.draggable = true
+		self:drawDraggableIcon(tile)
+		selectedGroup = nil
+		selectedTile = tile
+	end
+	
+end
+
+function scene:unsetDraggable(tile)
+	
+	if(tile.group) then
+		for k,v in pairs(groups[tile.group]) do
+			groups[tile.group][k].draggable = false
+		end 
+		
+		display.remove(groups[tile.group][1].iconDraggable)
+		self:deleteGroupDragLine(tile.group)
+	else
+		tile.movable = false
+		self:deleteTileDragLine(tile)
+
+		display.remove(tile.iconDraggable)
+		tile.iconDraggable = nil
+	end
+	
+	selectedGroup 	= nil
+	selectedTile 	= nil
+end
+
+--- delete the motion line
+function scene:deleteGroupDragLine(group)
+	if(editor.dragLines[group]) then
+		display.remove(editor.dragLines[group])
+		editor.dragLines[group] = nil
+	end
+end
+
+function scene:deleteTileDragLine(tile)
+	if(tile.dragLine) then
+		display.remove(tile.dragLine)
+		tile.dragLine = nil
+	end
+end
+
+------------------------------------------
+
+function scene:drawGroupDragLine(group, groupDraggable)
+	self:deleteGroupDragLine(group)
+	local line = self:drawDragLine(groupDraggable.x1, groupDraggable.y1, groupDraggable.x2, groupDraggable.y2)
+	editor.dragLines[group] = line
+end
+
+function scene:drawDragLine(x1,y1, x2,y2)
+
+	local line = display.newLine( editor, x1,y1, x2,y2)
+	line.x1 = x1
+	line.y1 = y1
+	line.x2 = x2
+	line.y2 = y2
+	
+	return line
+end
+
+------------------------------------------
+
+function scene:drawDraggableIcon(tile)
+	tile.iconDraggable = levelDrawer.drawTile( editor, 83, tile.x - 20 , tile.y - 20 )
+	tile.iconDraggable:scale(0.4,0.4)
+end
+
+--------------------------------------------------------------------------------------------------
+-- TOUCHES - ACTIONS
+--------------------------------------------------------------------------------------------------
 
 function scene:touchScreen( event )
 
@@ -639,8 +737,141 @@ function scene:touchScreen( event )
       	end
 
    	end
+		
+		if(state == ENABLING_DRAG) then
+
+   		if(selectedGroup) then
+				local groupDraggable = GLOBALS.levelEditor.groupDragLines[selectedGroup]
+				groupDraggable.x1 = (groups[selectedGroup][1].x + groups[selectedGroup][#groups[selectedGroup]].x  )/2
+				groupDraggable.y1 = (groups[selectedGroup][1].y + groups[selectedGroup][#groups[selectedGroup]].y  )/2
+				groupDraggable.x2 = event.x - editor.x
+				groupDraggable.y2 = event.y - editor.y
+				
+				self:drawGroupDragLine(selectedGroup, groupDraggable)
+			
+			elseif(selectedTile) then
+				self:deleteTileDragLine(selectedTile)
+
+   			local line = display.newLine( editor, selectedTile.x,selectedTile.y, event.x, event.y )
+   			line.x1 = selectedTile.x
+   			line.y1 = selectedTile.y
+   			line.x2 = event.x - editor.x
+   			line.y2 = event.y - editor.y
+
+				selectedTile.dragLine = line
+      	end
+
+   	end
 	end
+	
 end	
+
+------------------------------------------
+
+function scene:touchTile(tile, event)
+
+	if(event.phase == "began") then
+
+		if(state == ERASING) then
+			self:deleteTile(tile)
+			return
+
+		elseif(state == GROUPING) then
+			self:changeGroup(tile)
+			return
+
+		elseif(state == ENABLING_MOVE) then
+			self:changeMoveAbility(tile)
+			return
+
+		elseif(state == ENABLING_DRAG) then
+			self:changeDragAbility(tile)
+			return
+
+		end
+
+		if(isDragging) then return end
+	end
+
+	if(state == DRAWING) then
+   	isDragging = true
+   	display.getCurrentStage():setFocus( event.target )
+   	self:dragTile(tile, event) 
+	end
+
+	if(event.phase == "ended") then
+   	display.getCurrentStage():setFocus( nil )
+		isDragging = false
+	end
+	
+end
+
+------------------------------------------
+
+function scene:dragTile(tile, event)
+
+	if(tile.group) then
+		for i=1, #groups[tile.group] do
+
+			touchController.drag(groups[tile.group][i], event)
+
+			if(groups[tile.group][i].isInGroup) then 
+				touchController.drag(groups[tile.group][i].iconGroup, event)
+			end 
+
+		end
+
+		if(groups[tile.group][1].movable) then 
+			touchController.drag(groups[tile.group][1].iconMovable, event)
+		end 
+
+		if(groups[tile.group][1].draggable) then 
+			touchController.drag(groups[tile.group][1].iconDraggable, event)
+		end 
+		
+		if(groupMotions[tile.group]) then
+			local line = groupMotions[tile.group]
+			local previousX = line.x
+			local previousY = line.y
+			touchController.drag(line, event)
+			line.x1 = line.x
+			line.y1 = line.y
+			line.x2 = line.x2 + line.x - previousX
+			line.y2 = line.y2 + line.y - previousY
+		end
+		
+		if(editor.dragLines[tile.group]) then
+			local line = editor.dragLines[tile.group]
+			local previousX = line.x
+			local previousY = line.y
+			touchController.drag(line, event)
+			line.x1 = line.x
+			line.y1 = line.y
+			line.x2 = line.x2 + line.x - previousX
+			line.y2 = line.y2 + line.y - previousY
+			
+			GLOBALS.levelEditor.groupDragLines[tile.group].x1 = line.x1
+			GLOBALS.levelEditor.groupDragLines[tile.group].x2 = line.x2
+			GLOBALS.levelEditor.groupDragLines[tile.group].y1 = line.y1
+			GLOBALS.levelEditor.groupDragLines[tile.group].y2 = line.y2
+		end
+	else
+		touchController.drag(tile, event)
+
+		if(tile.movable) then 
+			touchController.drag(tile.iconMovable, event)
+		end 
+
+		if(tile.draggable) then 
+			touchController.drag(tile.iconDraggable, event)
+		end 
+		
+		if(tile.motion) then
+			touchController.drag(tile.motion, event)
+		end
+	end
+
+end
 
 ------------------------------------------
 --	local options =

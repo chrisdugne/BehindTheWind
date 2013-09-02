@@ -48,3 +48,19 @@ function moveTile(tile, motionVector, way, duration)
 		moveTile(tile, motionVector, -way, duration)
 	end)
 end
+
+---------------------------------------------------------------------
+
+function addGroupDraggable(group, motion, groups)
+
+	local motionStart 	= vector2D:new(motion.x1, motion.y1)
+	local motionEnd		= vector2D:new(motion.x2, motion.y2)
+	local direction 		= vector2D:Sub(motionEnd, motionStart)
+	local motionVector 	= vector2D:Normalize(direction)
+	
+	for i = 1, #group do
+   	group[i]:addEventListener( "touch", function(event)
+   		touchController.dragGroup(group, event, motionVector)
+   	end)
+	end
+end

@@ -117,10 +117,10 @@ function swipeUp()
 end
 
 -------------------------------------
+--- used in LevelEditor
 
 function dragTile( tile, groups, event )
 	
-   	
 	if event.phase == "began" then
    	display.getCurrentStage():setFocus( event.target )
 		setState(DRAGGING_TILE)
@@ -153,6 +153,29 @@ function dragTile( tile, groups, event )
 end
 
 -------------------------------------
+--- used in LevelEditor
+
+function dragGroup( group, event, motionVector )
+	
+	if event.phase == "began" then
+   	display.getCurrentStage():setFocus( event.target )
+		setState(DRAGGING_TILE)
+	elseif event.phase == "ended" or event.phase == "cancelled" then
+		setState(NONE)
+		display.getCurrentStage():setFocus( nil )
+	end
+	
+	for i = 1, #group do
+		translateVector(group[i], event, motionVector)
+
+   	if(character.floor == group[i]) then
+   		translateVector(character.sprite, event, motionVector)
+   	end
+	end
+	
+end
+	
+-------------------------------------
 
 function drag( tile, event )
 	
@@ -160,16 +183,46 @@ function drag( tile, event )
 		tile.moving = true
 		tile.markX = tile.x    -- store x location of object
 		tile.markY = tile.y    -- store y location of object
-
-	elseif event.phase == "ended" or event.phase == "cancelled" then
-		tile.moving = false
 	
 	elseif event.phase == "moved" and tile.moving then
-
 		local x = (event.x - event.xStart) + tile.markX
 		local y = (event.y - event.yStart) + tile.markY
 			
 		tile.x, tile.y = x, y    -- move object based on calculations above
+
+	elseif event.phase == "ended" or event.phase == "cancelled" then
+		tile.moving = false
+		
+	end
+
+	return true
+end
+
+---------------------------------------------------------------------
+
+function translateVector( object, event, motionVector )
+	
+	if event.phase == "began" then
+		object.moving = true
+		object.markX = object.x 
+		object.markY = object.y 
+
+	elseif event.phase == "ended" then
+		object.moving = false
+	
+	elseif event.phase == "moved" and object.moving then
+		
+		local finger 				= vector2D:new(event.x, event.y)
+		local start 				= vector2D:new(event.xStart, event.yStart)
+   	local fingerDirection 	= vector2D:Sub(finger, start)
+   	local magnitude 			= fingerDirection:magnitude()
+		
+		motionVector:mult(magnitude)
+		
+		print(motionVector.x, motionVector.y)
+		
+		object.x = motionVector.x + object.markX	
+		object.y = motionVector.y + object.markY		
 	end
 
 	return true
@@ -187,10 +240,8 @@ function translateUpDown( object, event )
 		object.moving = false
 	
 	elseif event.phase == "moved" and object.moving then
-
-		local y = (event.y - event.yStart) + object.markY
-
-		object.y = y    -- move object based on calculations above
+		object.y = (event.y - event.yStart) + object.markY
+		
 	end
 
 	return true
@@ -208,10 +259,7 @@ function translateLeftRight( object, event )
 		object.moving = false
 	
 	elseif event.phase == "moved" and object.moving then
-
-		local x = (event.x - event.xStart) + object.markX
-
-		object.x = x
+		object.x = (event.x - event.xStart) + object.markX
 	end
 
 	return true
