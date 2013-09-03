@@ -43,7 +43,7 @@ end
 function touchTile( sprite, event )
 	local vx, vy = sprite:getLinearVelocity()
 	
-	if(event.other.y > sprite.y and vy > 0) then
+	if(event.other.y > sprite.y and vy > 0 and event.other.isFloor) then
 		floor = event.other
 	-- else : collision from sides or top : not the floor !
 	end

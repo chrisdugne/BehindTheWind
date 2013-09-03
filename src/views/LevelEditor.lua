@@ -12,6 +12,7 @@ local tileSelection 			= display.newGroup()
 local editor 					= display.newGroup()
 local selectedTile
 local selectedGroup
+local selectedEnergyType
 
 local groups 					= {}
 local groupMotions  			= {} -- contient la liste des lines pour chaque group movable. pour les tiles uniques : tile.motion
@@ -19,17 +20,26 @@ local groupDragLines  		= {}
 
 -----------------------------------------------------------------------------------------
 
-local DRAWING 			= 1
-local ERASING 			= 2
-local GROUPING 		= 3
-local ENABLING_MOVE 	= 4
-local ENABLING_DRAG 	= 5
+local DRAWING 				= 1
+local ERASING 				= 2
+local GROUPING 			= 3
+local ENABLING_MOVE 		= 4
+local ENABLING_DRAG 		= 5
+
+local DRAWING_ENERGY 	= 6
 
 -----------------------------------------------------------------------------------------
 
 local state = DRAWING
 local erase, grouping, enableMove, enableDrag
+local smallEnergyButton, mediumEnergyButton, bigEnergyButton
 local currentGroup = 0
+
+-----------------------------------------------------------------------------------------
+
+local smallEnergyButtonScale = 0.04
+local mediumEnergyButtonScale = 0.08
+local bigEnergyButtonScale = 0.01
 
 -----------------------------------------------------------------------------------------
 
@@ -53,7 +63,7 @@ end
 function scene:refreshScene()
 	
 	viewManager.initView(self.view);
-	editor.dragLines 	= {}
+	self:initLevel()
 	
 	------------------------------
 
@@ -68,53 +78,81 @@ function scene:refreshScene()
       tile:addEventListener( "touch", function(event) if(event.phase == "began") then self:addTile(num) end end )
 	end
    
-	-------------------------------------
+
+	------------------------------------------------------------------------------------------------------------
+	-- Editor moves
+	------------------------------------------------------------------------------------------------------------
 
 	local down = display.newImage( "assets/images/tutorial/arrow.down.png" )
 	down.x = 20
 	down.y = 80
 	down:scale(0.12,0.12)
-   down:addEventListener( "touch", function(event) if(event.phase == "began") then editor.y = editor.y + 100 end end )
+   down:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then editor.y = editor.y + 100 end
+		dontListenThisTouchScreen = true
+	end )
 
 	local up = display.newImage( "assets/images/tutorial/arrow.top.png" )
 	up.x = 20
 	up.y = 55
 	up:scale(0.12,0.12)
-   up:addEventListener( "touch", function(event) if(event.phase == "began") then editor.y = editor.y - 100 end end )
+   up:addEventListener( "touch", function(event)
+   	if(event.phase == "began") then editor.y = editor.y - 100 end
+		dontListenThisTouchScreen = true	 
+   end )
 
 	local left = display.newImage( "assets/images/tutorial/arrow.left.png" )
 	left.x = 8
 	left.y = 67
 	left:scale(0.12,0.12)
-   left:addEventListener( "touch", function(event) if(event.phase == "began") then editor.x = editor.x - 190 end end )
+   left:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then editor.x = editor.x - 190 end 
+   	dontListenThisTouchScreen = true
+  	end )
 
 	local right = display.newImage( "assets/images/tutorial/arrow.right.png" )
 	right.x = 32
 	right.y = 67
 	right:scale(0.12,0.12)
-   right:addEventListener( "touch", function(event) if(event.phase == "began") then editor.x = editor.x + 190 end end )
+   right:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then editor.x = editor.x + 190 end
+		dontListenThisTouchScreen = true 
+   end )
 
-	-------------------------------------
+
+	------------------------------------------------------------------------------------------------------------
+	-- Tile selector
+	------------------------------------------------------------------------------------------------------------
 
 	local selectionLeft = display.newImage( "assets/images/tutorial/arrow.left.png" )
 	selectionLeft.x = 60
 	selectionLeft.y = 62
 	selectionLeft:scale(0.1,0.1)
-   selectionLeft:addEventListener( "touch", function(event) if(event.phase == "began") then tileSelection.x = tileSelection.x + 300 end end )
+   selectionLeft:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then tileSelection.x = tileSelection.x + 300 end
+		dontListenThisTouchScreen = true 
+   end )
 
 	local selectionRight = display.newImage( "assets/images/tutorial/arrow.right.png" )
 	selectionRight.x = 75
 	selectionRight.y = 62
 	selectionRight:scale(0.1,0.1)
-   selectionRight:addEventListener( "touch", function(event) if(event.phase == "began") then tileSelection.x = tileSelection.x - 300 end end )
+   selectionRight:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then tileSelection.x = tileSelection.x - 300 end
+		dontListenThisTouchScreen = true 
+   end )
 
-	-------------------------------------
+
+	------------------------------------------------------------------------------------------------------------
+	-- States
+	------------------------------------------------------------------------------------------------------------
 	
 	erase = levelDrawer.drawTile( self.view, 2, 100, 62 )
 	erase:scale(0.5,0.5)
    erase:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		stateErasing()
+   		dontListenThisTouchScreen = true
    	end 
   	end )
 
@@ -125,6 +163,7 @@ function scene:refreshScene()
    grouping:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		stateGrouping()
+   		dontListenThisTouchScreen = true
    	end 
   	end )
 
@@ -135,6 +174,7 @@ function scene:refreshScene()
    enableMove:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		stateEnablingMove()
+   		dontListenThisTouchScreen = true
    	end 
   	end )
 
@@ -145,8 +185,65 @@ function scene:refreshScene()
    enableDrag:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		stateEnablingDrag()
+   		dontListenThisTouchScreen = true
    	end 
   	end )
+
+	------------------------------------------------------------------------------------------------------------
+	-- Spawn point / Checkpoint / Energies
+	------------------------------------------------------------------------------------------------------------
+	
+	smallEnergyButton = display.newImage( "assets/images/game/planet.white.png" )
+	smallEnergyButton.x = 300
+	smallEnergyButton.y = 60
+	smallEnergyButton.alpha = 0.7
+	smallEnergyButton:scale(0.04,0.04)
+   smallEnergyButton:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		selectedEnergyType = SMALL_ENERGY
+   		stateDrawEnergy(smallEnergyButton)
+   		dontListenThisTouchScreen = true
+   	end 
+  	end )
+
+	mediumEnergyButton = display.newImage( "assets/images/game/planet.white.png" )
+	mediumEnergyButton.x = 320
+	mediumEnergyButton.y = 60
+	mediumEnergyButton.alpha = 0.7
+	mediumEnergyButton:scale(0.08,0.08)
+   mediumEnergyButton:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		selectedEnergyType = MEDIUM_ENERGY
+   		stateDrawEnergy(mediumEnergyButton)
+   		dontListenThisTouchScreen = true
+   	end 
+  	end )
+
+	bigEnergyButton = display.newImage( "assets/images/game/planet.white.png" )
+	bigEnergyButton.x = 350
+	bigEnergyButton.y = 60
+	bigEnergyButton.alpha = 0.7
+	bigEnergyButton:scale(0.12,0.12)
+   bigEnergyButton:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		selectedEnergyType = BIG_ENERGY
+   		stateDrawEnergy(bigEnergyButton)
+   		dontListenThisTouchScreen = true
+   	end 
+  	end )
+	
+	------------------------------------------------------------------------------------------------------------
+	-- Import / Export
+	------------------------------------------------------------------------------------------------------------
+
+	local import = levelDrawer.drawTile( self.view, 9, display.contentWidth - 35, 62 )
+	import:scale(0.5,0.5)
+	import:addEventListener( "touch", function(event) 
+		if(event.phase == "began") then
+   		dontListenThisTouchScreen = true
+			self:import()
+		end 
+	end )
 
 	-------------------------------------
 
@@ -156,17 +253,6 @@ function scene:refreshScene()
 		if(event.phase == "began") then
    		dontListenThisTouchScreen = true
 			self:export()
-		end 
-	end )
-
-	-------------------------------------
-
-	local import = levelDrawer.drawTile( self.view, 9, display.contentWidth - 35, 62 )
-	import:scale(0.5,0.5)
-	import:addEventListener( "touch", function(event) 
-		if(event.phase == "began") then
-   		dontListenThisTouchScreen = true
-			self:import()
 		end 
 	end )
 	
@@ -183,6 +269,10 @@ function resetStates()
 		enableMove:scale(0.5,0.5)
 	elseif(state == ENABLING_DRAG) then
 		enableDrag:scale(0.5,0.5)
+	elseif(state == DRAWING_ENERGY) then
+		smallEnergyButton.alpha = 0.7
+		mediumEnergyButton.alpha = 0.7
+		bigEnergyButton.alpha = 0.7
 	end
 end
 
@@ -250,16 +340,39 @@ end
 
 ------------------------------------------
 
+function stateDrawEnergy(button)
+	if(button.alpha < 1) then
+   	resetStates()
+   	state = DRAWING_ENERGY
+   	button.alpha = 1
+   	selectedTile = nil
+   	selectedGroup = nil
+		dontListenThisTouchScreen = true
+   else
+   	button.alpha = 0.7
+   	stateDrawing()
+   end
+end
+
+------------------------------------------
+
+function scene:initLevel()
+	groups 				= {}
+	groupMotions 		= {}
+	groupDragLines 	= {}
+	editor.dragLines 	= {}
+	editor.energies 	= {}
+end
+
+------------------------------------------
+
 function scene:import()
 
 	-----------------------------
 	
 	utils.emptyGroup(editor)
-	groups 				= {}
-	groupMotions 		= {}
-	groupDragLines 	= {}
-	editor.dragLines 	= {}
-
+	self:initLevel()
+	
 	-----------------------------
 
 	local tiles = GLOBALS.levelEditor.tiles
@@ -287,6 +400,14 @@ function scene:import()
 			end
 		
 		end
+	end 
+	
+	-----------------------------
+
+	local energies = GLOBALS.levelEditor.energies
+
+	for i=1, #energies do
+		self:drawEnergy(energies[i].x, energies[i].y, energies[i].type)
 	end 
 
 	-----------------------------
@@ -323,8 +444,6 @@ function scene:import()
 	selectedTile 	= nil
 	selectedGroup 	= nil
 	
-	print("import")
-	utils.tprint(GLOBALS.levelEditor.groupDragLines)
 end
 
 ------------------------------------------
@@ -333,14 +452,18 @@ function scene:export()
 
 	--------------------------------------
 
-	local groupDragLines = GLOBALS.levelEditor.groupDragLines or {}
-	GLOBALS.levelEditor = {}
-	GLOBALS.levelEditor.tiles = {}
-	GLOBALS.levelEditor.groupDragLines = groupDragLines
+	local groupDragLines = (GLOBALS.levelEditor and GLOBALS.levelEditor.groupDragLines) or {}
+	
+	GLOBALS.levelEditor 						= {}
+	GLOBALS.levelEditor.tiles 				= {}
+	GLOBALS.levelEditor.energies 			= {}
+	GLOBALS.levelEditor.groupDragLines 	= groupDragLines
 
 	--------------------------------------
 
-	local num = 1
+	local numTile 		= 1
+	local numEnergy 	= 1
+	
 	for i=1, editor.numChildren,1 do
 
 		if(editor[i].isTile) then
@@ -372,8 +495,18 @@ function scene:export()
 				}
 			end
 
-			GLOBALS.levelEditor.tiles[num] = tile
-			num = num + 1
+			GLOBALS.levelEditor.tiles[numTile] = tile
+			numTile = numTile + 1
+		end
+		
+		if(editor[i].isEnergy) then
+			local energy = {}
+			energy.type 	= editor[i].type
+			energy.x 		= editor[i].x
+			energy.y 		= editor[i].y
+
+			GLOBALS.levelEditor.energies[numEnergy] = energy
+			numEnergy = numEnergy + 1
 		end
 
 	end
@@ -667,6 +800,7 @@ function scene:deleteGroupDragLine(group)
 	if(editor.dragLines[group]) then
 		display.remove(editor.dragLines[group])
 		editor.dragLines[group] = nil
+		GLOBALS.levelEditor.groupDragLines[group] = nil
 	end
 end
 
@@ -704,6 +838,29 @@ function scene:drawDraggableIcon(tile)
 end
 
 --------------------------------------------------------------------------------------------------
+-- Energies
+--------------------------------------------------------------------------------------------------
+
+function scene:drawEnergy(x, y, type)
+
+	local energy = display.newImage( editor, "assets/images/game/planet.white.png" )
+	energy.x = x 
+	energy.y = y
+	energy.isEnergy 	= true
+	energy.type 		= type 
+
+	local scaleAmount = 0.04
+	if(type == MEDIUM_ENERGY) then scaleAmount = 0.08 end
+	if(type == BIG_ENERGY) then scaleAmount = 0.12 end
+
+	energy:scale(scaleAmount, scaleAmount)
+
+	energy:addEventListener( "touch", function(event)
+		self:touchTile(energy, event)
+	end )
+end
+
+--------------------------------------------------------------------------------------------------
 -- TOUCHES - ACTIONS
 --------------------------------------------------------------------------------------------------
 
@@ -737,9 +894,8 @@ function scene:touchScreen( event )
 				selectedTile.motion = line
       	end
 
-   	end
 		
-		if(state == ENABLING_DRAG) then
+		elseif(state == ENABLING_DRAG) then
 
    		if(selectedGroup) then
 				local groupDraggable = GLOBALS.levelEditor.groupDragLines[selectedGroup]
@@ -761,6 +917,12 @@ function scene:touchScreen( event )
 
 				selectedTile.dragLine = line
       	end
+   	
+		
+		elseif(state == DRAWING_ENERGY) then
+   		local x = event.x - editor.x
+   		local y = event.y - editor.y
+   		self:drawEnergy(x, y, selectedEnergyType)
 
    	end
 	end

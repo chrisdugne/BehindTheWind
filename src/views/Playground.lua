@@ -31,6 +31,7 @@ function scene:refreshScene()
 	---------------------
 
 	local tiles 			= GLOBALS.level1.tiles
+	local energies 		= GLOBALS.level1.energies
 	local groupMotions 	= GLOBALS.level1.groupMotions
 	local groupDragLines = GLOBALS.level1.groupDragLines
 	
@@ -68,6 +69,7 @@ function scene:refreshScene()
 		
 		tile.startX 		= tiles[i].x
 		tile.startY 		= tiles[i].y
+		tile.isFloor 		= true
 		
 		physics.addBody( tile, "static", { friction=0.3, bounce=0 } )
    	tile.isFixedRotation = true
@@ -84,6 +86,12 @@ function scene:refreshScene()
 
 		--------------------
 		
+	end 
+	
+	------------------------------
+
+	for i=1, #energies do
+		levelDrawer.drawEnergy(camera, energies[i].x, energies[i].y, energies[i].type)
 	end 
 	
 	------------------------------
@@ -117,13 +125,22 @@ end
 
 function scene:refreshCamera( )
 
-	local leftDistance = character.sprite.x + camera.x
-	local rightDistance = display.contentWidth - leftDistance
+	local leftDistance 		= character.sprite.x + camera.x
+	local rightDistance 		= display.contentWidth - leftDistance
+
+	local topDistance 		= character.sprite.y + camera.y
+	local bottomDistance 	= display.contentHeight - topDistance
 	
 	if(rightDistance < display.contentWidth*0.38) then
 		camera.x = - character.sprite.x + display.contentWidth*0.62
 	elseif(leftDistance < display.contentWidth*0.38) then
 		camera.x = - character.sprite.x + display.contentWidth*0.38
+	end
+
+	if(bottomDistance < display.contentHeight*0.28) then
+		camera.y = - character.sprite.y + display.contentHeight*0.72
+	elseif(topDistance < display.contentHeight*0.28) then
+		camera.y = - character.sprite.y + display.contentHeight*0.28
 	end
 end
 

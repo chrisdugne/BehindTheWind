@@ -15,8 +15,9 @@ SIMULATOR 			= system.getInfo( "environment" )  == "simulator"
 
 -----------------------------------------------------------------------------------------
 
-IMAGE_CENTER		= "IMAGE_CENTER";
-IMAGE_TOP_LEFT 	= "IMAGE_TOP_LEFT";
+SMALL_ENERGY 		= 1
+MEDIUM_ENERGY 		= 2
+BIG_ENERGY 			= 3
 
 -----------------------------------------------------------------------------------------
 
