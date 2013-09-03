@@ -5,6 +5,7 @@
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
+
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
@@ -64,7 +65,10 @@ function scene:refreshScene()
 		tile.group 			= tiles[i].group
 		tile.movable 		= tiles[i].movable
 		tile.draggable 	= tiles[i].draggable
-
+		
+		tile.startX 		= tiles[i].x
+		tile.startY 		= tiles[i].y
+		
 		physics.addBody( tile, "static", { friction=0.3, bounce=0 } )
    	tile.isFixedRotation = true
 		
@@ -80,12 +84,6 @@ function scene:refreshScene()
 
 		--------------------
 		
---   	if(tile.draggable) then
---   		tile:addEventListener( "touch", function(event)
---   			touchController.dragTile(tile, groups, event)
---   		end)
---   	end
-		
 	end 
 	
 	------------------------------
@@ -100,7 +98,7 @@ function scene:refreshScene()
 	
 	for k,groupDragLine in pairs(groupDragLines) do
 		if(groupDragLine) then
-			levelDrawer.addGroupDraggable(groups[k], groupDragLine, groups)
+			levelDrawer.addGroupDraggable(groups[k], groupDragLine)
 		end
 	end
 
@@ -111,6 +109,8 @@ function scene:refreshScene()
 	-----------------------------
 	
 	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	
+	--camera:scale(0.3,0.3)
 end
 
 ------------------------------------------

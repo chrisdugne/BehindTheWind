@@ -51,16 +51,15 @@ end
 
 ---------------------------------------------------------------------
 
-function addGroupDraggable(group, motion, groups)
+function addGroupDraggable(group, dragLine)
 
-	local motionStart 	= vector2D:new(motion.x1, motion.y1)
-	local motionEnd		= vector2D:new(motion.x2, motion.y2)
-	local direction 		= vector2D:Sub(motionEnd, motionStart)
-	local motionVector 	= vector2D:Normalize(direction)
-	
+	local motionLimit = {}
+	motionLimit.horizontal 	= dragLine.x2 - dragLine.x1
+	motionLimit.vertical 	= dragLine.y2 - dragLine.y1
+
 	for i = 1, #group do
-   	group[i]:addEventListener( "touch", function(event)
-   		touchController.dragGroup(group, event, motionVector)
-   	end)
+		group[i]:addEventListener( "touch", function(event)
+			touchController.dragGroup(group, motionLimit, event)
+		end)
 	end
 end

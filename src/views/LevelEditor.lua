@@ -53,6 +53,7 @@ end
 function scene:refreshScene()
 	
 	viewManager.initView(self.view);
+	editor.dragLines 	= {}
 	
 	------------------------------
 

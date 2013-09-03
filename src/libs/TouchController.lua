@@ -116,10 +116,10 @@ function swipeUp()
 	character.jump()
 end
 
--------------------------------------
---- used in LevelEditor
 
-function dragTile( tile, groups, event )
+-------------------------------------
+
+function dragGroup( group, motionLimit, event )
 	
 	if event.phase == "began" then
    	display.getCurrentStage():setFocus( event.target )
@@ -128,48 +128,26 @@ function dragTile( tile, groups, event )
 		setState(NONE)
 		display.getCurrentStage():setFocus( nil )
 	end
-	
-	if(tile.group) then
-		for i=1, #groups[tile.group] do
-			translateUpDown(groups[tile.group][i], event)
-			
-			if(groups[tile.group][i].icon) then 
-				translateUpDown(groups[tile.group][i].icon, event)
-			end 
-		end
 
-   	if(character.floor.group == tile.group) then
-   		translateUpDown(character.sprite, event)
-   	end
-   	
-	else
-		translateUpDown(tile, event)
-
-   	if(character.floor == tile) then
-   		translateUpDown(character.sprite, event)
-   	end
-   	
-	end
-end
-
--------------------------------------
---- used in LevelEditor
-
-function dragGroup( group, event, motionVector )
-	
-	if event.phase == "began" then
-   	display.getCurrentStage():setFocus( event.target )
-		setState(DRAGGING_TILE)
-	elseif event.phase == "ended" or event.phase == "cancelled" then
-		setState(NONE)
-		display.getCurrentStage():setFocus( nil )
-	end
-	
 	for i = 1, #group do
-		translateVector(group[i], event, motionVector)
 
-   	if(character.floor == group[i]) then
-   		translateVector(character.sprite, event, motionVector)
+   	local characterIsOnThisGroup = false
+   	local xFloorOffset = 0
+   	local yFloorOffset = 0
+   	
+   	if(group[i] == character.floor) then
+   		characterIsOnThisGroup = true
+   		xFloorOffset = character.floor.x
+   		yFloorOffset = character.floor.y
+   	end
+
+		drag(group[i], event, motionLimit)
+   	
+   	if(characterIsOnThisGroup) then
+   		xFloorOffset = character.floor.x - xFloorOffset
+   		yFloorOffset = character.floor.y - yFloorOffset
+   		character.sprite.x = character.sprite.x + xFloorOffset 
+   		character.sprite.y = character.sprite.y + yFloorOffset
    	end
 	end
 	
@@ -177,7 +155,7 @@ end
 	
 -------------------------------------
 
-function drag( tile, event )
+function drag( tile, event, motionLimit )
 	
 	if event.phase == "began" then
 		tile.moving = true
@@ -187,79 +165,34 @@ function drag( tile, event )
 	elseif event.phase == "moved" and tile.moving then
 		local x = (event.x - event.xStart) + tile.markX
 		local y = (event.y - event.yStart) + tile.markY
-			
+		
+		if(motionLimit) then
+			if(motionLimit.horizontal > 0) then
+      		if	(x - tile.startX > motionLimit.horizontal) 	then x = tile.startX + motionLimit.horizontal 	end
+      		if	(x < tile.startX) then x = tile.startX end
+			elseif(motionLimit.horizontal < 0) then
+      		if	(x - tile.startX < motionLimit.horizontal) 	then x = tile.startX + motionLimit.horizontal 	end
+      		if	(x > tile.startX) then x = tile.startX end
+      	else
+      		x = tile.startX
+   		end
+
+			if(motionLimit.vertical > 0) then
+      		if	(y - tile.startY > motionLimit.vertical) 	then y = tile.startY + motionLimit.vertical 	end
+      		if	(y < tile.startY) then y = tile.startY end
+			elseif(motionLimit.vertical < 0) then
+      		if	(y - tile.startY < motionLimit.vertical) 	then y = tile.startY + motionLimit.vertical 	end
+      		if	(y > tile.startY) then y = tile.startY end
+      	else
+      		y = tile.startY
+   		end
+		end
+		
 		tile.x, tile.y = x, y    -- move object based on calculations above
 
 	elseif event.phase == "ended" or event.phase == "cancelled" then
 		tile.moving = false
 		
-	end
-
-	return true
-end
-
----------------------------------------------------------------------
-
-function translateVector( object, event, motionVector )
-	
-	if event.phase == "began" then
-		object.moving = true
-		object.markX = object.x 
-		object.markY = object.y 
-
-	elseif event.phase == "ended" then
-		object.moving = false
-	
-	elseif event.phase == "moved" and object.moving then
-		
-		local finger 				= vector2D:new(event.x, event.y)
-		local start 				= vector2D:new(event.xStart, event.yStart)
-   	local fingerDirection 	= vector2D:Sub(finger, start)
-   	local magnitude 			= fingerDirection:magnitude()
-		
-		motionVector:mult(magnitude)
-		
-		print(motionVector.x, motionVector.y)
-		
-		object.x = motionVector.x + object.markX	
-		object.y = motionVector.y + object.markY		
-	end
-
-	return true
-end
-
----------------------------------------------------------------------
-
-function translateUpDown( object, event )
-	
-	if event.phase == "began" then
-		object.moving = true
-		object.markY = object.y    -- store y location of object
-
-	elseif event.phase == "ended" then
-		object.moving = false
-	
-	elseif event.phase == "moved" and object.moving then
-		object.y = (event.y - event.yStart) + object.markY
-		
-	end
-
-	return true
-end
-
----------------------------------------------------------------------
-
-function translateLeftRight( object, event )
-	
-	if event.phase == "began" then
-		object.moving = true
-		object.markX = object.x
-
-	elseif event.phase == "ended" then
-		object.moving = false
-	
-	elseif event.phase == "moved" and object.moving then
-		object.x = (event.x - event.xStart) + object.markX
 	end
 
 	return true
