@@ -24,10 +24,6 @@ end
 
 function drawEnergy(view, x, y, type)
 
-	local lifeSpan = 400
-	if(type == MEDIUM_ENERGY) then lifeSpan = 800 end
-	if(type == BIG_ENERGY) then lifeSpan = 1200 end
-
 	local light=CBE.VentGroup{
 		{
 			title="light",
@@ -37,18 +33,17 @@ function drawEnergy(view, x, y, type)
 			y = y,
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=300,
-			lifeSpan=1200,
+			emitDelay=250,
+			lifeSpan=600,
+			fadeInTime=700,
 			physics={
-				velocity=0.5,
+				velocity=0.8,
 				xDamping=1,
-				gravityY=0.6,
+				gravityY=0.2,
 				gravityX=0
 			}
 		}
 	}
-	light:start("light")
-	view:insert(light:get("light").content)
 	
 	local energy = display.newImage("assets/images/game/energy.body.png")
 	energy.type = type 
@@ -64,6 +59,7 @@ function drawEnergy(view, x, y, type)
    
    view:insert(energy)
 	energy:addEventListener( "preCollision", function(event) touchEnergy(energy, view, event) end )
+	return energy
 end
 
 -------------------------------------
@@ -75,39 +71,37 @@ function touchEnergy( energy, view, event )
    	display.remove(energy)
    	
    	timer.performWithDelay(3000, function() energy.light:destroyMaster() end)
-   	
-   	drawFollow(view)
+   	timer.performWithDelay(200, function() drawFollow(view) end)
+   	timer.performWithDelay(600, function() drawFollow(view) end)
+   	timer.performWithDelay(1000, function() drawFollow(view) end)
    end
 end
 
 function drawFollow( view )
 	local vx,vy = character.sprite:getLinearVelocity()
-	print(vx,vy)
 	local follow = CBE.VentGroup{
 		{
 			preset="wisps",
 			title="followLight", -- The pop that appears when a mortar shot explodes
-			color={{0, 255, 0}},
-			emitDelay=300,
+			color={{105,135,182}},
 			perEmit=1,
-			emissionNum=5,
-			lifeSpan=300,
-			alpha=0.6,
-			startAlpha=0,
-			endAlpha=0,
-   		fadeInTime = 1400,
+			emissionNum=1,
+			emitDelay=310,
+			lifeSpan=520,
+			fadeInTime=500,
 			physics={
-   			maxX=5,maxY=5,
-   			relativeToSize=true,
-				velocity=0,
-				gravityY=0
+				gravityX=vx/5,
+				gravityY=vy/5,
 			},
 			x = character.sprite.x,
 			y = character.sprite.y,
 		}
 	}
+	
 	follow:start("followLight")
 	view:insert(follow:get("followLight").content)
+	
+	timer.performWithDelay(3000, function() follow:destroyMaster() end)
 end
 
 ---------------------------------------------------------------------

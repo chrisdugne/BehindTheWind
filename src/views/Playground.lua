@@ -5,6 +5,7 @@
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
+local effects
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -90,8 +91,11 @@ function scene:refreshScene()
 	
 	------------------------------
 
+	effects = {}
+
 	for i=1, #energies do
-		levelDrawer.drawEnergy(camera, energies[i].x, energies[i].y, energies[i].type)
+		local energy = levelDrawer.drawEnergy(camera, energies[i].x, energies[i].y, energies[i].type)
+		table.insert(effects, energy)
 	end 
 	
 	------------------------------
@@ -117,13 +121,14 @@ function scene:refreshScene()
 	-----------------------------
 	
 	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	Runtime:addEventListener( "enterFrame", self.checkEffectsInScreen )
 	
 	--camera:scale(0.3,0.3)
 end
 
 ------------------------------------------
 
-function scene:refreshCamera( )
+function scene:refreshCamera()
 
 	local leftDistance 		= character.sprite.x + camera.x
 	local rightDistance 		= display.contentWidth - leftDistance
@@ -142,6 +147,37 @@ function scene:refreshCamera( )
 	elseif(topDistance < display.contentHeight*0.28) then
 		camera.y = - character.sprite.y + display.contentHeight*0.28
 	end
+end
+
+------------------------------------------
+
+function scene:checkEffectsInScreen()
+	if(effects) then
+		for i=1,#effects do
+			local effect = effects[i]
+			local isOnscreen = false
+			if( effect.x
+			and effect.x > -camera.x - 50
+			and effect.x < display.contentWidth - camera.x + 50 
+			and effect.y > -camera.y - 50
+			and effect.y < display.contentHeight - camera.y + 50) then
+				isOnscreen = true
+			end
+			
+			if(isOnscreen) then
+				if(not effect.started) then
+					effect.light:startMaster()
+					camera:insert(effect.light:get("light").content)
+   				effect.started = true
+   			end
+			elseif(effect.started) then
+				effect.light:stopMaster()
+				effect.started = false
+			end
+		end
+
+
+   end
 end
 
 ------------------------------------------

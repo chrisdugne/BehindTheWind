@@ -17,6 +17,7 @@ state = NOT_MOVING
 
 floor 	= nil
 sprite 	= nil
+view 	= nil
 
 -------------------------------------
 
@@ -24,9 +25,10 @@ local playerWalk = require("src.game.graphics.PlayerWalk")
 local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
 
 function init(camera)
+	view = camera
    sprite = display.newSprite( camera, playerSheet, playerWalk.sequence )
    sprite.x = 120
-   sprite.y = 19
+   sprite.y = 209
    physics.addBody( sprite, { 
    	density = 0.1, 
    	friction = 1, 
