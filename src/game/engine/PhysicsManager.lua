@@ -74,8 +74,8 @@ function throw( x1,y1, x2,y2 )
 	local xForce = 5*(x2-x1)
 	local yForce = 5*(y2-y1)
 
-	if(xForce > 300) then xForce = 300 end
-	if(xForce < -300) then xForce = -300 end
+	if(xForce > 600) then xForce = 600 end
+	if(xForce < -600) then xForce = -600 end
 	if(yForce > 500) then yForce = 500 end
 	if(yForce < -500) then yForce = -500 end
 
@@ -86,14 +86,43 @@ function throw( x1,y1, x2,y2 )
 	physics.addBody( rock, { density=3.0, friction=1, bounce=0.12, radius=7 } )
 	rock:setLinearVelocity(xForce, yForce)
 	
-	rock:addEventListener( "preCollision", rockHit )
+	rock:addEventListener( "preCollision", rockPrepareHit )
+	rock:addEventListener( "collision", rockHit )
 	
+	effectsManager.setItemFire(rock)
+end
+
+-----------------------------------------------------------------------------------------------
+
+function grab( x1,y1, x2,y2 )
+
+	local xForce = 6*(x2-x1)
+	local yForce = 6*(y2-y1)
+
+	local rock = display.newImage(camera, "assets/images/game/rock.png");
+	rock.x = character.sprite.x
+	rock.y = character.sprite.y
+	rock:scale(0.1,0.1)
+	physics.addBody( rock, { density=1.0, friction=1, bounce=0.12, radius=3.5 } )
+	rock:setLinearVelocity(xForce, yForce)
+	
+	rock:addEventListener( "preCollision", rockPrepareHit )
+	rock:addEventListener( "collision", rockHit )
+	
+	effectsManager.setItemLight(rock)
 end
 
 -------------------------------------
 
-function rockHit( event )
-	if(event.other == character.sprite) then
+function rockPrepareHit( event )
+	if(event.other == character.sprite or event.other.isTrigger) then
 		event.contact.isEnabled = false
 	end
+end
+
+function rockHit( event )
+	if(event.other ~= character.sprite and not event.other.isTrigger) then
+		effectsManager.off(event.target)
+		display.remove(event.target)
+   end
 end

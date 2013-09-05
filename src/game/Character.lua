@@ -15,29 +15,32 @@ local JUMPING 	= false
 
 state = NOT_MOVING
 
+-------------------------------------
+
 floor 	= nil
 sprite 	= nil
-view 	= nil
 
 -------------------------------------
 
 local playerWalk = require("src.game.graphics.PlayerWalk")
 local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
 
-function init(camera)
-	view = camera
+function init()
    sprite = display.newSprite( camera, playerSheet, playerWalk.sequence )
    sprite.x = 120
    sprite.y = 209
+   
    physics.addBody( sprite, { 
    	density = 0.1, 
    	friction = 1, 
    	bounce = 0.12,
    	shape = { -7,-22,  7,-22,  7,17,  3,22,  -3,22,  -7,17 }
    })
+   
    sprite.isFixedRotation = true
 	sprite.collision = collide
 	sprite:addEventListener( "collision", sprite )
+	
 end
 
 -------------------------------------
@@ -68,6 +71,7 @@ end
 -------------------------------------
 
 function setGrabbing()
+	effectsManager.setCharacterGrabbing()
 end
 
 function setThrowing()
@@ -85,6 +89,8 @@ function stop()
 	sprite:setFrame(1)
 	local vx, vy = sprite:getLinearVelocity()
 	sprite:setLinearVelocity( 0 , vy )
+	
+	effectsManager.stopCharacterLight()
 end
 
 
@@ -126,4 +132,10 @@ end
 
 function throw( x1,y1, x2,y2 )
 	physicsManager.throw(x1,y1, x2,y2)
+end
+
+-------------------------------------
+
+function grab( x1,y1, x2,y2 )
+	physicsManager.grab(x1,y1, x2,y2)
 end

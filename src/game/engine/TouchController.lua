@@ -52,17 +52,6 @@ function touchScreen( event )
    	
    	display.getCurrentStage():setFocus( character.sprite )
    	Runtime:addEventListener( "enterFrame", onTouch )
-
-	elseif event.phase == "ended" then
-   	if(currentState == THROWING) then
-			character.throw( lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y)
-   	end
-   	
-		hold = false
-		setState(NONE, event)
-		character.stop()
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", onTouch )
    	
 		
 	elseif event.phase == "moved" then
@@ -85,6 +74,19 @@ function touchScreen( event )
 		elseif(event.x + 40 < xStart) then
 			setState(SWIPE_LEFT)
 		end
+
+	elseif event.phase == "ended" then
+   	if(currentState == THROWING) then
+			character.throw( lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y)
+   	elseif(currentState == GRABBING) then
+			character.grab( lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y)
+   	end
+   	
+		hold = false
+		setState(NONE)
+		character.stop()
+   	display.getCurrentStage():setFocus( nil )
+   	Runtime:removeEventListener( "enterFrame", onTouch )
 		
 	end
 
@@ -119,12 +121,10 @@ function onTouch( event )
 		if(currentState ~= THROWING) then
    		local now = system.getTimer()
    		
-   		if(now - startTouchTime > 1000) then
-   			setState(GRABBING)
-   			character.setGrabbing()
+   		if(now - startTouchTime > 800) then
+   			setState(GRABBING, function() character.setGrabbing() end)
    		elseif(now - startTouchTime > 300) then
-   			setState(READY_TO_THROW)
-   			character.setThrowing()
+   			setState(READY_TO_THROW, function() character.setThrowing() end)
    		end
 		end
 		
@@ -134,12 +134,16 @@ end
 	
 -------------------------------------
 
-function setState(state)
+function setState(state, toApply)
 	
 	if(currentState ~= state) then
 		xStart, yStart = lastX, lastY
 		previousState = currentState
 		currentState = state
+		
+		if(toApply ~= nil) then
+			toApply()
+		end
 	end
 	
 end
