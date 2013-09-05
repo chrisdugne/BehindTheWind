@@ -109,7 +109,7 @@ function grab( x1,y1, x2,y2 )
 	rock:addEventListener( "preCollision", rockPrepareHit )
 	rock:addEventListener( "collision", rockHit )
 	
-	effectsManager.setItemLight(rock)
+	effectsManager.setItemBeam(rock)
 end
 
 -------------------------------------

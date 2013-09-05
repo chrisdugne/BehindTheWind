@@ -244,7 +244,7 @@ function setItemFire(item)
 	table.insert(items, item)
 end
 
-function setItemLight(item)
+function setItemBeam(item)
 
 	item.light = CBE.VentGroup{
 		{
