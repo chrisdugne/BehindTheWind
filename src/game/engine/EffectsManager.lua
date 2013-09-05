@@ -102,6 +102,27 @@ end
 
 ------------------------------------------
 
+function setCharacterThrowing()
+	character.light = CBE.VentGroup{
+		{
+			preset="burn",
+			title="characterLight", -- The pop that appears when a mortar shot explodes
+			color={{105,135,182}},
+			perEmit=1,
+			emissionNum=0,
+			emitDelay=530,
+			lifeSpan=550,
+			x = character.sprite.x,
+			y = character.sprite.y,
+		}
+	}
+	
+	character.light:startMaster()
+	camera:insert(character.light:get("characterLight").content)
+end
+
+------------------------------------------
+
 function checkEffectsInScreen()
 	if(effects) then
 		for i=1,#effects do

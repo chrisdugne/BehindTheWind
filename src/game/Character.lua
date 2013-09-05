@@ -71,6 +71,7 @@ function setGrabbing()
 end
 
 function setThrowing()
+	effectsManager.setCharacterThrowing()
 end
 
 -------------------------------------
