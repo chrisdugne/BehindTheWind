@@ -29,19 +29,27 @@ end
 
 -----------------------------------------------------------------------------------------
 --- Corona's libraries
-json 				= require "json"
-storyboard 		= require "storyboard"
-store	 			= require "store"
+json 					= require "json"
+storyboard 			= require "storyboard"
+store	 				= require "store"
 
 ---- Additional libs
-xml 				= require "src.libs.Xml"
-utils 			= require "src.libs.Utils"
-vector2D			= require "src.libs.Vector2D"
-gameCenter		= require "src.libs.GameCenter"
+xml 					= require "src.libs.Xml"
+utils 				= require "src.libs.Utils"
+vector2D				= require "src.libs.Vector2D"
+gameCenter			= require "src.libs.GameCenter"
 
-touchController = require "src.libs.TouchController"
-levelDrawer 	= require "src.libs.LevelDrawer"
-character		= require "src.libs.Character"
+---- Game libs
+character			= require "src.game.Character"
+hud					= require "src.game.HUD"
+game					= require "src.game.Game"
+
+touchController 	= require "src.game.engine.TouchController"
+physicsManager		= require "src.game.engine.PhysicsManager"
+effectsManager		= require "src.game.engine.EffectsManager"
+musicManager		= require "src.game.engine.MusicManager"
+
+levelDrawer 		= require "src.game.levels.LevelDrawer"
 
 -----------------------------------------------------------------------------------------
 -- Translations
@@ -59,11 +67,7 @@ end
 ---- App Tools
 router 			= require "src.tools.Router"
 viewManager		= require "src.tools.ViewManager"
-musicManager	= require "src.tools.MusicManager"
 
----- Game libs
-hud				= require "src.game.HUD"
-game				= require "src.game.Game"
 
 -----------------------------------------------------------------------------------------
 ---- App globals
@@ -73,6 +77,8 @@ GLOBALS = {
 	level1 			= utils.loadFile("levelEditor/level1.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
 }
+
+camera = display.newGroup()
 
 -----------------------------------------------------------------------------------------
 

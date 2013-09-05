@@ -4,12 +4,16 @@ module(..., package.seeall)
 
 -------------------------------------
 
-NONE 			= 0
-SWIPE_RIGHT = 1
-SWIPE_LEFT 	= 2
-SWIPE_UP 	= 3
+NONE 					= 0
+SWIPE_RIGHT 		= 1
+SWIPE_LEFT 			= 2
+SWIPE_UP 			= 3
 
-DRAGGING_TILE 	= 4
+READY_TO_THROW 	= 11
+THROWING 			= 12
+GRABBING 			= 13
+
+DRAGGING_TILE 		= 101
 
 -------------------------------------
 
@@ -20,11 +24,78 @@ local xStart				= 0
 local yStart				= 0
 local lastX					= 0
 local lastY					= 0
+local startTouchTime		= 0
 
 -------------------------------------
 
-function repeatCurrentAction( event )
+function init()
+	display.getCurrentStage():addEventListener( "touch", function(event)
+		touchScreen(event)
+	end)
+end
 
+-------------------------------------
+
+function touchScreen( event )
+	
+	lastX, lastY = event.x, event.y
+	if(not character.floor) then
+		xStart, yStart = lastX, lastY
+	end
+	
+	if(currentState == DRAGGING_TILE) then return end
+   	
+	if event.phase == "began" then
+   	startTouchTime 	= system.getTimer()
+		hold 					= true	
+		xStart, yStart 	= event.xStart, event.yStart
+   	
+   	display.getCurrentStage():setFocus( character.sprite )
+   	Runtime:addEventListener( "enterFrame", onTouch )
+
+	elseif event.phase == "ended" then
+   	if(currentState == THROWING) then
+			character.throw( lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y)
+   	end
+   	
+		hold = false
+		setState(NONE, event)
+		character.stop()
+   	display.getCurrentStage():setFocus( nil )
+   	Runtime:removeEventListener( "enterFrame", onTouch )
+   	
+		
+	elseif event.phase == "moved" then
+		
+		if(currentState == READY_TO_THROW) then 
+			setState(THROWING)
+			return
+
+		elseif(currentState == THROWING or currentState == GRABBING) then 
+			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
+			return
+			
+		elseif(event.y + 40 < yStart) then
+			setState(SWIPE_UP)
+			swipeUp()
+
+		elseif(event.x - 40 > xStart) then
+			setState(SWIPE_RIGHT)
+
+		elseif(event.x + 40 < xStart) then
+			setState(SWIPE_LEFT)
+		end
+		
+	end
+
+	return true
+end
+
+
+-------------------------------------
+
+function onTouch( event )
+	
 	if(currentState == SWIPE_LEFT) then
 		swipeLeft()
 
@@ -44,52 +115,23 @@ function repeatCurrentAction( event )
 
    	end
 
-	end
-end
-	
--------------------------------------
-
-function touchScreen( event )
-	
-	lastX, lastY = event.x, event.y
-	
-	if(not character.floor) then
-		xStart, yStart = lastX, lastY
-	end
-	
-	if(currentState == DRAGGING_TILE) then return end
-   	
-	if event.phase == "began" then
-		hold = true	
-		xStart, yStart = event.xStart, event.yStart
-   	display.getCurrentStage():setFocus( character.sprite )
-   	Runtime:addEventListener( "enterFrame", repeatCurrentAction )
-
-	elseif event.phase == "ended" then
-		hold = false
-		setState(NONE, event)
-		character.stop()
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", repeatCurrentAction )
-		
-	elseif event.phase == "moved" then
-	
-		if(event.y + 40 < yStart) then
-			setState(SWIPE_UP)
-			swipeUp()
-
-		elseif(event.x - 40 > xStart) then
-			setState(SWIPE_RIGHT)
-
-		elseif(event.x + 40 < xStart) then
-			setState(SWIPE_LEFT)
+	else
+		if(currentState ~= THROWING) then
+   		local now = system.getTimer()
+   		
+   		if(now - startTouchTime > 1000) then
+   			setState(GRABBING)
+   			character.setGrabbing()
+   		elseif(now - startTouchTime > 300) then
+   			setState(READY_TO_THROW)
+   			character.setThrowing()
+   		end
 		end
 		
 	end
-
-	return true
 end
-
+	
+	
 -------------------------------------
 
 function setState(state)

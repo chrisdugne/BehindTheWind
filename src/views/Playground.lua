@@ -5,7 +5,6 @@
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
-local effects
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -13,10 +12,6 @@ local effects
 -- NOTE: Code outside of listener functions (below) will only be executed once,
 --		 unless storyboard.removeScene() is called.
 -- 
-
------------------------------------------------------------------------------------------
-
-local camera = display.newGroup()
 
 -----------------------------------------------------------------------------------------
 
@@ -30,100 +25,38 @@ end
 function scene:refreshScene()
 	
 	---------------------
-
-	local tiles 			= GLOBALS.level1.tiles
-	local energies 		= GLOBALS.level1.energies
-	local groupMotions 	= GLOBALS.level1.groupMotions
-	local groupDragLines = GLOBALS.level1.groupDragLines
-	
-	---------------------
+	-- init playground
 
 	viewManager.initView(self.view);
 	viewManager.initBack()
 	
+	------------------------------
+	-- camera
+		
 	utils.emptyGroup(camera)
+	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	--camera:scale(0.3,0.3)
 	
 	---------------------
+	-- engines
 
-	local physics = require("physics")
-	physics.start()
-	physics.setGravity( 0, 20 )
+	physicsManager.init()
+	effectsManager.init()
+	touchController.init()
 	
 	------------------------------
-
-	display.getCurrentStage():addEventListener( "touch", function(event)
-		touchController.touchScreen(event)
-	end)
+	-- level content
 	
-	------------------------------
-
-	local groups = {}
-	
-	for i=1, #tiles do
-
-		--------------------
-
-   	local tile 			= levelDrawer.drawTile( camera, tiles[i].num, tiles[i].x, tiles[i].y )
-		tile.group 			= tiles[i].group
-		tile.movable 		= tiles[i].movable
-		tile.draggable 	= tiles[i].draggable
-		
-		tile.startX 		= tiles[i].x
-		tile.startY 		= tiles[i].y
-		tile.isFloor 		= true
-		
-		physics.addBody( tile, "static", { friction=0.3, bounce=0 } )
-   	tile.isFixedRotation = true
-		
-		--------------------
-   
-   	if(tile.group) then
-      	if(not groups[tile.group]) then
-      		groups[tile.group] = {}
-      	end
-   
-   		table.insert(groups[tile.group], tile)
-   	end
-
-		--------------------
-		
-	end 
-	
-	------------------------------
-
-	effects = {}
-
-	for i=1, #energies do
-		local energy = levelDrawer.drawEnergy(camera, energies[i].x, energies[i].y, energies[i].type)
-		table.insert(effects, energy)
-	end 
-	
-	------------------------------
-	
-	for k,groupMotion in pairs(groupMotions) do
-		if(groupMotion) then
-			levelDrawer.addGroupMotion(groups[k], groupMotion)
-		end
-	end
-
-	------------------------------
-	
-	for k,groupDragLine in pairs(groupDragLines) do
-		if(groupDragLine) then
-			levelDrawer.addGroupDraggable(groups[k], groupDragLine)
-		end
-	end
-
-	------------------------------
-
-	character.init(camera)
+	levelDrawer.designLevel()
 	
 	-----------------------------
-	
-	Runtime:addEventListener( "enterFrame", self.refreshCamera )
-	Runtime:addEventListener( "enterFrame", self.checkEffectsInScreen )
-	
-	--camera:scale(0.3,0.3)
+	-- camera
+
+	character.init(camera)
+
+	------------------------------
+	-- level foregrounds
+
 end
 
 ------------------------------------------
@@ -147,37 +80,6 @@ function scene:refreshCamera()
 	elseif(topDistance < display.contentHeight*0.28) then
 		camera.y = - character.sprite.y + display.contentHeight*0.28
 	end
-end
-
-------------------------------------------
-
-function scene:checkEffectsInScreen()
-	if(effects) then
-		for i=1,#effects do
-			local effect = effects[i]
-			local isOnscreen = false
-			if( effect.x
-			and effect.x > -camera.x - 50
-			and effect.x < display.contentWidth - camera.x + 50 
-			and effect.y > -camera.y - 50
-			and effect.y < display.contentHeight - camera.y + 50) then
-				isOnscreen = true
-			end
-			
-			if(isOnscreen) then
-				if(not effect.started) then
-					effect.light:startMaster()
-					camera:insert(effect.light:get("light").content)
-   				effect.started = true
-   			end
-			elseif(effect.started) then
-				effect.light:stopMaster()
-				effect.started = false
-			end
-		end
-
-
-   end
 end
 
 ------------------------------------------

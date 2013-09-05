@@ -36,23 +36,41 @@ function init(camera)
    	shape = { -7,-22,  7,-22,  7,17,  3,22,  -3,22,  -7,17 }
    })
    sprite.isFixedRotation = true
-	sprite.collision = touchTile
+	sprite.collision = collide
 	sprite:addEventListener( "collision", sprite )
 end
 
 -------------------------------------
 
-function touchTile( sprite, event )
+function collide( sprite, event )
 	local vx, vy = sprite:getLinearVelocity()
-	
-	if(event.other.y > sprite.y and vy > 0 and event.other.isFloor) then
+
+	if(event.other.y > sprite.y and event.other.isFloor) then
 		floor = event.other
 	-- else : collision from sides or top : not the floor !
 	end
 	
-	if(state == JUMPING and vy > 0) then
+	if(state == JUMPING and vy > -200) then -- -280 is is the start vy when jumping. -200 is around the jump start 
 		state = NOT_MOVING 
 	end
+end
+
+-------------------------------------
+
+function lookLeft()
+	sprite.xScale = -1
+end
+
+function lookRight()
+	sprite.xScale = 1
+end
+
+-------------------------------------
+
+function setGrabbing()
+end
+
+function setThrowing()
 end
 
 -------------------------------------
@@ -75,7 +93,7 @@ function startMoveLeft()
 	local floorVx, floorVy = floor:getLinearVelocity()
 	
 	state = GOING_LEFT	
-	sprite.xScale = -1
+	lookLeft()
 	sprite:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
 	sprite:play()
 end
@@ -86,7 +104,7 @@ function startMoveRight()
 	local floorVx, floorVy = floor:getLinearVelocity()
 
 	state = GOING_RIGHT
-	sprite.xScale = 1
+	lookRight()
 	sprite:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )
 	sprite:play()
 end
@@ -104,3 +122,7 @@ function jump()
 end
 
 -------------------------------------
+
+function throw( x1,y1, x2,y2 )
+	physicsManager.throw(x1,y1, x2,y2)
+end
