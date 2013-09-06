@@ -5,47 +5,115 @@ module(..., package.seeall)
 -----------------------------------------------------------------------------
 
 effects 	= nil
-items 	= nil
 
 -------------------------------------
 
 function init()
 	effects = {}
-	items = {}
-	Runtime:addEventListener( "enterFrame", checkEffectsInScreen )
-	Runtime:addEventListener( "enterFrame", refreshItemsLightCoordinates )
+	Runtime:addEventListener( "enterFrame", refreshEffects )
+end
+
+function stop()
+	Runtime:removeEventListener( "enterFrame", refreshEffects )
+	
+	if(effects) then
+		for i=1,#effects do
+			destroyEffect(effects[i], true)
+		end
+	end
+end
+
+-----------------------------------------------------------------------------
+
+function registerNewEffect( effect )
+	effect.num = #effects+1
+	effects[effect.num] = effect
+	
+	print("registerNewEffect " .. effect.num .. " / " .. #effects)
+end
+
+function destroyEffect( effect, now )
+	
+	if(effect.num) then -- else deja detruit (pb de lien pour le GC dans un performWithDelay ? exmple deleteRock + timeout 4sec force)
+   	print(effect.num)
+   	print("destroyEffect " .. effect.num .. " -> " .. #effects)
+      effect.beingDestroyed = true
+   	
+   	if(not now and effect.body) then
+      	print("destroy body")
+   		utils.destroyFromDisplay(effect.body)
+   	end
+   
+   
+   -- Probleme : supprimer les nums decale en meme temps les nouveaux cest pourri
+   --	table.remove(effects, effect.num) 
+   --
+   --	for i=effect.num, #effects do
+   --		effects[i].num = effects[i].num - 1
+   --	end 
+   -- TODO vider la liste des effects nil !
+        
+      effect:stopMaster()
+      
+      if(now) then
+      	effect:destroyMaster() 
+      	effect = nil
+      else
+         timer.performWithDelay(3000, function()
+         	if(effect.num) then -- else detruit entre temps
+         		effect:destroyMaster()
+         	end 
+         end)
+      end
+	end
+
 end
 
 -----------------------------------------------------------------------------
 --- CHECK level effects in screen
 -----------------------------------------------------------------------------
 
-function checkEffectsInScreen()
+function refreshEffects()
 	if(effects) then
 		for i=1,#effects do
 			local effect = effects[i]
-			local isOnscreen = false
-			if( effect.x
-			and effect.x > -camera.x - 50
-			and effect.x < display.contentWidth - camera.x + 50 
-			and effect.y > -camera.y - 50
-			and effect.y < display.contentHeight - camera.y + 50) then
-				isOnscreen = true
-			end
 			
-			if(isOnscreen) then
-				if(not effect.started) then
-					effect.light:startMaster()
-					camera:insert(effect.light:get("light").content)
-   				effect.started = true
+			if(effect.num) then -- else passed throug destroyMaster
+   			local isOnscreen = not effect.body -- si il n y a pas de body cest un simple effet visuel : onScreen (exemple drawFollow)
+   			
+   			if(not effect.static) then
+   				refreshEffectsCoordinates(effect)
    			end
-			elseif(effect.started) then
-				effect.light:stopMaster()
-				effect.started = false
-			end
+   			
+   			if( effect.body
+   			and effect.body.x
+   			and effect.body.x > -camera.x - 50
+   			and effect.body.x < display.contentWidth - camera.x + 50 
+   			and effect.body.y > -camera.y - 50
+   			and effect.body.y < display.contentHeight - camera.y + 50) then
+   				isOnscreen = true
+   			end
+   			
+   			if(isOnscreen) then
+   				if(not effect.started) then
+   					print("		starting " .. effect.num .. " / " .. #effects)
+   					effect:startMaster()
+      				effect.started = true
+      			end
+   			elseif(effect.started) then
+   				print("			stopping " .. effect.num .. " / " .. #effects)
+   				effect:stopMaster()
+   				effect.started = false
+   			end
+   		end
 		end
+   end
+end
 
-
+function refreshEffectsCoordinates(effect)
+	if(effect.body and effect.body.x and effect.body.y) then
+   	effect:get("light").x = effect.body.x 
+   	effect:get("light").y = effect.body.y
    end
 end
 
@@ -53,7 +121,7 @@ end
 --- Level energies
 -----------------------------------------------------------------------------
 
-function drawEnergy(view, x, y, type)
+function drawEnergy(x, y, type)
 
 	local light=CBE.VentGroup{
 		{
@@ -78,39 +146,42 @@ function drawEnergy(view, x, y, type)
 	energy.light = light
 	energy.x = x
 	energy.y = y
-	energy.isTrigger = true
+	energy.isSensor = true
 	
    physics.addBody( energy, "kinematic", { 
    	density = 0, 
    	friction = 0, 
-   	bounce = 0
+   	bounce = 0,
    })
    
-   view:insert(energy)
-	energy:addEventListener( "preCollision", function(event) touchEnergy(energy, view, event) end )
+   camera:insert(energy)
+	energy:addEventListener( "preCollision", function(event) touchEnergy(energy, event) end )
+
 	
-	table.insert(effects, energy)
+	light.body = energy
+	light.static = true
+	registerNewEffect(light)	
+	camera:insert(light:get("light").content)
 end
 
-
-function touchEnergy( energy, view, event )
+function touchEnergy( energy, event )
 	if(event.contact) then
 		event.contact.isEnabled = false
    	
    	if(event.other == character.sprite) then
-      	energy.light:stopMaster()
-      	display.remove(energy)
-      	
-      	timer.performWithDelay(3000, function() energy.light:destroyMaster() end)
-      	timer.performWithDelay(200, function() drawFollow(view) end)
-      	timer.performWithDelay(600, function() drawFollow(view) end)
-      	timer.performWithDelay(1000, function() drawFollow(view) end)
+   		
+   		if(not energy.light.beingDestroyed) then
+      		destroyEffect(energy.light)
+         	
+         	timer.performWithDelay(200, function() drawFollow() end)
+         	timer.performWithDelay(600, function() drawFollow() end)
+         	timer.performWithDelay(1000, function() drawFollow() end)
+         end
       end
    end
 end
 
-function drawFollow( view )
-	local vx,vy = character.sprite:getLinearVelocity()
+function drawFollow( )
 	local follow = CBE.VentGroup{
 		{
 			preset="wisps",
@@ -121,18 +192,20 @@ function drawFollow( view )
 			emitDelay=210,
 			lifeSpan=920,
 			physics={
-				gravityX=0.83*math.abs(vx)/vx,
-				gravityY=0.04*math.abs(vy)/vy,
+				gravityX=0.83,
+				gravityY=0.04,
 			},
 			x = character.sprite.x,
 			y = character.sprite.y,
 		}
 	}
 	
+	follow.static = true
 	follow:start("followLight")
-	view:insert(follow:get("followLight").content)
+	camera:insert(follow:get("followLight").content)
 	
-	timer.performWithDelay(3000, function() follow:destroyMaster() end)
+	registerNewEffect(follow)
+	timer.performWithDelay(3000, function() destroyEffect(follow) end)
 end
 
 ------------------------------------------------------------------------------------------
@@ -141,7 +214,7 @@ end
 
 function setCharacterThrowing()
 
-	character.light = CBE.VentGroup{
+	character.lightReadyToThrow = CBE.VentGroup{
 		{
 			preset="wisps",
 			title="characterLight", -- The pop that appears when a mortar shot explodes
@@ -161,19 +234,22 @@ function setCharacterThrowing()
 		}
 	}
 	
-	character.light:startMaster()
-	camera:insert(character.light:get("characterLight").content)
+	character.lightReadyToThrow.static = true
+	character.lightReadyToThrow:startMaster()
+	camera:insert(character.lightReadyToThrow:get("characterLight").content)
 	
 	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
+
+	registerNewEffect(character.lightReadyToThrow)
 end
 
 ------------------------------------------
 
 function setCharacterGrabbing()
 	
-	if(character.light) then character.light.stopMaster() end
+	destroyEffect(character.lightReadyToThrow)
 	
-	character.light = CBE.VentGroup{
+	character.lightReadyToGrab = CBE.VentGroup{
 		{
 			preset="wisps",
 			title="characterLight", -- The pop that appears when a mortar shot explodes
@@ -192,34 +268,55 @@ function setCharacterGrabbing()
 		}
 	}
 	
-	character.light:startMaster()
-	camera:insert(character.light:get("characterLight").content)
+	character.lightReadyToGrab.static = true
+	character.lightReadyToGrab:startMaster()
+	camera:insert(character.lightReadyToGrab:get("characterLight").content)
+
+	registerNewEffect(character.lightReadyToGrab)
 end
 
 ------------------------------------------
 
 function refreshCharacterLightCoordinates()
-	character.light:get("characterLight").x = character.sprite.x + 16*character.sprite.xScale 
-	character.light:get("characterLight").y = character.sprite.y + 15
+	
+	if(character.lightReadyToGrab) then
+		effect = character.lightReadyToGrab
+	elseif(character.lightReadyToThrow) then
+		effect = character.lightReadyToThrow
+   end
+   
+	if(effect.num) then -- else detruit depuis le dernier enterFrame ?
+		effect:get("characterLight").x = character.sprite.x + 16*character.sprite.xScale 
+		effect:get("characterLight").y = character.sprite.y + 15
+   end
 end
 
 ------------------------------------------
 
 function stopCharacterLight()
-	if(character.light) then
-		Runtime:removeEventListener( "enterFrame", refreshCharacterLightCoordinates )	
-		character.light.destroyMaster()
-		character.light = nil
+
+	Runtime:removeEventListener( "enterFrame", refreshCharacterLightCoordinates )	
+
+	if(character.lightReadyToThrow) then
+		destroyEffect(character.lightReadyToThrow, true)
 	end
+	
+	if(character.lightReadyToGrab) then
+		destroyEffect(character.lightReadyToGrab, true)
+	end
+	
+	character.lightReadyToGrab = nil
+	character.lightReadyToThrow = nil
+	
 end
 
 ------------------------------------------------------------------------------------------
 -- Items
 ------------------------------------------------------------------------------------------
 
-function setItemFire(item)
+function setItemFire(body)
 
-	item.light = CBE.VentGroup{
+	local fire = CBE.VentGroup{
 		{
 			preset="burn",
 			title="light", -- The pop that appears when a mortar shot explodes
@@ -237,23 +334,55 @@ function setItemFire(item)
 		}
 	}
 	
-	item.light:startMaster()
-	camera:insert(item.light:get("light").content)
+	fire.body = body
+	body.effect = fire
 	
-	item.num = #items+1
-	table.insert(items, item)
+	fire:startMaster()
+	camera:insert(fire:get("light").content)
+	
+	registerNewEffect(fire)
 end
 
-function setItemBeam(item)
+function beamPath(body)
 
-	item.light = CBE.VentGroup{
+	local beam = CBE.VentGroup{
 		{
 			preset="wisps",
 			title="light", -- The pop that appears when a mortar shot explodes
 			color={{255,155,115}},
-			perEmit=2,
+			perEmit=1,
 			emissionNum=0,
 			emitDelay=3,
+			fadeInTime=10,
+			startAlpha=0.5,
+			scale=0.12,
+			physics={
+				xDamping = 7,
+				yDamping = 1,
+				gravityY=0.06,
+			}
+		}
+	}
+	
+	beam.body = body
+	body.effect = beam
+	
+	beam:startMaster()
+	camera:insert(beam:get("light").content)
+	
+	registerNewEffect(beam)
+end
+
+function simpleBeam(body)
+
+	local beam = CBE.VentGroup{
+		{
+			preset="wisps",
+			title="light", -- The pop that appears when a mortar shot explodes
+			color={{255,155,115}},
+			perEmit=8,
+			emissionNum=0,
+			emitDelay=30,
 			fadeInTime=1400,
 			startAlpha=0.5,
 			scale=0.26,
@@ -265,29 +394,47 @@ function setItemBeam(item)
 		}
 	}
 	
-	item.light:startMaster()
-	camera:insert(item.light:get("light").content)
+	beam.body = body
+	body.effect = beam
 	
-	item.num = #items+1
-	table.insert(items, item)
+	beam:startMaster()
+	camera:insert(beam:get("light").content)
+	
+	registerNewEffect(beam)
 end
 
-function off(item)
+function lightAttach(body)
 
-	item.light.stopMaster()
-	table.remove(items, item.num)
+	local beam = CBE.VentGroup{
+		{
+			preset="wisps",
+			title="light", -- The pop that appears when a mortar shot explodes
+			color={{255,155,115}},
+			perEmit=2,
+			emissionNum=0,
+			emitDelay=30,
+			fadeInTime=400,
+			startAlpha=0.5,
+			scale=0.16,
+			physics={
+				xDamping = 7,
+				yDamping = 1,
+				gravityY=0.06,
+			}
+		}
+	}	
 	
-	timer.performWithDelay(2000, function()
-   	item.light.destroyMaster()
-   	item.light = nil
-   	item = nil
-	end)
+	beam.body = body
+	body.effect = beam
+	
+	beam:startMaster()
+	camera:insert(beam:get("light").content)
+	
+	registerNewEffect(beam)
 end
 
-function refreshItemsLightCoordinates()
-	for i=1,#items do
-		local item = items[i]
-   	item.light:get("light").x = item.x 
-   	item.light:get("light").y = item.y
+function destroyObjectWithEffect(body)
+	if(body.effect) then
+		destroyEffect(body.effect)
    end
 end

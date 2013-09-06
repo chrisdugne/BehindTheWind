@@ -38,6 +38,8 @@ end
 
 function touchScreen( event )
 	
+	if(event.target.isHUD) then return end
+	
 	lastX, lastY = event.x, event.y
 	if(not character.floor) then
 		xStart, yStart = lastX, lastY

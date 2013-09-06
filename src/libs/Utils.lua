@@ -19,11 +19,11 @@ module(..., package.seeall)
 function getMinSec(seconds)
 	local min = math.floor(seconds/60)
 	local sec = seconds - min * 60
-	
+
 	if(sec < 10) then
 		sec = "0" .. sec
 	end
-	
+
 	return min, sec
 end
 
@@ -88,6 +88,14 @@ function emptyGroup( group )
 	end
 end
 
+function destroyFromDisplay(object)
+	if(object) then
+		display.remove(object)
+   	object = nil
+   end
+end
+      
+      
 -----------------------------------------------------------------------------------------
 
 function string.startsWith(String,Start)
@@ -125,10 +133,10 @@ function removeFromTable(t, object)
 		if(t[k] == object) then
 			break
 		end
-		
+
 		index = index + 1 
 	end 
-	
+
 	table.remove(t, index)
 end
 
@@ -157,21 +165,21 @@ function tprint (tbl, indent)
 	if type(tbl) ~= "table" then
 		print(tostring(tbl))
 	else
-   	if not indent then indent = 0 end
-   	for k, v in pairs(tbl) do
-   		formatting = string.rep("  ", indent) .. k .. ": "
-   		if type(v) == "table" then
-   			print(formatting)
-   			tprint(v, indent+1)
-   		else
-   			print(formatting .. tostring(v))
-   		end
-   	end
-   end
+		if not indent then indent = 0 end
+		for k, v in pairs(tbl) do
+			formatting = string.rep("  ", indent) .. k .. ": "
+			if type(v) == "table" then
+				print(formatting)
+				tprint(v, indent+1)
+			else
+				print(formatting .. tostring(v))
+			end
+		end
+	end
 end
 
 -----------------------------------------------------------------------------------------
-
+	
 function postWithJSON(data, url, next)
 	post(url, json.encode(data), next, "json")
 end
@@ -209,21 +217,21 @@ end
 --------------------------------------------------------
 
 function url_decode(str)
-  str = string.gsub (str, "+", " ")
-  str = string.gsub (str, "%%(%x%x)",
-      function(h) return string.char(tonumber(h,16)) end)
-  str = string.gsub (str, "\r\n", "\n")
-  return str
+	str = string.gsub (str, "+", " ")
+	str = string.gsub (str, "%%(%x%x)",
+	function(h) return string.char(tonumber(h,16)) end)
+	str = string.gsub (str, "\r\n", "\n")
+	return str
 end
 
 function urlEncode(str)
-  if (str) then
-    str = string.gsub (str, "\n", "\r\n")
-    str = string.gsub (str, "([^%w ])",
-        function (c) return string.format ("%%%02X", string.byte(c)) end)
-    str = string.gsub (str, " ", "+")
-  end
-  return str	
+	if (str) then
+		str = string.gsub (str, "\n", "\r\n")
+		str = string.gsub (str, "([^%w ])",
+		function (c) return string.format ("%%%02X", string.byte(c)) end)
+		str = string.gsub (str, " ", "+")
+	end
+	return str	
 end
 
 --------------------------------------------------------
@@ -245,7 +253,7 @@ function saveTable(t, filename, directory)
 	if(not directory) then
 		directory = system.DocumentsDirectory
 	end
-	
+
 	print(directory)
 
 	local path = system.pathForFile( filename, directory)
@@ -276,6 +284,33 @@ end
 
 --------------------------------------------------------
 
+function getPointsBetween(from, to, nbPoints)
+	
+	if(from.x > to.x) then
+		local swap = from
+		from = to
+		to = swap
+	end
+	
+	local x1,y1 = from.x,from.y
+	local x2,y2 = to.x,to.y
+	
+	local step = math.abs(x2-x1)/nbPoints
+	local points = {}
+
+	local a = (y2-y1)/(x2-x1)
+
+	for i=0,nbPoints do
+		local x = x1 + i*step
+		local y = y1 + a*(x - x1)
+		table.insert(points, vector2D:new(x, y))
+	end
+
+	return points
+end
+
+--------------------------------------------------------
+
 function loadUserData(file)
 	return loadTable(system.pathForFile( file , system.DocumentsDirectory))
 end
@@ -285,3 +320,12 @@ function loadFile(path)
 end
 
 --------------------------------------------------------
+--- http://developer.coronalabs.com/code/maths-library
+
+-- returns the distance between points a and b
+function distanceBetween( a, b )
+    local width, height = b.x-a.x, b.y-a.y
+    return (width*width + height*height)^0.5 -- math.sqrt(width*width + height*height)
+        -- nothing wrong with math.sqrt, but I believe the ^.5 is faster
+end
+ 

@@ -103,3 +103,21 @@ function explode(element, emissionNum, fadeInTime, color)
 		explosion = nil
 	end)
 end
+-----------------------------------------------------------------------------------------
+
+function initTopRightText()
+	display.remove(topRightText)
+	topRightText = display.newText( game.scene, "0", 0, 0, FONT, 21 )
+	topRightText:setTextColor( 255 )	
+	topRightText:setReferencePoint( display.CenterReferencePoint )
+	topRightText.x = display.contentWidth - topRightText.contentWidth/2 - 10
+	topRightText.y = 20
+	elements:insert(topRightText)
+end
+
+function refreshTopRightText(text)
+	if(topRightText.contentWidth) then
+		topRightText.text = text
+		topRightText.x 	= display.contentWidth - topRightText.contentWidth/2 - 10
+	end
+end

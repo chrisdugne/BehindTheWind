@@ -19,6 +19,7 @@ state = NOT_MOVING
 
 floor 	= nil
 sprite 	= nil
+ropes		= nil
 
 -------------------------------------
 
@@ -26,12 +27,14 @@ local playerWalk = require("src.game.graphics.PlayerWalk")
 local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
 
 function init()
+	ropes = {}
+	
    sprite = display.newSprite( camera, playerSheet, playerWalk.sequence )
    sprite.x = 120
    sprite.y = 209
    
    physics.addBody( sprite, { 
-   	density = 0.1, 
+   	density = 5, 
    	friction = 1, 
    	bounce = 0.12,
    	shape = { -7,-22,  7,-22,  7,17,  3,22,  -3,22,  -7,17 }

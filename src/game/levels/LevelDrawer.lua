@@ -57,7 +57,7 @@ function designLevel()
 	------------------------------
 
 	for i=1, #energies do
-		effectsManager.drawEnergy(camera, energies[i].x, energies[i].y, energies[i].type)
+		effectsManager.drawEnergy(energies[i].x, energies[i].y, energies[i].type)
 	end 
 	
 	------------------------------
@@ -82,7 +82,7 @@ function designLevel()
 	rock.x = 240
 	rock.y = 100
 	rock.isFloor = true
-	physics.addBody( rock, { density=3.0, friction=1, bounce=0.12, radius=33 } )
+	physics.addBody( rock, { density=3.0, friction=1, bounce=0.12, radius=33, isSensor = true } )
 	
 	rock:addEventListener( "touch", physicsManager.dragBody )
 end
@@ -120,6 +120,10 @@ function addGroupMotion(group, motion)
 end
 
 function moveTile(tile, motionVector, way, duration)
+	
+	-- ligne rajoutee pour lorsquon quitte le playground. a virer ?
+	if(not tile.setLinearVelocity) then return end
+	
 	tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
 
 	timer.performWithDelay(duration, function()

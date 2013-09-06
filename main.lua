@@ -87,7 +87,7 @@ math.randomseed( os.time() )
 
 ------------------------------------------
 
-CBE	=	require("CBEffects.Library")
+CBE = require("CBEffects.Library")
 
 ------------------------------------------
 	
@@ -104,6 +104,25 @@ end
 --router.openAppHome()
 router.openPlayground()
 --router.openLevelEditor()
+
+-----------------------------------------------------------------------------------------
+-- DEV ONLY
+--
+
+hud.initTopRightText()
+
+Runtime:addEventListener( "enterFrame", function()
+	hud.refreshTopRightText(math.floor(collectgarbage("count")))
+end )
+
+
+local reset = display.newCircle( 20, 20, 15 )
+reset.alpha = 0.01
+reset.isHUD = true
+
+reset:addEventListener ( "touch", function() 
+	router.openAppHome()
+end )
 
 -----------------------------------------------------------------------------------------
 --- iOS Status Bar

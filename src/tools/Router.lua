@@ -10,12 +10,16 @@ module(..., package.seeall)
 
 function openAppHome()
 	hud.explodeHUD()
+	utils.emptyGroup(camera)
+	effectsManager.stop()
 	storyboard.gotoScene( "src.views.AppHome" )
 end
 
 ---------------------------------------------
 
 function openPlayground()
+	utils.emptyGroup(camera)
+	effectsManager.stop()
 	storyboard.gotoScene( "src.views.Playground" )
 end
 
