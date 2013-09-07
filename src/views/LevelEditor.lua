@@ -26,8 +26,8 @@ local GROUPING 			= 20
 local ENABLING_MOVE 		= 65
 local ENABLING_DRAG 		= 83
 local SET_DESTRUCTIBLE 	= 8
-local SET_BACKGROUND 	= 4
-local SET_FOREGROUND 	= 5
+local SET_BACKGROUND 	= 5
+local SET_FOREGROUND 	= 4
 
 local DRAWING_ENERGY 	= 60
 

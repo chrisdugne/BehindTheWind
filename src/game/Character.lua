@@ -41,17 +41,25 @@ function init()
    })
    
    sprite.isFixedRotation = true
-	sprite.collision = collide
-	sprite:addEventListener( "collision", sprite )
-	
+	sprite:addEventListener( "collision", collide )
+	sprite:addEventListener( "preCollision", preCollide )
+
+end	
+
+-------------------------------------
+
+function preCollide(event)
+	if(event.contact and event.other.isSensor) then
+		event.contact.isEnabled = false
+   end
 end
 
 -------------------------------------
 
-function collide( sprite, event )
-	local vx, vy = sprite:getLinearVelocity()
+function collide( event )
+	local vx, vy = event.target:getLinearVelocity()
 
-	if(event.other.y > sprite.y and event.other.isFloor) then
+	if(event.other.y > event.target.y and event.other.isFloor) then
 		floor = event.other
 	-- else : collision from sides or top : not the floor !
 	end

@@ -33,16 +33,29 @@ function designLevel()
 		tile.movable 		= tiles[i].movable
 		tile.draggable 	= tiles[i].draggable
 		tile.destructible = tiles[i].destructible
+		tile.background	= tiles[i].background
+		tile.foreground 	= tiles[i].foreground
 		
 		tile.startX 		= tiles[i].x
 		tile.startY 		= tiles[i].y
 		tile.isFloor 		= true
 		
-		local type = "static"
-		if(tile.destructible) then	 type = "dynamic" end
+		local type 			= "static"
+		local requireBody = not tile.background and not tile.foreground
+
+
+		if(tile.foreground) then
+			print("foreground", tile.startX, tile.startY)	
+		end
+
+		if(tile.destructible) then	
+			type = "dynamic" 	
+		end
 		
-		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
-   	tile.isFixedRotation = true
+		if(requireBody) then
+   		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
+      	tile.isFixedRotation = true
+      end
 		
 		--------------------
    
@@ -82,13 +95,16 @@ function designLevel()
 	
 	-----------------------------
 	
-	local rock = display.newImage(camera, "assets/images/game/rock.png");
-	rock.x = 240
-	rock.y = 100
-	rock.isFloor = true
-	physics.addBody( rock, { density=3.0, friction=1, bounce=0.12, radius=33, isSensor = true } )
-	
-	rock:addEventListener( "touch", physicsManager.dragBody )
+end
+
+-------------------------------------
+
+function bringForegroundToFront()
+	for i=camera.numChildren,1,-1 do
+		if(camera[i].foreground) then
+			camera[i]:toFront()
+		end
+	end
 end
 
 -------------------------------------

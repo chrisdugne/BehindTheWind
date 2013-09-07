@@ -136,7 +136,7 @@ function drawEnergy(x, y, type)
 			lifeSpan=600,
 			fadeInTime=700,
 			physics={
-				gravityY=0.04
+				gravityY=0.01,
 			}
 		}
 	}

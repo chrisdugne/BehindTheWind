@@ -111,7 +111,7 @@ function initTopRightText()
 	topRightText:setTextColor( 255 )	
 	topRightText:setReferencePoint( display.CenterReferencePoint )
 	topRightText.x = display.contentWidth - topRightText.contentWidth/2 - 10
-	topRightText.y = 20
+	topRightText.y = display.contentHeight - 20
 	elements:insert(topRightText)
 end
 

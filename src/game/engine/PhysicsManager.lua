@@ -16,7 +16,7 @@ function init( )
 	trajectory = display.newGroup()
 	camera:insert (trajectory)
 	
-	physics.setDrawMode( "hybrid" )
+--	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 end
 
