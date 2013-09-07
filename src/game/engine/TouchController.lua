@@ -52,7 +52,7 @@ function touchScreen( event )
 		hold 					= true	
 		xStart, yStart 	= event.xStart, event.yStart
    	
-   	display.getCurrentStage():setFocus( character.sprite )
+   	display.getCurrentStage():setFocus( camera )
    	Runtime:addEventListener( "enterFrame", onTouch )
    	
 		
@@ -65,6 +65,9 @@ function touchScreen( event )
 		elseif(currentState == THROWING or currentState == GRABBING) then
 			physicsManager.refreshTrajectory(lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y) 
 			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
+			return
+		
+		elseif(#character.ropes > 0) then
 			return
 			
 		elseif(event.y + 40 < yStart) then

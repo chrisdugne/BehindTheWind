@@ -32,12 +32,16 @@ function designLevel()
 		tile.group 			= tiles[i].group
 		tile.movable 		= tiles[i].movable
 		tile.draggable 	= tiles[i].draggable
+		tile.destructible = tiles[i].destructible
 		
 		tile.startX 		= tiles[i].x
 		tile.startY 		= tiles[i].y
 		tile.isFloor 		= true
 		
-		physics.addBody( tile, "static", { friction=0.3, bounce=0 } )
+		local type = "static"
+		if(tile.destructible) then	 type = "dynamic" end
+		
+		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
    	tile.isFixedRotation = true
 		
 		--------------------

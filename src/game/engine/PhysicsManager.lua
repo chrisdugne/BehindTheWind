@@ -86,7 +86,7 @@ function throw( x1,y1, x2,y2 )
 	rock.x = character.sprite.x
 	rock.y = character.sprite.y
 	rock:scale(0.2,0.2)
-	physics.addBody( rock, { density=3.0, friction=1, bounce=0.12, radius=7 } )
+	physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=7 } )
 	rock:setLinearVelocity(force.vx, force.vy)
 	
 	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
@@ -170,8 +170,8 @@ end
 
 function getVelocity(x1,y1, x2,y2)
 	
-	local xForce = 3.2*(x2-x1)
-	local yForce = 3.2*(y2-y1)
+	local xForce = 5.2*(x2-x1)
+	local yForce = 5.2*(y2-y1)
 
 	return {
 		vx = xForce,	
@@ -221,8 +221,10 @@ function refreshRopeCoordinates()
 	local from = vector2D:new(character.sprite.x, character.sprite.y)
 	
 	for k,rope in pairs(character.ropes) do
-   	rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
-   	rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
+		if(rope.attach.ground and rope.attach.ground.x) then
+      	rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
+      	rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
+      end
    	
    	local to = vector2D:new(rope.attach.x, rope.attach.y)
    	local points = utils.getPointsBetween(from, to, #rope.beamPoints)
@@ -238,6 +240,9 @@ end
 
 function buildRopeTo(x,y,ground)
 
+	ground.lastBodyType = ground.bodyType
+	ground.bodyType = "kinematic"
+	
 	--------------------------
 	-- attach point
 
@@ -299,21 +304,22 @@ function buildRopeTo(x,y,ground)
 	--------------------------
 	--  remove rope
 
-	attach:addEventListener ( "touch", function() 
-		detachRope(rope.num)	
-	end )
+	attach:addEventListener ( "touch", detachRope)
+	character.sprite:addEventListener ( "touch", detachRope) 
 end
 
 ---------------------------------------------------------------------------
 
-function detachRope(num)
-	
-	local rope = character.ropes[num]	
+function detachRope(event)
+
+	local rope = character.ropes[1]	
 
 	for i=1,#rope.beamPoints do
 		effectsManager.destroyObjectWithEffect(rope.beamPoints[i])
 	end
 	
+	rope.attach.ground.bodyType = rope.attach.ground.lastBodyType
+
 	effectsManager.destroyObjectWithEffect(rope.attach)
 	display.remove(rope.joint)
 	
@@ -324,6 +330,9 @@ function detachRope(num)
 	for i=rope.num,#character.ropes do
 		character.ropes[i].num = character.ropes[i].num - 1
 	end
+
+	---------------------
 	
+	character.sprite:removeEventListener ( "touch", detachRope) 
 	
 end

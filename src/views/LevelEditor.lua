@@ -25,8 +25,9 @@ local ERASING 				= 2
 local GROUPING 			= 3
 local ENABLING_MOVE 		= 4
 local ENABLING_DRAG 		= 5
+local SET_DESTRUCTIBLE 	= 6
 
-local DRAWING_ENERGY 	= 6
+local DRAWING_ENERGY 	= 60
 
 -----------------------------------------------------------------------------------------
 
@@ -189,6 +190,17 @@ function scene:refreshScene()
    	end 
   	end )
 
+	-------------------------------------
+	
+	setDestructible = levelDrawer.drawTile( self.view, 8, 200, 62 )
+	setDestructible:scale(0.5,0.5)
+   setDestructible:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		stateDestructible()
+   		dontListenThisTouchScreen = true
+   	end 
+  	end )
+
 	------------------------------------------------------------------------------------------------------------
 	-- Spawn point / Checkpoint / Energies
 	------------------------------------------------------------------------------------------------------------
@@ -265,6 +277,8 @@ function resetStates()
 		erase:scale(0.5,0.5)
 	elseif(state == GROUPING) then
 		grouping:scale(0.5,0.5)
+	elseif(state == SET_DESTRUCTIBLE) then
+		setDestructible:scale(0.5,0.5)
 	elseif(state == ENABLING_MOVE) then
 		enableMove:scale(0.5,0.5)
 	elseif(state == ENABLING_DRAG) then
@@ -340,6 +354,21 @@ end
 
 ------------------------------------------
 
+function stateDestructible()
+	if(state ~= SET_DESTRUCTIBLE) then
+   	resetStates()
+   	state = SET_DESTRUCTIBLE
+   	setDestructible:scale(2,2)
+   	selectedTile = nil
+   	selectedGroup = nil
+		dontListenThisTouchScreen = true
+   else
+   	stateDrawing()
+   end
+end
+
+------------------------------------------
+
 function stateDrawEnergy(button)
 	if(button.alpha < 1) then
    	resetStates()
@@ -386,8 +415,9 @@ function scene:import()
 			self:addToGroup(tile)
 			
 			--- just set the boolean movable to be check by group after groups is formed
-			tile.movable = tiles[i].movable
-			tile.draggable = tiles[i].draggable
+			tile.movable 			= tiles[i].movable
+			tile.draggable 		= tiles[i].draggable
+			tile.destructible 	= tiles[i].destructible
 		
 		else
 			--- unique tile : check movable now
@@ -397,6 +427,10 @@ function scene:import()
 
 			if(tiles[i].draggable) then
    			self:setDraggable(tile)
+			end
+
+			if(tiles[i].destructible) then
+   			self:setDestructible(tile)
 			end
 		
 		end
@@ -419,6 +453,9 @@ function scene:import()
    	end 
 		if(groups[k][1].draggable) then
 			self:setDraggable(groups[k][1])
+   	end 
+		if(groups[k][1].destructible) then
+			self:setDestructible(groups[k][1])
    	end 
 	end 
 
@@ -443,7 +480,10 @@ function scene:import()
 	currentGroup 	= GLOBALS.levelEditor.lastGroup
 	selectedTile 	= nil
 	selectedGroup 	= nil
+
+	-----------------------------
 	
+	editor:toBack()		
 end
 
 ------------------------------------------
@@ -468,12 +508,13 @@ function scene:export()
 
 		if(editor[i].isTile) then
 			local tile = {}
-			tile.num 		= editor[i].num
-			tile.group 		= editor[i].group
-			tile.movable 	= editor[i].movable
-			tile.draggable = editor[i].draggable
-			tile.x 			= editor[i].x
-			tile.y 			= editor[i].y
+			tile.num 				= editor[i].num
+			tile.group 				= editor[i].group
+			tile.movable 			= editor[i].movable
+			tile.draggable 		= editor[i].draggable
+			tile.destructible 	= editor[i].destructible
+			tile.x 					= editor[i].x
+			tile.y 					= editor[i].y
 			
 			if(editor[i].motion) then
 				local line = editor[i].motion
@@ -837,6 +878,68 @@ function scene:drawDraggableIcon(tile)
 	tile.iconDraggable:scale(0.4,0.4)
 end
 
+
+-------------------------------------------------------------------------------------
+-- 		DESTRUCTIBLE PART
+-------------------------------------------------------------------------------------
+
+
+function scene:changeDestructibility(tile)
+
+	if(tile.destructible) then
+		self:unsetDestructible(tile)
+	else
+		self:setDestructible(tile)
+	end
+
+	dontListenThisTouchScreen = true
+end
+
+function scene:setDestructible(tile)
+
+	if(tile.group) then
+		for k,v in pairs(groups[tile.group]) do
+			groups[tile.group][k].destructible = true
+		end 
+		
+		self:drawDestructibleIcon(groups[tile.group][1])
+		selectedGroup = tile.group
+	else
+		tile.destructible = true
+		self:drawDestructibleIcon(tile)
+		selectedGroup = nil
+		selectedTile = tile
+	end
+	
+end
+
+function scene:unsetDestructible(tile)
+	
+	if(tile.group) then
+		for k,v in pairs(groups[tile.group]) do
+			groups[tile.group][k].destructible = false
+		end 
+		
+		display.remove(groups[tile.group][1].iconDestructible)
+	else
+		tile.destructible = false
+		display.remove(tile.iconDestructible)
+		tile.iconDestructible = nil
+	end
+	
+	selectedGroup 	= nil
+	selectedTile 	= nil
+end
+
+------------------------------------------
+
+function scene:drawDestructibleIcon(tile)
+	tile.iconDestructible = levelDrawer.drawTile( editor, 8, tile.x - 20 , tile.y - 20 )
+	tile.iconDestructible:scale(0.4,0.4)
+end
+
+
+
 --------------------------------------------------------------------------------------------------
 -- Energies
 --------------------------------------------------------------------------------------------------
@@ -951,6 +1054,10 @@ function scene:touchTile(tile, event)
 			self:changeDragAbility(tile)
 			return
 
+		elseif(state == SET_DESTRUCTIBLE) then
+			self:changeDestructibility(tile)
+			return
+
 		end
 
 		if(isDragging) then return end
@@ -991,6 +1098,10 @@ function scene:dragTile(tile, event)
 		if(groups[tile.group][1].draggable) then 
 			touchController.drag(groups[tile.group][1].iconDraggable, event)
 		end 
+
+		if(groups[tile.group][1].destructible) then 
+			touchController.drag(groups[tile.group][1].iconDestructible, event)
+		end 
 		
 		if(groupMotions[tile.group]) then
 			local line = groupMotions[tile.group]
@@ -1027,6 +1138,10 @@ function scene:dragTile(tile, event)
 
 		if(tile.draggable) then 
 			touchController.drag(tile.iconDraggable, event)
+		end 
+
+		if(tile.draggable) then 
+			touchController.drag(tile.iconDestructible, event)
 		end 
 		
 		if(tile.motion) then
