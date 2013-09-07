@@ -24,7 +24,7 @@ ropes		= nil
 -------------------------------------
 
 local playerWalk = require("src.game.graphics.PlayerWalk")
-local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk.png", playerWalk.sheet )
+local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk2.png", playerWalk.sheet )
 
 function init()
 	ropes = {}
