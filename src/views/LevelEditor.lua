@@ -22,10 +22,12 @@ local groupDragLines  		= {}
 
 local DRAWING 				= 1
 local ERASING 				= 2
-local GROUPING 			= 3
-local ENABLING_MOVE 		= 4
-local ENABLING_DRAG 		= 5
-local SET_DESTRUCTIBLE 	= 6
+local GROUPING 			= 20
+local ENABLING_MOVE 		= 65
+local ENABLING_DRAG 		= 83
+local SET_DESTRUCTIBLE 	= 8
+local SET_BACKGROUND 	= 4
+local SET_FOREGROUND 	= 5
 
 local DRAWING_ENERGY 	= 60
 
@@ -148,7 +150,7 @@ function scene:refreshScene()
 	-- States
 	------------------------------------------------------------------------------------------------------------
 	
-	erase = levelDrawer.drawTile( self.view, 2, 100, 62 )
+	erase = levelDrawer.drawTile( self.view, ERASING, 100, 62 )
 	erase:scale(0.5,0.5)
    erase:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -159,7 +161,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	grouping = levelDrawer.drawTile( self.view, 20, 125, 62 )
+	grouping = levelDrawer.drawTile( self.view, GROUPING, 125, 62 )
 	grouping:scale(0.5,0.5)
    grouping:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -170,33 +172,55 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	enableMove = levelDrawer.drawTile( self.view, 65, 150, 62 )
+	enableMove = levelDrawer.drawTile( self.view, ENABLING_MOVE, 150, 62 )
 	enableMove:scale(0.5,0.5)
    enableMove:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
-   		stateEnablingMove()
+   		setState(ENABLING_MOVE, enableMove)
    		dontListenThisTouchScreen = true
    	end 
   	end )
 
 	-------------------------------------
 	
-	enableDrag = levelDrawer.drawTile( self.view, 83, 175, 62 )
+	enableDrag = levelDrawer.drawTile( self.view, ENABLING_DRAG, 175, 62 )
 	enableDrag:scale(0.5,0.5)
    enableDrag:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
-   		stateEnablingDrag()
+   		setState(ENABLING_DRAG, enableDrag)
    		dontListenThisTouchScreen = true
    	end 
   	end )
 
 	-------------------------------------
 	
-	setDestructible = levelDrawer.drawTile( self.view, 8, 200, 62 )
+	setDestructible = levelDrawer.drawTile( self.view, SET_DESTRUCTIBLE, 200, 62 )
 	setDestructible:scale(0.5,0.5)
    setDestructible:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
-   		stateDestructible()
+   		setState(SET_DESTRUCTIBLE, setDestructible)
+   		dontListenThisTouchScreen = true
+   	end 
+  	end )
+
+	-------------------------------------
+	
+	setBackground = levelDrawer.drawTile( self.view, SET_BACKGROUND, 225, 62 )
+	setBackground:scale(0.5,0.5)
+   setBackground:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		setState(SET_BACKGROUND, setBackground)
+   		dontListenThisTouchScreen = true
+   	end 
+  	end )
+
+	-------------------------------------
+	
+	setForeground = levelDrawer.drawTile( self.view, SET_FOREGROUND, 250, 62 )
+	setForeground:scale(0.5,0.5)
+   setForeground:addEventListener( "touch", function(event) 
+   	if(event.phase == "began") then
+   		setState(SET_FOREGROUND, setForeground)
    		dontListenThisTouchScreen = true
    	end 
   	end )
@@ -279,6 +303,10 @@ function resetStates()
 		grouping:scale(0.5,0.5)
 	elseif(state == SET_DESTRUCTIBLE) then
 		setDestructible:scale(0.5,0.5)
+	elseif(state == SET_BACKGROUND) then
+		setBackground:scale(0.5,0.5)
+	elseif(state == SET_FOREGROUND) then
+		setForeground:scale(0.5,0.5)
 	elseif(state == ENABLING_MOVE) then
 		enableMove:scale(0.5,0.5)
 	elseif(state == ENABLING_DRAG) then
@@ -298,7 +326,7 @@ function stateDrawing()
 end
 
 ------------------------------------------
-
+--
 function stateGrouping()
 	if(state ~= GROUPING) then
    	resetStates()
@@ -311,7 +339,7 @@ function stateGrouping()
 end
 
 ------------------------------------------
-
+--
 function stateErasing()
 	if(state ~= ERASING) then
    	resetStates()
@@ -324,41 +352,11 @@ end
 
 ------------------------------------------
 
-function stateEnablingMove()
-	if(state ~= ENABLING_MOVE) then
+function setState(newState, stateButton)
+	if(state ~= newState) then
    	resetStates()
-   	state = ENABLING_MOVE
-   	enableMove:scale(2,2)
-   	selectedTile = nil
-   	selectedGroup = nil
-		dontListenThisTouchScreen = true
-   else
-   	stateDrawing()
-   end
-end
-
-------------------------------------------
-
-function stateEnablingDrag()
-	if(state ~= ENABLING_DRAG) then
-   	resetStates()
-   	state = ENABLING_DRAG
-   	enableDrag:scale(2,2)
-   	selectedTile = nil
-   	selectedGroup = nil
-		dontListenThisTouchScreen = true
-   else
-   	stateDrawing()
-   end
-end
-
-------------------------------------------
-
-function stateDestructible()
-	if(state ~= SET_DESTRUCTIBLE) then
-   	resetStates()
-   	state = SET_DESTRUCTIBLE
-   	setDestructible:scale(2,2)
+   	state = newState
+   	stateButton:scale(2,2)
    	selectedTile = nil
    	selectedGroup = nil
 		dontListenThisTouchScreen = true
@@ -418,6 +416,8 @@ function scene:import()
 			tile.movable 			= tiles[i].movable
 			tile.draggable 		= tiles[i].draggable
 			tile.destructible 	= tiles[i].destructible
+			tile.background 		= tiles[i].background
+			tile.foreground 		= tiles[i].foreground
 		
 		else
 			--- unique tile : check movable now
@@ -430,7 +430,15 @@ function scene:import()
 			end
 
 			if(tiles[i].destructible) then
-   			self:setDestructible(tile)
+   			self:setProperty(tile, "destructible")
+			end
+		
+			if(tiles[i].background) then
+   			self:setProperty(tile, "background")
+			end
+		
+			if(tiles[i].foreground) then
+   			self:setProperty(tile, "foreground")
 			end
 		
 		end
@@ -455,7 +463,13 @@ function scene:import()
 			self:setDraggable(groups[k][1])
    	end 
 		if(groups[k][1].destructible) then
-			self:setDestructible(groups[k][1])
+			self:setProperty(groups[k][1], "destructible")
+   	end 
+		if(groups[k][1].background) then
+			self:setProperty(groups[k][1], "background")
+   	end 
+		if(groups[k][1].foreground) then
+			self:setProperty(groups[k][1], "foreground")
    	end 
 	end 
 
@@ -513,6 +527,8 @@ function scene:export()
 			tile.movable 			= editor[i].movable
 			tile.draggable 		= editor[i].draggable
 			tile.destructible 	= editor[i].destructible
+			tile.background 		= editor[i].background
+			tile.foreground 		= editor[i].foreground
 			tile.x 					= editor[i].x
 			tile.y 					= editor[i].y
 			
@@ -605,6 +621,7 @@ function scene:addTile(num, x, y)
 	
 	local tile = levelDrawer.drawTile(editor, num, x, y)
 	tile.isTile = true
+	tile.icons = {}
 	
    tile:addEventListener( "touch", function(event)
    	self:touchTile(tile, event)
@@ -701,11 +718,11 @@ function scene:setMovable(tile)
 			groups[tile.group][k].movable = true
 		end 
 		
-		self:drawMovableIcon(groups[tile.group][1])
+		self:drawIcon(groups[tile.group][1], "movable")
 		selectedGroup = tile.group
 	else
 		tile.movable = true
-		self:drawMovableIcon(tile)
+		self:drawIcon(tile, "movable")
 		selectedGroup = nil
 		selectedTile = tile
 	end
@@ -804,11 +821,11 @@ function scene:setDraggable(tile)
 			GLOBALS.levelEditor.groupDragLines[tile.group] = {}
 		end
 		
-		self:drawDraggableIcon(groups[tile.group][1])
+		self:drawIcon(groups[tile.group][1], "draggable")
 		selectedGroup = tile.group
 	else
 		tile.draggable = true
-		self:drawDraggableIcon(tile)
+		self:drawIcon(tile, "draggable")
 		selectedGroup = nil
 		selectedTile = tile
 	end
@@ -871,60 +888,54 @@ function scene:drawDragLine(x1,y1, x2,y2)
 	return line
 end
 
-------------------------------------------
-
-function scene:drawDraggableIcon(tile)
-	tile.iconDraggable = levelDrawer.drawTile( editor, 83, tile.x - 20 , tile.y - 20 )
-	tile.iconDraggable:scale(0.4,0.4)
-end
-
 
 -------------------------------------------------------------------------------------
--- 		DESTRUCTIBLE PART
+-- 		COMMON ? PART
 -------------------------------------------------------------------------------------
 
 
-function scene:changeDestructibility(tile)
-
-	if(tile.destructible) then
-		self:unsetDestructible(tile)
+function scene:changeState(tile, property)
+	print("changeState " .. property)
+	if(tile[property]) then
+		self:unsetProperty(tile, property)
 	else
-		self:setDestructible(tile)
+		self:setProperty(tile, property)
 	end
 
 	dontListenThisTouchScreen = true
 end
 
-function scene:setDestructible(tile)
+function scene:setProperty(tile, property)
 
 	if(tile.group) then
 		for k,v in pairs(groups[tile.group]) do
-			groups[tile.group][k].destructible = true
+			groups[tile.group][k][property] = true
 		end 
 		
-		self:drawDestructibleIcon(groups[tile.group][1])
+		self:drawIcon(groups[tile.group][1], property)
 		selectedGroup = tile.group
 	else
-		tile.destructible = true
-		self:drawDestructibleIcon(tile)
+		tile[property] = true
+		self:drawIcon(groups[tile.group][1], property)
 		selectedGroup = nil
 		selectedTile = tile
 	end
 	
 end
 
-function scene:unsetDestructible(tile)
+function scene:unsetProperty(tile, property)
 	
 	if(tile.group) then
 		for k,v in pairs(groups[tile.group]) do
-			groups[tile.group][k].destructible = false
+			groups[tile.group][k][property] = false
 		end 
 		
-		display.remove(groups[tile.group][1].iconDestructible)
+		display.remove(groups[tile.group][1].icons[property])
+		groups[tile.group][1].icons[property] = nil
 	else
-		tile.destructible = false
-		display.remove(tile.iconDestructible)
-		tile.iconDestructible = nil
+		tile[property] = false
+		display.remove(tile.icons[property])
+		tile.icons[property] = nil
 	end
 	
 	selectedGroup 	= nil
@@ -933,9 +944,38 @@ end
 
 ------------------------------------------
 
-function scene:drawDestructibleIcon(tile)
-	tile.iconDestructible = levelDrawer.drawTile( editor, 8, tile.x - 20 , tile.y - 20 )
-	tile.iconDestructible:scale(0.4,0.4)
+function scene:getImage(property)
+	if(property == "movable") then
+		return ENABLING_MOVE
+	end
+	if(property == "draggable") then
+		return ENABLING_DRAG
+	end
+	if(property == "destructible") then
+		return SET_DESTRUCTIBLE
+	end
+	if(property == "background") then
+		return SET_BACKGROUND
+	end
+	if(property == "foreground") then
+		return SET_FOREGROUND
+	end
+end
+
+------------------------------------------
+
+function scene:drawIcon(tile, property)
+	
+	local image = scene:getImage(property)
+	print("draw icon " .. property .. " image " .. image)
+
+	local num = 1
+	for k,v in pairs(tile.icons) do
+		num = num + 1
+	end 
+
+	tile.icons[property]= levelDrawer.drawTile( editor, image, tile.x - 15*num , tile.y - 20 )
+	tile.icons[property]:scale(0.4,0.4)
 end
 
 
@@ -1055,7 +1095,15 @@ function scene:touchTile(tile, event)
 			return
 
 		elseif(state == SET_DESTRUCTIBLE) then
-			self:changeDestructibility(tile)
+			self:changeState(tile, "destructible")
+			return
+
+		elseif(state == SET_BACKGROUND) then
+			self:changeState(tile, "background")
+			return
+
+		elseif(state == SET_FOREGROUND) then
+			self:changeState(tile, "foreground")
 			return
 
 		end
@@ -1089,19 +1137,34 @@ function scene:dragTile(tile, event)
 				touchController.drag(groups[tile.group][i].iconGroup, event)
 			end 
 
+   		for k,icon in pairs(groups[tile.group][i].icons) do
+   			if(icon) then
+      			touchController.drag(icon, event)
+      		end
+   		end
 		end
 
-		if(groups[tile.group][1].movable) then 
-			touchController.drag(groups[tile.group][1].iconMovable, event)
-		end 
-
-		if(groups[tile.group][1].draggable) then 
-			touchController.drag(groups[tile.group][1].iconDraggable, event)
-		end 
-
-		if(groups[tile.group][1].destructible) then 
-			touchController.drag(groups[tile.group][1].iconDestructible, event)
-		end 
+	
+		
+--		if(groups[tile.group][1].movable) then 
+--			touchController.drag(groups[tile.group][1].icons["movable"], event)
+--		end 
+--
+--		if(groups[tile.group][1].draggable) then 
+--			touchController.drag(groups[tile.group][1].icons["draggable"], event)
+--		end 
+--
+--		if(groups[tile.group][1].destructible) then 
+--			touchController.drag(groups[tile.group][1].icons["destructible"], event)
+--		end 
+--
+--		if(groups[tile.group][1].background) then 
+--			touchController.drag(groups[tile.group][1].icons["background"], event)
+--		end 
+--
+--		if(groups[tile.group][1].foreground) then 
+--			touchController.drag(groups[tile.group][1].icons["foreground"], event)
+--		end 
 		
 		if(groupMotions[tile.group]) then
 			local line = groupMotions[tile.group]
