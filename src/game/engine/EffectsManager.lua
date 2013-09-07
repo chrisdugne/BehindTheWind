@@ -130,11 +130,12 @@ function drawEnergy(x, y, type)
 			color={{65,65,62},{55,55,20}},
 			x = x,
 			y = y,
-			perEmit=1,
+			perEmit=2,
 			emissionNum=0,
 			emitDelay=250,
-			lifeSpan=600,
+			lifeSpan=400,
 			fadeInTime=700,
+			scale=0.3,
 			physics={
 				gravityY=0.01,
 			}
@@ -190,9 +191,10 @@ function drawFollow( )
 			perEmit=1,
 			emissionNum=1,
 			emitDelay=210,
-			lifeSpan=920,
+			lifeSpan=720,
+			scale=0.3,
 			physics={
-				gravityX=0.83,
+				gravityX=0.53,
 				gravityY=0.04,
 			},
 			x = character.sprite.x,
