@@ -62,7 +62,8 @@ function touchScreen( event )
 			setState(THROWING)
 			return
 
-		elseif(currentState == THROWING or currentState == GRABBING) then 
+		elseif(currentState == THROWING or currentState == GRABBING) then
+			physicsManager.refreshTrajectory(lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y) 
 			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
 			return
 			

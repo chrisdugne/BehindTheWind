@@ -121,9 +121,6 @@ end
 
 function moveTile(tile, motionVector, way, duration)
 	
-	-- ligne rajoutee pour lorsquon quitte le playground. a virer ?
-	if(not tile.setLinearVelocity) then return end
-	
 	tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
 
 	timer.performWithDelay(duration, function()

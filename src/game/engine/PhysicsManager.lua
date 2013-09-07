@@ -4,10 +4,18 @@ module(..., package.seeall)
 
 -------------------------------------
 
+local trajectory = nil
+
+-------------------------------------
+
 function init( )
 	local physics = require("physics")
 	physics.start()
 	physics.setGravity( 0, 20 )
+	
+	trajectory = display.newGroup()
+	camera:insert (trajectory)
+	
 	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 end
@@ -71,20 +79,15 @@ end
 
 function throw( x1,y1, x2,y2 )
 
-	local xForce = 5.5*(x2-x1)
-	local yForce = 5.5*(y2-y1)
-
-	if(xForce > 600) then xForce = 600 end
-	if(xForce < -600) then xForce = -600 end
-	if(yForce > 500) then yForce = 500 end
-	if(yForce < -500) then yForce = -500 end
+	utils.emptyGroup(trajectory)
+	local force = getVelocity(x1,y1,x2,y2)
 
 	local rock = display.newImage(camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
 	rock.y = character.sprite.y
 	rock:scale(0.2,0.2)
 	physics.addBody( rock, { density=3.0, friction=1, bounce=0.12, radius=7 } )
-	rock:setLinearVelocity(xForce, yForce)
+	rock:setLinearVelocity(force.vx, force.vy)
 	
 	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
 	rock:addEventListener( "collision", rockCollision )
@@ -106,15 +109,15 @@ end
 
 function grab( x1,y1, x2,y2 )
 
-	local xForce = 7.5*(x2-x1)
-	local yForce = 7.5*(y2-y1)
-
+	utils.emptyGroup(trajectory)
+	local force = getVelocity(x1,y1,x2,y2)
+	
 	local rock = display.newImage(camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
 	rock.y = character.sprite.y
 	rock:scale(0.1,0.1)
 	physics.addBody( rock, { density=1.0, friction=1, bounce=0.12, radius=3.5 } )
-	rock:setLinearVelocity(xForce, yForce)
+	rock:setLinearVelocity(force.vx, force.vy)
 	
 	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
 	rock:addEventListener( "collision", grabCollision )
@@ -129,14 +132,12 @@ end
 -------------------------------------
 
 function thrownFromCharacterPreCollision( event )
-	print("precollision", event.other.isSensor)
 	if(event.other == character.sprite or event.other.isSensor) then
 		event.contact.isEnabled = false
 	end
 end
 
 function rockCollision( event )
-	print("rock collision", event.other.isSensor)
 	if(event.other ~= character.sprite and not event.other.isSensor) then
 		deleteRock(event.target)
    end
@@ -147,8 +148,17 @@ function grabCollision( event )
 	if(event.other ~= character.sprite and not event.other.isSensor) then
 
 		if ( event.phase == "ended" ) then
+			local ground = event.other
 			local x,y = event.target.x, event.target.y
-			timer.performWithDelay(30, function() buildRopeTo(x,y) end)
+			
+			timer.performWithDelay(30, function()
+				buildRopeTo(x,y,ground)
+				timer.performWithDelay(250, function()
+					if(#character.ropes == 2) then
+						detachRope(1)	
+					end
+   			end)
+			end)
 
    		deleteRock(event.target)
 		end
@@ -156,14 +166,65 @@ function grabCollision( event )
 	end
 end
 
--------------------------------------
+---------------------------------------------------------------------------
 
-function refreshRopeBeamCoordinates()
+function getVelocity(x1,y1, x2,y2)
+	
+	local xForce = 3.2*(x2-x1)
+	local yForce = 3.2*(y2-y1)
+
+	return {
+		vx = xForce,	
+		vy = yForce	
+	}
+
+end
+
+function refreshTrajectory(fingerX, fingerY, xStart, yStart)
+	
+	local startingPosition = {
+		x = character.sprite.x,
+		y = character.sprite.y
+	}
+	
+	local velocity = getVelocity(fingerX, fingerY, xStart, yStart)
+	local startingVelocity = {
+		x = velocity.vx,
+		y = velocity.vy
+	}
+
+	utils.emptyGroup(trajectory)
+
+	for i = 1,180 do
+		local trajectoryPosition = getTrajectoryPoint( startingPosition, startingVelocity, i )
+		local circ = display.newCircle( trajectory, trajectoryPosition.x, trajectoryPosition.y, 1 )
+	end
+end
+
+function getTrajectoryPoint( startingPosition, startingVelocity, n )
+   --velocity and gravity are given per second but we want time step values here
+   local t = 1/display.fps  --seconds per time step at 60fps
+   local stepVelocity = { x=t*startingVelocity.x, y=t*startingVelocity.y }
+   local stepGravity = { x=t*0, y=t*20 }
+   return {
+      x = startingPosition.x + n * stepVelocity.x + 0.5 * (n*n+n) * stepGravity.x,
+      y = startingPosition.y + n * stepVelocity.y + 0.5 * (n*n+n) * stepGravity.y
+   }
+end
+
+-----------------------------------------------------------------------------------------------------------------
+--- ROPES
+-----------------------------------------------------------------------------------------------------------------
+
+function refreshRopeCoordinates()
 	
 	local from = vector2D:new(character.sprite.x, character.sprite.y)
 	
 	for k,rope in pairs(character.ropes) do
-   	local to = vector2D:new(rope.attachX, rope.attachY)
+   	rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
+   	rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
+   	
+   	local to = vector2D:new(rope.attach.x, rope.attach.y)
    	local points = utils.getPointsBetween(from, to, #rope.beamPoints)
    	
    	for i,point in pairs(rope.beamPoints) do
@@ -175,23 +236,33 @@ end
 
 -------------------------------------
 
+function buildRopeTo(x,y,ground)
 
-function buildRopeTo( x,y )
+	--------------------------
+	-- attach point
+
+	local attach = display.newCircle( camera, x, y, 9 )
+	physics.addBody( attach, "static", {radius=9, density=2.0 } )
+	effectsManager.lightAttach(attach)
+	
+	attach.ground = ground
+	attach.offsetX = ground.x - x
+	attach.offsetY = ground.y - y
 
 	--------------------------
 
 	local rope = {
-		attachX = x,
-		attachY = y,
 		num = #character.ropes+1,
 		beamPoints = {}
 	}
 
+	rope.attach = attach
+	
 	--------------------------
 	-- calculate beam points
 
 	local from 		= vector2D:new(character.sprite.x, character.sprite.y)
-	local to 		= vector2D:new(rope.attachX, rope.attachY)
+	local to 		= vector2D:new(rope.attach.x, rope.attach.y)
 
 	local nbPoints = 18
 	local points 	= utils.getPointsBetween(from, to, nbPoints)
@@ -209,15 +280,6 @@ function buildRopeTo( x,y )
 	end
 
 	--------------------------
-	-- attach point
-
-	local attach = display.newCircle( camera, x, y, 9 )
-	physics.addBody( attach, "static", {radius=9, density=2.0 } )
-	effectsManager.lightAttach(attach)
-	
-	rope.attach = attach
-
-	--------------------------
 	-- joint
 
 	local joint = physics.newJoint( "distance", character.sprite, attach, character.sprite.x,character.sprite.y, attach.x,attach.y )
@@ -232,7 +294,7 @@ function buildRopeTo( x,y )
 	--------------------------
 
 	table.insert(character.ropes, rope)
-	Runtime:addEventListener( "enterFrame", refreshRopeBeamCoordinates )
+	Runtime:addEventListener( "enterFrame", refreshRopeCoordinates )
 	
 	--------------------------
 	--  remove rope
