@@ -57,6 +57,7 @@ function scene:refreshScene()
 	-- level foregrounds
 
 	levelDrawer.bringForegroundToFront()
+	levelDrawer.putBackgroundToBack()
 end
 
 ------------------------------------------

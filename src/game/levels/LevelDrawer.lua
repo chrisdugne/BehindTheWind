@@ -4,8 +4,18 @@ module(..., package.seeall)
 
 -------------------------------------
 
-local tiles = require("src.game.graphics.Tiles")
-local tilesSheet = graphics.newImageSheet( "assets/images/game/tiles.png", tiles.sheet )
+local tilesSheetConfig 		= require("src.game.graphics.Tiles")
+local treesSheetConfig 		= require("src.game.graphics.Trees")
+local tilesImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
+local treesImageSheet 		= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
+
+sheetConfigs = {}
+sheetConfigs[1] = tilesSheetConfig
+sheetConfigs[2] = treesSheetConfig
+
+imageSheets = {}
+imageSheets[1] = tilesImageSheet
+imageSheets[2] = treesImageSheet
 
 local MOTION_SPEED = 60
 
@@ -28,7 +38,7 @@ function designLevel()
 
 		--------------------
 
-   	local tile 			= drawTile( game.camera, tiles[i].num, tiles[i].x, tiles[i].y )
+   	local tile 			= drawTile( game.camera, tiles[i].sheet, tiles[i].num, tiles[i].x, tiles[i].y )
 		tile.group 			= tiles[i].group
 		tile.movable 		= tiles[i].movable
 		tile.draggable 	= tiles[i].draggable
@@ -107,15 +117,27 @@ function bringForegroundToFront()
 	end
 end
 
+function putBackgroundToBack()
+	for i=1,game.camera.numChildren do
+		if(game.camera[i].background) then
+			game.camera[i]:toBack()
+		end
+	end
+end
+
 -------------------------------------
 
-function drawTile(view, num, x, y)
+function drawTile(view, sheet, num, x, y)
 	
-	local tile = display.newImage( view, tilesSheet, num )
-
-	tile.x = x
-	tile.y = y
-	tile.num = num
+	if(not sheet) then
+		sheet = 1
+	end
+	
+	local tile = display.newImage( view, imageSheets[sheet], num )
+	tile.x 			= x
+	tile.y 			= y
+	tile.num	 		= num
+	tile.sheet 		= sheet
 	
 	return tile
 end
