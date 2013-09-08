@@ -4,12 +4,16 @@ module(..., package.seeall)
 
 -----------------------------------------------------------------------------
 
-effects 	= nil
+effects 	 		= {}
+nbDestroyed   	= 0
+nbRunning   	= 0
 
 -------------------------------------
 
 function init()
-	effects = {}
+   effects 	 		= {}
+   nbDestroyed   	= 0
+   nbRunning   	= 0
 	Runtime:addEventListener( "enterFrame", refreshEffects )
 end
 
@@ -28,32 +32,42 @@ end
 function registerNewEffect( effect )
 	effect.num = #effects+1
 	effects[effect.num] = effect
-	
-	print("registerNewEffect " .. effect.num .. " / " .. #effects)
 end
+
+-----------------------------------------------------------------------------
+
+function startEffect( effect )
+	effect:startMaster()
+	effect.started = true
+
+	--- debug
+	nbRunning 	= nbRunning + 1
+end
+
+-----------------------------------------------------------------------------
+
+function stopEffect( effect )
+	effect:stopMaster()
+	effect.started = false
+
+	--- debug
+	nbRunning 	= nbRunning - 1
+end
+
+-----------------------------------------------------------------------------
 
 function destroyEffect( effect, now )
 	
-	if(effect.num) then -- else deja detruit (pb de lien pour le GC dans un performWithDelay ? exmple deleteRock + timeout 4sec force)
-   	print(effect.num)
-   	print("destroyEffect " .. effect.num .. " -> " .. #effects)
+	if(not effect.beingDestroyed and effect.num) then -- else deja detruit (pb de lien pour le GC dans un performWithDelay ? exmple deleteRock + timeout 4sec force)
       effect.beingDestroyed = true
    	
    	if(not now and effect.body) then
-      	print("destroy body")
    		utils.destroyFromDisplay(effect.body)
    	end
    
-   
-   -- Probleme : supprimer les nums decale en meme temps les nouveaux cest pourri
-   --	table.remove(effects, effect.num) 
-   --
-   --	for i=effect.num, #effects do
-   --		effects[i].num = effects[i].num - 1
-   --	end 
-   -- TODO vider la liste des effects nil !
-        
-      effect:stopMaster()
+      if(effect.started) then
+      	stopEffect(effect)
+      end
       
       if(now) then
       	effect:destroyMaster() 
@@ -65,6 +79,19 @@ function destroyEffect( effect, now )
          	end 
          end)
       end
+
+   -- Probleme : supprimer les nums decale en meme temps les nouveaux cest pourri
+   --	table.remove(effects, effect.num) 
+   --
+   --	for i=effect.num, #effects do
+   --		effects[i].num = effects[i].num - 1
+   --	end 
+   -- TODO vider la liste des effects nil !
+
+		--- debug
+      nbDestroyed = nbDestroyed + 1
+      
+
 	end
 
 end
@@ -74,11 +101,12 @@ end
 -----------------------------------------------------------------------------
 
 function refreshEffects()
+	
 	if(effects) then
 		for i=1,#effects do
 			local effect = effects[i]
 			
-			if(effect.num) then -- else passed throug destroyMaster
+			if(not effect.beingDestroyed and effect.num) then -- else passed throug destroyMaster
    			local isOnscreen = not effect.body -- si il n y a pas de body cest un simple effet visuel : onScreen (exemple drawFollow)
    			
    			if(not effect.static) then
@@ -87,23 +115,19 @@ function refreshEffects()
    			
    			if( effect.body
    			and effect.body.x
-   			and effect.body.x > -camera.x - 50
-   			and effect.body.x < display.contentWidth - camera.x + 50 
-   			and effect.body.y > -camera.y - 50
-   			and effect.body.y < display.contentHeight - camera.y + 50) then
+   			and effect.body.x > -game.camera.x - 50
+   			and effect.body.x < display.contentWidth - game.camera.x + 50 
+   			and effect.body.y > -game.camera.y - 50
+   			and effect.body.y < display.contentHeight - game.camera.y + 50) then
    				isOnscreen = true
    			end
    			
    			if(isOnscreen) then
    				if(not effect.started) then
-   					print("		starting " .. effect.num .. " / " .. #effects)
-   					effect:startMaster()
-      				effect.started = true
+   					startEffect(effect)
       			end
    			elseif(effect.started) then
-   				print("			stopping " .. effect.num .. " / " .. #effects)
-   				effect:stopMaster()
-   				effect.started = false
+      			stopEffect(effect)
    			end
    		end
 		end
@@ -155,14 +179,14 @@ function drawEnergy(x, y, type)
    	bounce = 0,
    })
    
-   camera:insert(energy)
+   game.camera:insert(energy)
 	energy:addEventListener( "preCollision", function(event) touchEnergy(energy, event) end )
 
 	
 	light.body = energy
 	light.static = true
 	registerNewEffect(light)	
-	camera:insert(light:get("light").content)
+	game.camera:insert(light:get("light").content)
 end
 
 function touchEnergy( energy, event )
@@ -204,7 +228,7 @@ function drawFollow( )
 	
 	follow.static = true
 	follow:start("followLight")
-	camera:insert(follow:get("followLight").content)
+	game.camera:insert(follow:get("followLight").content)
 	
 	registerNewEffect(follow)
 	timer.performWithDelay(3000, function() destroyEffect(follow) end)
@@ -237,8 +261,7 @@ function setCharacterThrowing()
 	}
 	
 	character.lightReadyToThrow.static = true
-	character.lightReadyToThrow:startMaster()
-	camera:insert(character.lightReadyToThrow:get("characterLight").content)
+	game.camera:insert(character.lightReadyToThrow:get("characterLight").content)
 	
 	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
 
@@ -248,8 +271,6 @@ end
 ------------------------------------------
 
 function setCharacterGrabbing()
-	
-	destroyEffect(character.lightReadyToThrow)
 	
 	character.lightReadyToGrab = CBE.VentGroup{
 		{
@@ -271,9 +292,10 @@ function setCharacterGrabbing()
 	}
 	
 	character.lightReadyToGrab.static = true
-	character.lightReadyToGrab:startMaster()
-	camera:insert(character.lightReadyToGrab:get("characterLight").content)
+	game.camera:insert(character.lightReadyToGrab:get("characterLight").content)
 
+	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
+	
 	registerNewEffect(character.lightReadyToGrab)
 end
 
@@ -339,8 +361,7 @@ function setItemFire(body)
 	fire.body = body
 	body.effect = fire
 	
-	fire:startMaster()
-	camera:insert(fire:get("light").content)
+	game.camera:insert(fire:get("light").content)
 	
 	registerNewEffect(fire)
 end
@@ -369,8 +390,7 @@ function beamPath(body)
 	beam.body = body
 	body.effect = beam
 	
-	beam:startMaster()
-	camera:insert(beam:get("light").content)
+	game.camera:insert(beam:get("light").content)
 	
 	registerNewEffect(beam)
 end
@@ -399,8 +419,7 @@ function simpleBeam(body)
 	beam.body = body
 	body.effect = beam
 	
-	beam:startMaster()
-	camera:insert(beam:get("light").content)
+	game.camera:insert(beam:get("light").content)
 	
 	registerNewEffect(beam)
 end
@@ -429,8 +448,7 @@ function lightAttach(body)
 	beam.body = body
 	body.effect = beam
 	
-	beam:startMaster()
-	camera:insert(beam:get("light").content)
+	game.camera:insert(beam:get("light").content)
 	
 	registerNewEffect(beam)
 end

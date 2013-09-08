@@ -107,7 +107,7 @@ end
 
 function initTopRightText()
 	display.remove(topRightText)
-	topRightText = display.newText( game.scene, "0", 0, 0, FONT, 21 )
+	topRightText = display.newText( "0", 0, 0, FONT, 12 )
 	topRightText:setTextColor( 255 )	
 	topRightText:setReferencePoint( display.CenterReferencePoint )
 	topRightText.x = display.contentWidth - topRightText.contentWidth/2 - 10
@@ -118,6 +118,35 @@ end
 function refreshTopRightText(text)
 	if(topRightText.contentWidth) then
 		topRightText.text = text
+		topRightText.size = 12
 		topRightText.x 	= display.contentWidth - topRightText.contentWidth/2 - 10
 	end
+end
+
+-----------------------------------------------------------------------------------------
+
+function initFollowRockButton()
+   followButton = display.newCircle( 20, display.contentHeight -20, 10 )
+   hideFollowRockButton()
+end
+
+function touchFollowRock(event)
+	if(event.phase == "began") then
+		game.focus = ROCK 
+	elseif(event.phase == "ended") then
+		game.focus = CHARACTER 
+	end
+
+	return true
+end
+
+function showFollowRockButton()
+	followButton.alpha = 1
+   followButton:addEventListener ( "touch", touchFollowRock )
+end
+
+function hideFollowRockButton()
+	followButton.alpha = 0
+   followButton:removeEventListener ( "touch", touchFollowRock )
+	game.focus = CHARACTER 
 end

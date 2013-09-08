@@ -20,6 +20,12 @@ MEDIUM_ENERGY 		= 2
 BIG_ENERGY 			= 3
 
 -----------------------------------------------------------------------------------------
+--- Camera focus
+
+CHARACTER 			= 1
+ROCK 					= 2
+
+-----------------------------------------------------------------------------------------
 
 if ANDROID then
    FONT = "Macondo-Regular"
@@ -42,14 +48,18 @@ gameCenter			= require "src.libs.GameCenter"
 ---- Game libs
 character			= require "src.game.Character"
 hud					= require "src.game.HUD"
-game					= require "src.game.Game"
 
+Game					= require "src.game.engine.Game"
 touchController 	= require "src.game.engine.TouchController"
 physicsManager		= require "src.game.engine.PhysicsManager"
 effectsManager		= require "src.game.engine.EffectsManager"
 musicManager		= require "src.game.engine.MusicManager"
 
 levelDrawer 		= require "src.game.levels.LevelDrawer"
+
+-----------------------------------------------------------------------------------------
+
+game = Game:new()
 
 -----------------------------------------------------------------------------------------
 -- Translations
@@ -90,12 +100,6 @@ math.randomseed( os.time() )
 CBE = require("CBEffects.Library")
 
 ------------------------------------------
-	
-if(not GLOBALS.savedData) then
-	game.initGameData()
-end
-
-------------------------------------------
 
 --musicManager.playMusic()
 
@@ -112,17 +116,45 @@ router.openPlayground()
 hud.initTopRightText()
 
 Runtime:addEventListener( "enterFrame", function()
-	hud.refreshTopRightText(math.floor(collectgarbage("count")))
+	local running 			= effectsManager.nbRunning
+	local total 			= #effectsManager.effects
+	
+	hud.refreshTopRightText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
 end )
 
 
 local reset = display.newCircle( 20, 20, 15 )
 reset.alpha = 0.01
-reset.isHUD = true
 
-reset:addEventListener ( "touch", function() 
-	router.openAppHome()
+reset:addEventListener ( "touch", function(event) 
+	if(event.phase == "began") then
+		router.openAppHome()
+	end
+	
+	return true
 end )
+
+
+-----------------------------------------------------------------------------------------
+--	
+--if(not GLOBALS.savedData) then
+--	initGameData()
+--end
+--
+--function initGameData()
+--
+--	GLOBALS.savedData = {
+--		user = "New player",
+--		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
+--		requireTutorial = true,
+--		levels = {{available = true}}, 
+--		scores = {
+--			classic={},
+--		}
+--	}
+--
+--	utils.saveTable(GLOBALS.savedData, "savedData.json")
+--end
 
 -----------------------------------------------------------------------------------------
 --- iOS Status Bar

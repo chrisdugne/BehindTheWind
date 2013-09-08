@@ -29,7 +29,7 @@ local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk2.png
 function init()
 	ropes = {}
 	
-   sprite = display.newSprite( camera, playerSheet, playerWalk.sequence )
+   sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
    sprite.x = 120
    sprite.y = 209
    

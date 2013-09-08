@@ -28,7 +28,7 @@ function designLevel()
 
 		--------------------
 
-   	local tile 			= drawTile( camera, tiles[i].num, tiles[i].x, tiles[i].y )
+   	local tile 			= drawTile( game.camera, tiles[i].num, tiles[i].x, tiles[i].y )
 		tile.group 			= tiles[i].group
 		tile.movable 		= tiles[i].movable
 		tile.draggable 	= tiles[i].draggable
@@ -100,9 +100,9 @@ end
 -------------------------------------
 
 function bringForegroundToFront()
-	for i=camera.numChildren,1,-1 do
-		if(camera[i].foreground) then
-			camera[i]:toFront()
+	for i=game.camera.numChildren,1,-1 do
+		if(game.camera[i].foreground) then
+			game.camera[i]:toFront()
 		end
 	end
 end

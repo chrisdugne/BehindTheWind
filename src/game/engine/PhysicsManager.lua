@@ -14,7 +14,7 @@ function init( )
 	physics.setGravity( 0, 20 )
 	
 	trajectory = display.newGroup()
-	camera:insert (trajectory)
+	game.camera:insert (trajectory)
 	
 --	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
@@ -33,7 +33,7 @@ function dragBody( event, params )
 	if "began" == phase then
 		stage:setFocus( body, event.id )
 		body.isFocus = true
-		body.tempJoint = physics.newJoint( "touch", body, event.x - camera.x, event.y-camera.y )
+		body.tempJoint = physics.newJoint( "touch", body, event.x - game.camera.x, event.y-game.camera.y )
 
 		-- Apply optional joint parameters
 		if params then
@@ -59,7 +59,7 @@ function dragBody( event, params )
 		if "moved" == phase then
 		
 			-- Update the joint to track the touch
-			body.tempJoint:setTarget( event.x - camera.x, event.y - camera.y )
+			body.tempJoint:setTarget( event.x - game.camera.x, event.y - game.camera.y )
 
 		elseif "ended" == phase or "cancelled" == phase then
 			stage:setFocus( body, nil )
@@ -82,7 +82,7 @@ function throw( x1,y1, x2,y2 )
 	utils.emptyGroup(trajectory)
 	local force = getVelocity(x1,y1,x2,y2)
 
-	local rock = display.newImage(camera, "assets/images/game/rock.png");
+	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
 	rock.y = character.sprite.y
 	rock:scale(0.2,0.2)
@@ -93,16 +93,13 @@ function throw( x1,y1, x2,y2 )
 	rock:addEventListener( "collision", rockCollision )
 	
 	effectsManager.setItemFire(rock)
+	character.rock = rock
 
 	timer.performWithDelay(4000, function()
 		deleteRock(rock)
 	end)
-end
 
-function deleteRock(rock)
-	print("delete rock") 
-	effectsManager.destroyObjectWithEffect(rock)
-	rock = nil
+	hud.showFollowRockButton()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -112,7 +109,7 @@ function grab( x1,y1, x2,y2 )
 	utils.emptyGroup(trajectory)
 	local force = getVelocity(x1,y1,x2,y2)
 	
-	local rock = display.newImage(camera, "assets/images/game/rock.png");
+	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
 	rock.y = character.sprite.y
 	rock:scale(0.1,0.1)
@@ -123,10 +120,12 @@ function grab( x1,y1, x2,y2 )
 	rock:addEventListener( "collision", grabCollision )
 	
 	effectsManager.simpleBeam(rock)
+	character.rock = rock
 	
 	timer.performWithDelay(4000, function()
 		deleteRock(rock)
 	end)
+
 end
 
 -------------------------------------
@@ -164,6 +163,19 @@ function grabCollision( event )
 		end
 
 	end
+end
+
+---------------------------------------------------------------------------
+
+function deleteRock(rock)
+	
+	if(character.rock == rock) then
+   	hud.hideFollowRockButton()
+   end
+	
+	effectsManager.destroyObjectWithEffect(rock)
+	rock = nil
+	
 end
 
 ---------------------------------------------------------------------------
@@ -246,7 +258,7 @@ function buildRopeTo(x,y,ground)
 	--------------------------
 	-- attach point
 
-	local attach = display.newCircle( camera, x, y, 9 )
+	local attach = display.newCircle( game.camera, x, y, 9 )
 	physics.addBody( attach, "static", {radius=9, density=2.0 } )
 	effectsManager.lightAttach(attach)
 	
@@ -276,7 +288,7 @@ function buildRopeTo(x,y,ground)
 	-- draw beam points
 
 	for i=1,nbPoints do
-		local point = display.newCircle( camera, points[i].x, points[i].y, 2 )
+		local point = display.newCircle( game.camera, points[i].x, points[i].y, 2 )
 		point.alpha = 0
 		point.isSensor = true
 		physics.addBody( point, "static", {radius=2, isSensor=true } )

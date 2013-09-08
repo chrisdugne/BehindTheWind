@@ -7,7 +7,7 @@ module(..., package.seeall)
 NONE 					= 0
 SWIPE_RIGHT 		= 1
 SWIPE_LEFT 			= 2
-SWIPE_UP 			= 3
+--SWIPE_UP 			= 3
 
 READY_TO_THROW 	= 11
 THROWING 			= 12
@@ -17,7 +17,6 @@ DRAGGING_TILE 		= 101
 
 -------------------------------------
 
-local hold 					= false
 local previousState 		= NONE
 local currentState 		= NONE
 local xStart				= 0
@@ -25,6 +24,14 @@ local yStart				= 0
 local lastX					= 0
 local lastY					= 0
 local startTouchTime		= 0
+local previousTapTime	= 0
+
+local tapping				= 0
+local swipping				= false
+
+-------------------------------------
+
+local TAP_TIME_LIMIT		= 200
 
 -------------------------------------
 
@@ -38,8 +45,6 @@ end
 
 function touchScreen( event )
 	
-	if(event.target.isHUD) then return end
-	
 	lastX, lastY = event.x, event.y
 	if(not character.floor) then
 		xStart, yStart = lastX, lastY
@@ -48,52 +53,66 @@ function touchScreen( event )
 	if(currentState == DRAGGING_TILE) then return end
    	
 	if event.phase == "began" then
+
    	startTouchTime 	= system.getTimer()
-		hold 					= true	
-		xStart, yStart 	= event.xStart, event.yStart
+		swipping = false
    	
-   	display.getCurrentStage():setFocus( camera )
+		---------------------------------------------
+		
+		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
+			tapping = 0
+		end
+   	
+   	if(tapping > 0) then
+   		print("touch after tapping", tapping)
+   	else
+   		print("new touch")
+   	end
+   	
+		xStart, yStart 	= event.xStart, event.yStart
+
+   	display.getCurrentStage():setFocus( game.camera )
    	Runtime:addEventListener( "enterFrame", onTouch )
    	
 		
 	elseif event.phase == "moved" then
 		
-		if(currentState == READY_TO_THROW) then 
-			setState(THROWING)
-			return
-
-		elseif(currentState == THROWING or currentState == GRABBING) then
-			physicsManager.refreshTrajectory(lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y) 
-			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
-			return
-		
-		elseif(#character.ropes > 0) then
+		if(currentState == THROWING 
+		or currentState == GRABBING
+		or #character.ropes > 0) then
 			return
 			
-		elseif(event.y + 40 < yStart) then
-			setState(SWIPE_UP)
-			swipeUp()
-
-		elseif(event.x - 40 > xStart) then
+		elseif(event.x - 10 > xStart) then
 			setState(SWIPE_RIGHT)
 
-		elseif(event.x + 40 < xStart) then
+		elseif(event.x + 10 < xStart) then
 			setState(SWIPE_LEFT)
 		end
 
 	elseif event.phase == "ended" then
    	if(currentState == THROWING) then
-			character.throw( lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y)
+			character.throw( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	elseif(currentState == GRABBING) then
-			character.grab( lastX - camera.x,lastY - camera.y, xStart - camera.x,yStart - camera.y)
+			character.grab( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
    	
-		hold = false
+		swipping = false
 		setState(NONE)
 		character.stop()
    	display.getCurrentStage():setFocus( nil )
    	Runtime:removeEventListener( "enterFrame", onTouch )
 		
+		---------------------------------------------
+		
+		local now = system.getTimer()
+		local touchDuration = now - startTouchTime
+
+		if(touchDuration < TAP_TIME_LIMIT) then 
+			previousTapTime = now
+			tapping = tapping + 1
+		end
+
+		---------------------------------------------
 	end
 
 	return true
@@ -104,37 +123,63 @@ end
 
 function onTouch( event )
 	
+	local now = system.getTimer()
+	local touchDuration = now - startTouchTime
+
 	if(currentState == SWIPE_LEFT) then
 		swipeLeft()
 
 	elseif(currentState == SWIPE_RIGHT) then
 		swipeRight()
-
-	elseif(currentState == SWIPE_UP) then
-		if(not character.floor) then return end
-
-   	if(previousState == SWIPE_LEFT) then
-   		setState(SWIPE_LEFT)
-   		swipeLeft()
-
-   	elseif(previousState == SWIPE_RIGHT) then
-   		setState(SWIPE_RIGHT)
-   		swipeRight()
-
-   	end
-
-	else
-		if(currentState ~= THROWING) then
-   		local now = system.getTimer()
-   		
-   		if(now - startTouchTime > 800) then
-   			setState(GRABBING, function() character.setGrabbing() end)
-   		elseif(now - startTouchTime > 300) then
-   			setState(READY_TO_THROW, function() character.setThrowing() end)
-   		end
-		end
-		
 	end
+	
+	if(tapping == 1) then 
+		setState(THROWING, function() character.setThrowing() end)
+	elseif(tapping == 2) then 
+		setState(GRABBING, function() character.setGrabbing() end)
+	end
+
+	if(touchDuration > TAP_TIME_LIMIT) then
+	
+		if(tapping == 0) then
+   		if(xStart ~= lastX or yStart ~= lastY) then 
+   			swipping = true
+   			print("swipping")
+   		else
+   			character.jump()
+   		end
+		else
+   		if(currentState == THROWING or currentState == GRABBING) then
+   			physicsManager.refreshTrajectory(lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y) 
+   			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
+			end
+		end
+	end
+
+--	elseif(currentState == SWIPE_UP) then
+--		if(not character.floor) then return end
+--
+--   	if(previousState == SWIPE_LEFT) then
+--   		setState(SWIPE_LEFT)
+--   		swipeLeft()
+--
+--   	elseif(previousState == SWIPE_RIGHT) then
+--   		setState(SWIPE_RIGHT)
+--   		swipeRight()
+--
+--   	end
+--
+--	else
+--		if(currentState ~= THROWING) then
+--   		local now = system.getTimer()
+--   		
+--   		if(now - startTouchTime > 800) then
+--   			setState(GRABBING, function() character.setGrabbing() end)
+--   		elseif(now - startTouchTime > 300) then
+--   			setState(READY_TO_THROW, function() character.setThrowing() end)
+--   		end
+--		end
+--		
 end
 	
 	
@@ -163,11 +208,6 @@ end
 function swipeRight()
 	character.startMoveRight()
 end
-
-function swipeUp()
-	character.jump()
-end
-
 
 -------------------------------------
 

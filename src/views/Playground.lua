@@ -33,9 +33,8 @@ function scene:refreshScene()
 	------------------------------
 	-- camera
 		
-	utils.emptyGroup(camera)
-	Runtime:addEventListener( "enterFrame", self.refreshCamera )
-	--camera:scale(0.3,0.3)
+	game:init()
+	hud.initFollowRockButton()
 	
 	---------------------
 	-- engines
@@ -58,29 +57,6 @@ function scene:refreshScene()
 	-- level foregrounds
 
 	levelDrawer.bringForegroundToFront()
-end
-
-------------------------------------------
-
-function scene:refreshCamera()
-
-	local leftDistance 		= character.sprite.x + camera.x
-	local rightDistance 		= display.contentWidth - leftDistance
-
-	local topDistance 		= character.sprite.y + camera.y
-	local bottomDistance 	= display.contentHeight - topDistance
-	
-	if(rightDistance < display.contentWidth*0.38) then
-		camera.x = - character.sprite.x + display.contentWidth*0.62
-	elseif(leftDistance < display.contentWidth*0.38) then
-		camera.x = - character.sprite.x + display.contentWidth*0.38
-	end
-
-	if(bottomDistance < display.contentHeight*0.28) then
-		camera.y = - character.sprite.y + display.contentHeight*0.72
-	elseif(topDistance < display.contentHeight*0.28) then
-		camera.y = - character.sprite.y + display.contentHeight*0.28
-	end
 end
 
 ------------------------------------------
