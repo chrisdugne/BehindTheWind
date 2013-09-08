@@ -7,7 +7,6 @@ module(..., package.seeall)
 NONE 					= 0
 SWIPE_RIGHT 		= 1
 SWIPE_LEFT 			= 2
---SWIPE_UP 			= 3
 
 READY_TO_THROW 	= 11
 THROWING 			= 12
@@ -52,24 +51,16 @@ function touchScreen( event )
 	
 	if(currentState == DRAGGING_TILE) then return end
    	
+   	
 	if event.phase == "began" then
 
    	startTouchTime 	= system.getTimer()
+		xStart, yStart 	= event.xStart, event.yStart
 		swipping = false
    	
-		---------------------------------------------
-		
 		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
 			tapping = 0
 		end
-   	
-   	if(tapping > 0) then
-   		print("touch after tapping", tapping)
-   	else
-   		print("new touch")
-   	end
-   	
-		xStart, yStart 	= event.xStart, event.yStart
 
    	display.getCurrentStage():setFocus( game.camera )
    	Runtime:addEventListener( "enterFrame", onTouch )
@@ -83,19 +74,25 @@ function touchScreen( event )
 			return
 			
 		elseif(event.x - 10 > xStart) then
+			swipping = true
 			setState(SWIPE_RIGHT)
 
 		elseif(event.x + 10 < xStart) then
+			swipping = true
 			setState(SWIPE_LEFT)
 		end
 
+
 	elseif event.phase == "ended" then
+   	
    	if(currentState == THROWING) then
 			character.throw( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	elseif(currentState == GRABBING) then
 			character.grab( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
    	
+		---------------------------------------------
+		
 		swipping = false
 		setState(NONE)
 		character.stop()
@@ -142,10 +139,13 @@ function onTouch( event )
 	if(touchDuration > TAP_TIME_LIMIT) then
 	
 		if(tapping == 0) then
-   		if(xStart ~= lastX or yStart ~= lastY) then 
-   			swipping = true
-   			print("swipping")
-   		else
+   		if(not swipping) then
+   			if(xStart-(character.sprite.x + game.camera.x) > 15) then
+   				swipeRight()
+   			elseif(xStart-(character.sprite.x + game.camera.x) < - 15) then
+   				swipeLeft()
+   			end
+   			
    			character.jump()
    		end
 		else
@@ -155,31 +155,6 @@ function onTouch( event )
 			end
 		end
 	end
-
---	elseif(currentState == SWIPE_UP) then
---		if(not character.floor) then return end
---
---   	if(previousState == SWIPE_LEFT) then
---   		setState(SWIPE_LEFT)
---   		swipeLeft()
---
---   	elseif(previousState == SWIPE_RIGHT) then
---   		setState(SWIPE_RIGHT)
---   		swipeRight()
---
---   	end
---
---	else
---		if(currentState ~= THROWING) then
---   		local now = system.getTimer()
---   		
---   		if(now - startTouchTime > 800) then
---   			setState(GRABBING, function() character.setGrabbing() end)
---   		elseif(now - startTouchTime > 300) then
---   			setState(READY_TO_THROW, function() character.setThrowing() end)
---   		end
---		end
---		
 end
 	
 	
