@@ -42,12 +42,13 @@ local currentSheet 	= 1
 
 -----------------------------------------------------------------------------------------
 
-local smallEnergyButtonScale = 0.04
-local mediumEnergyButtonScale = 0.08
-local bigEnergyButtonScale = 0.01
+local smallEnergyButtonScale 		= 0.04
+local mediumEnergyButtonScale 	= 0.08
+local bigEnergyButtonScale 		= 0.01
 
 -----------------------------------------------------------------------------------------
 
+-- note virer ca et return true partout
 local dontListenThisTouchScreen = false
 
 -----------------------------------------------------------------------------------------
@@ -91,7 +92,7 @@ function scene:refreshScene()
 	down:scale(0.12,0.12)
    down:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then editor.y = editor.y + 100 end
-		dontListenThisTouchScreen = true
+		return true
 	end )
 
 	local up = display.newImage( "assets/images/tutorial/arrow.top.png" )
@@ -100,7 +101,7 @@ function scene:refreshScene()
 	up:scale(0.12,0.12)
    up:addEventListener( "touch", function(event)
    	if(event.phase == "began") then editor.y = editor.y - 100 end
-		dontListenThisTouchScreen = true	 
+		return true
    end )
 
 	local left = display.newImage( "assets/images/tutorial/arrow.left.png" )
@@ -109,7 +110,7 @@ function scene:refreshScene()
 	left:scale(0.12,0.12)
    left:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then editor.x = editor.x - 190 end 
-   	dontListenThisTouchScreen = true
+		return true
   	end )
 
 	local right = display.newImage( "assets/images/tutorial/arrow.right.png" )
@@ -118,7 +119,7 @@ function scene:refreshScene()
 	right:scale(0.12,0.12)
    right:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then editor.x = editor.x + 190 end
-		dontListenThisTouchScreen = true 
+		return true
    end )
 
 
@@ -132,7 +133,7 @@ function scene:refreshScene()
 	selectionLeft:scale(0.1,0.1)
    selectionLeft:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then tileSelection.x = tileSelection.x + 300 end
-		dontListenThisTouchScreen = true 
+		return true
    end )
 
 	local selectionRight = display.newImage( "assets/images/tutorial/arrow.right.png" )
@@ -140,8 +141,8 @@ function scene:refreshScene()
 	selectionRight.y = 62
 	selectionRight:scale(0.1,0.1)
    selectionRight:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then tileSelection.x = tileSelection.x - 300 end
-		dontListenThisTouchScreen = true 
+   	if(event.phase == "began") then tileSelection.x = tileSelection.x - 300 end	 
+		return true
    end )
    
 	local selectionDown = display.newImage( "assets/images/tutorial/arrow.down.png" )
@@ -154,7 +155,7 @@ function scene:refreshScene()
    		if(currentSheet > #levelDrawer.imageSheets) then currentSheet = 1 end
    		self:refreshTileSelection()
    	end
-		dontListenThisTouchScreen = true
+		return true
 	end )
 
 
@@ -162,78 +163,78 @@ function scene:refreshScene()
 	-- States
 	------------------------------------------------------------------------------------------------------------
 	
-	erase = levelDrawer.drawTile( self.view, 1, ERASING, 100, 62 )
+	erase = levelDrawer.drawTile( self.view, levelDrawer.TILES, ERASING, 100, 62 )
 	erase:scale(0.5,0.5)
    erase:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		stateErasing()
-   		dontListenThisTouchScreen = true
-   	end 
+   	end
+   	return true 
   	end )
 
 	-------------------------------------
 	
-	grouping = levelDrawer.drawTile( self.view, 1, GROUPING, 125, 62 )
+	grouping = levelDrawer.drawTile( self.view, levelDrawer.TILES, GROUPING, 125, 62 )
 	grouping:scale(0.5,0.5)
    grouping:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
-   		stateGrouping()
-   		dontListenThisTouchScreen = true
+   		stateGrouping()	 
+			return true
    	end 
   	end )
 
 	-------------------------------------
 	
-	enableMove = levelDrawer.drawTile( self.view, 1, ENABLING_MOVE, 150, 62 )
+	enableMove = levelDrawer.drawTile( self.view, levelDrawer.TILES, ENABLING_MOVE, 150, 62 )
 	enableMove:scale(0.5,0.5)
    enableMove:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		setState(ENABLING_MOVE, enableMove)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
 	-------------------------------------
 	
-	enableDrag = levelDrawer.drawTile( self.view, 1, ENABLING_DRAG, 175, 62 )
+	enableDrag = levelDrawer.drawTile( self.view, levelDrawer.TILES, ENABLING_DRAG, 175, 62 )
 	enableDrag:scale(0.5,0.5)
    enableDrag:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		setState(ENABLING_DRAG, enableDrag)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
 	-------------------------------------
 	
-	setDestructible = levelDrawer.drawTile( self.view, 1, SET_DESTRUCTIBLE, 200, 62 )
+	setDestructible = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_DESTRUCTIBLE, 200, 62 )
 	setDestructible:scale(0.5,0.5)
    setDestructible:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		setState(SET_DESTRUCTIBLE, setDestructible)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
 	-------------------------------------
 	
-	setBackground = levelDrawer.drawTile( self.view, 1, SET_BACKGROUND, 225, 62 )
+	setBackground = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_BACKGROUND, 225, 62 )
 	setBackground:scale(0.5,0.5)
    setBackground:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		setState(SET_BACKGROUND, setBackground)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
 	-------------------------------------
 	
-	setForeground = levelDrawer.drawTile( self.view, 1, SET_FOREGROUND, 250, 62 )
+	setForeground = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_FOREGROUND, 250, 62 )
 	setForeground:scale(0.5,0.5)
    setForeground:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		setState(SET_FOREGROUND, setForeground)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
@@ -250,7 +251,7 @@ function scene:refreshScene()
    	if(event.phase == "began") then
    		selectedEnergyType = SMALL_ENERGY
    		stateDrawEnergy(smallEnergyButton)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
@@ -263,7 +264,7 @@ function scene:refreshScene()
    	if(event.phase == "began") then
    		selectedEnergyType = MEDIUM_ENERGY
    		stateDrawEnergy(mediumEnergyButton)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 
@@ -276,7 +277,7 @@ function scene:refreshScene()
    	if(event.phase == "began") then
    		selectedEnergyType = BIG_ENERGY
    		stateDrawEnergy(bigEnergyButton)
-   		dontListenThisTouchScreen = true
+			return true
    	end 
   	end )
 	
@@ -284,23 +285,23 @@ function scene:refreshScene()
 	-- Import / Export
 	------------------------------------------------------------------------------------------------------------
 
-	local import = levelDrawer.drawTile( self.view, 1, 9, display.contentWidth - 35, 62 )
+	local import = levelDrawer.drawTile( self.view, levelDrawer.TILES, 9, display.contentWidth - 35, 62 )
 	import:scale(0.5,0.5)
 	import:addEventListener( "touch", function(event) 
 		if(event.phase == "began") then
-   		dontListenThisTouchScreen = true
 			self:import()
+			return true
 		end 
 	end )
 
 	-------------------------------------
 
-	local export = levelDrawer.drawTile( self.view, 1, 4, display.contentWidth - 15, 62 )
+	local export = levelDrawer.drawTile( self.view, levelDrawer.TILES, 4, display.contentWidth - 15, 62 )
 	export:scale(0.5,0.5)
 	export:addEventListener( "touch", function(event) 
 		if(event.phase == "began") then
-   		dontListenThisTouchScreen = true
 			self:export()
+			return true
 		end 
 	end )
 	
@@ -407,7 +408,7 @@ function scene:refreshTileSelection()
 	
 	--------------------------
 
-	local x = 0
+	local x = 40
    for num = 1, #currentSheetConfig.sheet.frames do
    
    	if(num > 1) then
@@ -515,6 +516,10 @@ function scene:import()
 	-----------------------------
 
 	for k,groupMotion in pairs(GLOBALS.levelEditor.groupMotions) do
+	
+		-- k est parfois le num en string dans le json groupMotions (gd num de groupe a priori)
+		if(type(k) == "string") then k = tonumber(k) end
+
 		if(groupMotion) then
 			self:drawGroupMotion(k, groupMotion.x1, groupMotion.y1, groupMotion.x2, groupMotion.y2)
    	end 
@@ -536,7 +541,13 @@ function scene:import()
 
 	-----------------------------
 	
-	editor:toBack()		
+	for i=1,editor.numChildren do
+		if(editor[i].background) then
+			editor[i]:toBack()
+		end
+	end
+	
+	editor:toBack()	
 end
 
 ------------------------------------------
@@ -711,7 +722,7 @@ end
 function scene:addToGroup(tile)
 	
 	tile.group = currentGroup
-	tile.iconGroup = levelDrawer.drawTile( editor, 1, tile.group, tile.x, tile.y )
+	tile.iconGroup = levelDrawer.drawTile( editor, levelDrawer.TILES, tile.group, tile.x, tile.y )
 	tile.iconGroup:scale(0.3,0.3)
 
 	tile.isInGroup = true
@@ -827,7 +838,7 @@ end
 ------------------------------------------
 
 function scene:drawMovableIcon(tile)
-	tile.iconMovable = levelDrawer.drawTile( editor, 1, 65, tile.x - 20 , tile.y - 20 )
+	tile.iconMovable = levelDrawer.drawTile( editor, levelDrawer.TILES, 65, tile.x - 20 , tile.y - 20 )
 	tile.iconMovable:scale(0.4,0.4)
 end
 
@@ -955,8 +966,9 @@ function scene:setProperty(tile, property)
 		self:drawIcon(groups[tile.group][1], property)
 		selectedGroup = tile.group
 	else
+		print(tile.num, tile.group, property)
 		tile[property] = true
-		self:drawIcon(groups[tile.group][1], property)
+		self:drawIcon(tile, property)
 		selectedGroup = nil
 		selectedTile = tile
 	end
@@ -1014,7 +1026,7 @@ function scene:drawIcon(tile, property)
 		num = num + 1
 	end 
 
-	tile.icons[property]= levelDrawer.drawTile( editor, 1, image, tile.x - 15*num , tile.y - 20 )
+	tile.icons[property]= levelDrawer.drawTile( editor, levelDrawer.TILES, image, tile.x - 15*num , tile.y - 20 )
 	tile.icons[property]:scale(0.4,0.4)
 end
 

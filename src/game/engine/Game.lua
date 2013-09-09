@@ -26,7 +26,7 @@ end
 ------------------------------------------
 
 function Game:refreshCamera(event)
-	if(character.sprite) then
+	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
 		if(not character.rock or game.focus == CHARACTER) then	
       	local leftDistance 		= character.sprite.x + game.camera.x
       	local rightDistance 		= display.contentWidth - leftDistance

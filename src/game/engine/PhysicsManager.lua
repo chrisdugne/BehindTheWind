@@ -105,7 +105,7 @@ end
 -----------------------------------------------------------------------------------------------
 
 function grab( x1,y1, x2,y2 )
-
+	
 	utils.emptyGroup(trajectory)
 	local force = getVelocity(x1,y1,x2,y2)
 	
@@ -120,18 +120,23 @@ function grab( x1,y1, x2,y2 )
 	rock:addEventListener( "collision", grabCollision )
 	
 	effectsManager.simpleBeam(rock)
+
 	character.rock = rock
 	
 	timer.performWithDelay(7000, function()
 		deleteRock(rock)
 	end)
 
+	hud.showFollowRockButton()
 end
 
 -------------------------------------
 
 function thrownFromCharacterPreCollision( event )
-	if(event.other == character.sprite or event.other.isSensor) then
+
+	if(event.other == character.sprite
+	and not event.other.isSensor
+	and not event.other.isAttach) then
 		event.contact.isEnabled = false
 	end
 end
@@ -144,7 +149,9 @@ end
 
 
 function grabCollision( event )
-	if(event.other ~= character.sprite and not event.other.isSensor) then
+	if(event.other ~= character.sprite 
+	and not event.other.isSensor
+	and not event.other.isAttach) then
 
 		if ( event.phase == "ended" ) then
 			local ground = event.other
@@ -265,6 +272,7 @@ function buildRopeTo(x,y,ground)
 	attach.ground = ground
 	attach.offsetX = ground.x - x
 	attach.offsetY = ground.y - y
+	attach.isAttach = true
 
 	--------------------------
 

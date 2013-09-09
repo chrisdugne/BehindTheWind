@@ -30,28 +30,37 @@ function init()
 	ropes = {}
 	
    sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
-   sprite.x = 120
-   sprite.y = 209
    
    physics.addBody( sprite, { 
    	density = 5, 
    	friction = 1, 
    	bounce = 0.12,
-   	radius = 31
+   	radius = 15
    })
    
    sprite.isFixedRotation = true
 	sprite:addEventListener( "collision", collide )
 	sprite:addEventListener( "preCollision", preCollide )
 
-	Runtime:addEventListener( "enterFrame", refreshCharacterSprite )
+	Runtime:addEventListener( "enterFrame", checkCharacter )
 end	
 
 -------------------------------------
+
+function spawn()
+	stop()
+	sprite:setFrame(1)
+   sprite.x = levelDrawer.level.spawnX
+   sprite.y = levelDrawer.level.spawnY
+   sprite:setLinearVelocity(0,6)
+end
+
+-------------------------------------
+
 local previousVy = 0
 local nbFramesToKeep = 0
 
-function refreshCharacterSprite(event)
+function checkCharacter(event)
 	
 	if(nbFramesToKeep > 0 ) then
 		nbFramesToKeep = nbFramesToKeep - 1
@@ -79,7 +88,15 @@ function refreshCharacterSprite(event)
    	end
    	
    	previousVy = vy
+	   
+	   if(sprite.y > levelDrawer.level.bottomY) then
+			nbFramesToKeep = 100
+   		timer.performWithDelay(2000, function()
+   			character.spawn()
+   		end)
+   	end
    end
+   
 end
 
 -------------------------------------
@@ -99,13 +116,18 @@ function collide( event )
 
 	if(event.other.y > event.target.y + event.target.height/2 and event.other.isFloor and vy > -200) then
 		floor = event.other
-	-- else : collision from sides or top : not the floor !
+	else
+		-- collision from sides or top : not the floor !
+		floor = nil
 	end
 	
 	if(state == JUMPING and vy > -200) then 
 		state = NOT_MOVING
-		nbFramesToKeep = 2
-		sprite:setFrame(6) 
+		
+		if(floor) then
+   		nbFramesToKeep = 2
+			sprite:setFrame(6) 
+   	end
 	end
 end
 
@@ -131,22 +153,25 @@ end
 
 -------------------------------------
 
-function stop()
+function stop(tapping)
 	if(state ~= JUMPING) then 
    	state = NOT_MOVING
  	end
- 	
-	local vx, vy = sprite:getLinearVelocity()
-	sprite:setLinearVelocity( 0 , vy )
+ 
+ 	if(tapping == 0) then
+		local vx, vy = sprite:getLinearVelocity()
+		sprite:setLinearVelocity( 0 , vy )
+	end
 	
 	effectsManager.stopCharacterLight()
 end
 
 
 function goLeft()
-	if(state == JUMPING or not floor) then return end
 	local vx, vy = sprite:getLinearVelocity()
-	local floorVx, floorVy = floor:getLinearVelocity()
+	
+	local floorVx, floorVy = 0,0
+	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 	
 	state = GOING_LEFT	
 	lookLeft()
@@ -154,9 +179,10 @@ function goLeft()
 end
 
 function goRight()
-	if(state == JUMPING or not floor) then return end
 	local vx, vy = sprite:getLinearVelocity()
-	local floorVx, floorVy = floor:getLinearVelocity()
+	
+	local floorVx, floorVy = 0,0
+	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 
 	state = GOING_RIGHT
 	lookRight()

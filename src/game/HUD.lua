@@ -125,6 +125,25 @@ end
 
 -----------------------------------------------------------------------------------------
 
+local panel
+function openPanel(level, num)
+	display.remove(panel)
+   panel = display.newImage( "assets/images/tutorial/tuto" .. level .. "." .. num .. ".png")
+   panel.x = display.contentWidth/2
+   panel.y = display.contentHeight/2
+   
+	panel:addEventListener( "touch", closePanel)
+end
+
+function closePanel(event)
+	if(event.phase == "began") then
+		display.remove(panel)
+   end
+   return true
+end
+
+-----------------------------------------------------------------------------------------
+
 function initFollowRockButton()
    followButton = display.newCircle( 20, display.contentHeight -20, 10 )
    hideFollowRockButton()

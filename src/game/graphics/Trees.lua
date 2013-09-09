@@ -1,11 +1,11 @@
 --
 -- created with TexturePacker (http://www.codeandweb.com/texturepacker)
 --
--- $TexturePacker:SmartUpdate:9c9cac32aff349526dcd00dbc52fb7a9:1/1$
+-- $TexturePacker:SmartUpdate:78434c5a1b2d9a3e5ef0dc87af36b9f6:1/1$
 --
--- local Trees = require("mysheet")
--- local myImageSheet = graphics.newImageSheet( "mysheet.png", Trees:getSheet() )
--- local sprite = display.newSprite( myImageSheet , {frames={Trees:getFrameIndex("sprite")}} )
+-- local sheetInfo = require("mysheet")
+-- local myImageSheet = graphics.newImageSheet( "mysheet.png", sheetInfo:getSheet() )
+-- local sprite = display.newSprite( myImageSheet , {frames={sheetInfo:getFrameIndex("sprite")}} )
 --
 
 local Trees = {}
@@ -16,308 +16,248 @@ Trees.sheet =
     
         {
             -- bush.classic.green
-            x=334,
-            y=375,
-            width=54,
-            height=57,
+            x=1780,
+            y=910,
+            width=216,
+            height=225,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 54,
-            sourceHeight = 56
         },
         {
             -- bush.dark.black
-            x=278,
-            y=335,
-            width=54,
-            height=57,
+            x=1780,
+            y=683,
+            width=216,
+            height=225,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 54,
-            sourceHeight = 56
         },
         {
             -- bush.dark.pink
-            x=437,
-            y=325,
-            width=54,
-            height=57,
+            x=1780,
+            y=456,
+            width=216,
+            height=225,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 54,
-            sourceHeight = 56
         },
         {
             -- bush.dark.red
-            x=381,
-            y=316,
-            width=54,
-            height=57,
+            x=1780,
+            y=229,
+            width=216,
+            height=225,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 54,
-            sourceHeight = 56
         },
         {
             -- bush.silhouette
-            x=437,
-            y=266,
-            width=54,
-            height=57,
+            x=1780,
+            y=2,
+            width=216,
+            height=225,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 54,
-            sourceHeight = 56
         },
         {
             -- hugetree.classic.green
-            x=126,
+            x=488,
             y=2,
-            width=122,
-            height=124,
+            width=484,
+            height=494,
 
-            sourceX = 4,
-            sourceY = 4,
-            sourceWidth = 128,
-            sourceHeight = 128
+            sourceX = 19,
+            sourceY = 18,
+            sourceWidth = 512,
+            sourceHeight = 512
         },
         {
             -- hugetree.dark.black
             x=2,
-            y=380,
-            width=122,
-            height=124,
+            y=1490,
+            width=484,
+            height=494,
 
-            sourceX = 4,
-            sourceY = 4,
-            sourceWidth = 128,
-            sourceHeight = 128
+            sourceX = 19,
+            sourceY = 18,
+            sourceWidth = 512,
+            sourceHeight = 512
         },
         {
             -- hugetree.dark.pink
             x=2,
-            y=254,
-            width=122,
-            height=124,
+            y=994,
+            width=484,
+            height=494,
 
-            sourceX = 4,
-            sourceY = 4,
-            sourceWidth = 128,
-            sourceHeight = 128
+            sourceX = 19,
+            sourceY = 18,
+            sourceWidth = 512,
+            sourceHeight = 512
         },
         {
             -- hugetree.dark.red
             x=2,
-            y=128,
-            width=122,
-            height=124,
+            y=498,
+            width=484,
+            height=494,
 
-            sourceX = 4,
-            sourceY = 4,
-            sourceWidth = 128,
-            sourceHeight = 128
+            sourceX = 19,
+            sourceY = 18,
+            sourceWidth = 512,
+            sourceHeight = 512
         },
         {
             -- hugetree.silhouette
             x=2,
             y=2,
-            width=122,
-            height=124,
+            width=484,
+            height=494,
 
-            sourceX = 4,
-            sourceY = 4,
-            sourceWidth = 128,
-            sourceHeight = 128
+            sourceX = 19,
+            sourceY = 18,
+            sourceWidth = 512,
+            sourceHeight = 512
         },
         {
             -- mediumtree.classic.green
-            x=202,
-            y=384,
-            width=74,
-            height=83,
+            x=1080,
+            y=976,
+            width=294,
+            height=330,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 74,
-            sourceHeight = 83
         },
         {
             -- mediumtree.dark.black
-            x=126,
-            y=384,
-            width=74,
-            height=83,
+            x=784,
+            y=1469,
+            width=294,
+            height=330,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 74,
-            sourceHeight = 83
         },
         {
             -- mediumtree.dark.pink
-            x=305,
-            y=250,
-            width=74,
-            height=83,
+            x=784,
+            y=1137,
+            width=294,
+            height=330,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 74,
-            sourceHeight = 83
         },
         {
             -- mediumtree.dark.red
-            x=126,
-            y=252,
-            width=74,
-            height=83,
+            x=488,
+            y=1469,
+            width=294,
+            height=330,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 74,
-            sourceHeight = 83
         },
         {
             -- mediumtree.silhouette
-            x=229,
-            y=250,
-            width=74,
-            height=83,
+            x=488,
+            y=1137,
+            width=294,
+            height=330,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 74,
-            sourceHeight = 83
         },
         {
             -- smalltree.classic.green
-            x=381,
-            y=250,
-            width=54,
-            height=64,
+            x=1080,
+            y=1308,
+            width=212,
+            height=254,
 
-            sourceX = 5,
-            sourceY = 0,
-            sourceWidth = 64,
-            sourceHeight = 64
+            sourceX = 21,
+            sourceY = 2,
+            sourceWidth = 256,
+            sourceHeight = 256
         },
         {
             -- smalltree.dark.black
-            x=456,
-            y=200,
-            width=54,
-            height=64,
+            x=1804,
+            y=1137,
+            width=212,
+            height=254,
 
-            sourceX = 5,
-            sourceY = 0,
-            sourceWidth = 64,
-            sourceHeight = 64
+            sourceX = 21,
+            sourceY = 2,
+            sourceWidth = 256,
+            sourceHeight = 256
         },
         {
             -- smalltree.dark.pink
-            x=456,
-            y=134,
-            width=54,
-            height=64,
+            x=1376,
+            y=1232,
+            width=212,
+            height=254,
 
-            sourceX = 5,
-            sourceY = 0,
-            sourceWidth = 64,
-            sourceHeight = 64
+            sourceX = 21,
+            sourceY = 2,
+            sourceWidth = 256,
+            sourceHeight = 256
         },
         {
             -- smalltree.dark.red
-            x=456,
-            y=68,
-            width=54,
-            height=64,
+            x=1590,
+            y=1137,
+            width=212,
+            height=254,
 
-            sourceX = 5,
-            sourceY = 0,
-            sourceWidth = 64,
-            sourceHeight = 64
+            sourceX = 21,
+            sourceY = 2,
+            sourceWidth = 256,
+            sourceHeight = 256
         },
         {
             -- smalltree.silhouette
-            x=456,
-            y=2,
-            width=54,
-            height=64,
+            x=1376,
+            y=976,
+            width=212,
+            height=254,
 
-            sourceX = 5,
-            sourceY = 0,
-            sourceWidth = 64,
-            sourceHeight = 64
+            sourceX = 21,
+            sourceY = 2,
+            sourceWidth = 256,
+            sourceHeight = 256
         },
         {
             -- talltree.classic.green
-            x=126,
-            y=128,
-            width=101,
-            height=122,
+            x=488,
+            y=498,
+            width=401,
+            height=485,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 100,
-            sourceHeight = 121
         },
         {
             -- talltree.dark.black
-            x=353,
-            y=126,
-            width=101,
-            height=122,
+            x=1377,
+            y=489,
+            width=401,
+            height=485,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 100,
-            sourceHeight = 121
         },
         {
             -- talltree.dark.pink
-            x=250,
-            y=126,
-            width=101,
-            height=122,
+            x=974,
+            y=489,
+            width=401,
+            height=485,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 100,
-            sourceHeight = 121
         },
         {
             -- talltree.dark.red
-            x=353,
+            x=1377,
             y=2,
-            width=101,
-            height=122,
+            width=401,
+            height=485,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 100,
-            sourceHeight = 121
         },
         {
             -- talltree.silhouette
-            x=250,
+            x=974,
             y=2,
-            width=101,
-            height=122,
+            width=401,
+            height=485,
 
-            sourceX = 0,
-            sourceY = 0,
-            sourceWidth = 100,
-            sourceHeight = 121
         },
     },
     
-    sheetContentWidth = 512,
-    sheetContentHeight = 512
+    sheetContentWidth = 2048,
+    sheetContentHeight = 2048
 }
 
 Trees.frameIndex =

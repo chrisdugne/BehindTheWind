@@ -7,8 +7,9 @@ module(..., package.seeall)
 NONE 					= 0
 
 READY_TO_THROW 	= 11
-THROWING 			= 12
-GRABBING 			= 13
+READY_TO_GRAB 		= 12
+THROWING 			= 13
+GRABBING 			= 14
 
 DRAGGING_TILE 		= 101
 
@@ -28,7 +29,7 @@ local swipping				= false
 
 -------------------------------------
 
-local TAP_TIME_LIMIT		= 200
+local TAP_TIME_LIMIT		= 150
 
 -------------------------------------
 
@@ -43,7 +44,8 @@ end
 function touchScreen( event )
 	
 	lastX, lastY = event.x, event.y
-	if(not character.floor) then
+
+	if(currentState ~= THROWING and currentState ~= GRABBING) then
 		xStart, yStart = lastX, lastY
 	end
 	
@@ -64,7 +66,15 @@ function touchScreen( event )
    	Runtime:addEventListener( "enterFrame", onTouch )
    	
 		
---	elseif event.phase == "moved" then
+	elseif event.phase == "moved" then
+		
+		if(currentState == READY_TO_THROW) then
+			setState(THROWING, function() character.setThrowing() end)
+		end 
+
+		if(currentState == READY_TO_GRAB) then
+			setState(GRABBING, function() character.setGrabbing() end)
+		end 
 --		
 --		if(currentState == THROWING 
 --		or currentState == GRABBING
@@ -88,15 +98,6 @@ function touchScreen( event )
    	elseif(currentState == GRABBING) then
 			character.grab( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
-   	
-		---------------------------------------------
-		
-		swipping = false
-		setState(NONE)
-		character.stop()
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", onTouch )
-		
 		---------------------------------------------
 		
 		local now = system.getTimer()
@@ -106,7 +107,14 @@ function touchScreen( event )
 			previousTapTime = now
 			tapping = tapping + 1
 		end
-
+   	
+		---------------------------------------------
+		
+		character.stop(tapping)
+		setState(NONE)
+   	display.getCurrentStage():setFocus( nil )
+   	Runtime:removeEventListener( "enterFrame", onTouch )
+		
 		---------------------------------------------
 	end
 
@@ -121,25 +129,24 @@ function onTouch( event )
 	local now = system.getTimer()
 	local touchDuration = now - startTouchTime
 
-	if(tapping == 1) then 
-		setState(THROWING, function() character.setThrowing() end)
-	elseif(tapping == 2) then 
-		setState(GRABBING, function() character.setGrabbing() end)
+	if(currentState ~= THROWING and currentState ~= GRABBING) then
+   	if(tapping == 1) then 
+   		setState(READY_TO_THROW)
+   	elseif(tapping == 2) then 
+   		setState(READY_TO_GRAB)
+   	end
 	end
 
 	if(touchDuration > TAP_TIME_LIMIT) then
 	
 		if(tapping == 0) then
-   		if(not swipping) then
-   		
-   			if(xStart-(character.sprite.x + game.camera.x) > 15) then
-   				character.goRight()
-   			elseif(xStart-(character.sprite.x + game.camera.x) < - 15) then
-   				character.goLeft()
-   			end
-   			
-   			character.jump()
-   		end
+			if(xStart-(character.sprite.x + game.camera.x) > 15) then
+				character.goRight()
+			elseif(xStart-(character.sprite.x + game.camera.x) < - 15) then
+				character.goLeft()
+			end
+			
+			character.jump()
 		else
    		if(currentState == THROWING or currentState == GRABBING) then
    			physicsManager.refreshTrajectory(lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y) 

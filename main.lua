@@ -112,27 +112,31 @@ router.openPlayground()
 -----------------------------------------------------------------------------------------
 -- DEV ONLY
 --
+-----------------------------------------------
+-- MEMORY counters
+--
+--hud.initTopRightText()
+--
+--Runtime:addEventListener( "enterFrame", function()
+--	local running 			= effectsManager.nbRunning
+--	local total 			= #effectsManager.effects
+--	
+--	hud.refreshTopRightText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
+--end )
 
-hud.initTopRightText()
+-----------------------------------------------
+-- RESET BUTTON
 
-Runtime:addEventListener( "enterFrame", function()
-	local running 			= effectsManager.nbRunning
-	local total 			= #effectsManager.effects
-	
-	hud.refreshTopRightText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
-end )
-
-
-local reset = display.newCircle( 20, 20, 15 )
-reset.alpha = 0.01
-
-reset:addEventListener ( "touch", function(event) 
-	if(event.phase == "began") then
-		router.openAppHome()
-	end
-	
-	return true
-end )
+--local reset = display.newCircle( 20, 20, 15 )
+--reset.alpha = 0.01
+--
+--reset:addEventListener ( "touch", function(event) 
+--	if(event.phase == "began") then
+--		router.openAppHome()
+--	end
+--	
+--	return true
+--end )
 
 
 -----------------------------------------------------------------------------------------

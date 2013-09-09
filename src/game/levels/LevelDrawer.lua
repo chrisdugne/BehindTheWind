@@ -4,18 +4,48 @@ module(..., package.seeall)
 
 -------------------------------------
 
+TILES 			= 1
+TREES 			= 2
+TILES_GREY 		= 3
+TILES_DARK 		= 4
+LEVEL_MISC 		= 5
+
+CHECKPOINT 		= 1 
+SPAWNPOINT 		= 2 
+EXIT 				= 3
+PANEL				= 4 
+
+-------------------------------------
+
 local tilesSheetConfig 		= require("src.game.graphics.Tiles")
 local treesSheetConfig 		= require("src.game.graphics.Trees")
+local levelMiscSheetConfig 	= require("src.game.graphics.LevelMisc")
+
 local tilesImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
+local tilesGreyImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
+local tilesDarkImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.dark.png", tilesSheetConfig.sheet )
 local treesImageSheet 		= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
+local levelMiscImageSheet 	= graphics.newImageSheet( "assets/images/game/LevelMisc.png", levelMiscSheetConfig.sheet )
+
+-------------------------------------
 
 sheetConfigs = {}
-sheetConfigs[1] = tilesSheetConfig
-sheetConfigs[2] = treesSheetConfig
+sheetConfigs[TILES] 			= tilesSheetConfig
+sheetConfigs[TREES] 			= treesSheetConfig
+sheetConfigs[TILES_GREY] 	= tilesSheetConfig
+sheetConfigs[TILES_DARK] 	= tilesSheetConfig
+sheetConfigs[LEVEL_MISC] 	= levelMiscSheetConfig
 
 imageSheets = {}
-imageSheets[1] = tilesImageSheet
-imageSheets[2] = treesImageSheet
+imageSheets[TILES] 			= tilesImageSheet
+imageSheets[TREES] 			= treesImageSheet
+imageSheets[TILES_GREY] 	= tilesGreyImageSheet
+imageSheets[TILES_DARK] 	= tilesDarkImageSheet
+imageSheets[LEVEL_MISC] 	= levelMiscImageSheet
+
+level = {}
+
+-------------------------------------
 
 local MOTION_SPEED = 60
 
@@ -23,6 +53,13 @@ local MOTION_SPEED = 60
 
 function designLevel()
 
+	---------------------
+
+	level 					= {}
+	level.checkPoints 	= {}
+	level.num 				= 1
+	level.bottomY 			= -100000
+			
 	---------------------
 
 	local tiles 			= GLOBALS.level1.tiles
@@ -33,6 +70,7 @@ function designLevel()
 	---------------------
 	
 	local groups = {}
+	local panelNum = 0
 	
 	for i=1, #tiles do
 
@@ -52,11 +90,8 @@ function designLevel()
 		
 		local type 			= "static"
 		local requireBody = not tile.background and not tile.foreground
-
-
-		if(tile.foreground) then
-			print("foreground", tile.startX, tile.startY)	
-		end
+		
+		--------------------
 
 		if(tile.destructible) then	
 			type = "dynamic" 	
@@ -66,6 +101,12 @@ function designLevel()
    		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
       	tile.isFixedRotation = true
       end
+
+		--------------------
+
+		if(tile.startY + 400 > level.bottomY) then
+			level.bottomY = tile.startY + 400
+		end
 		
 		--------------------
    
@@ -74,9 +115,32 @@ function designLevel()
       		groups[tile.group] = {}
       	end
    
-   		table.insert(groups[tile.group], tile)
+--   		table.insert(groups[tile.group], tile)
+			groups[tile.group][#groups[tile.group] + 1] = tile
    	end
 
+		--------------------
+		-- Level Misc 
+		-- 
+		
+		if(tile.sheet == LEVEL_MISC) then
+		
+			if(tile.num == PANEL) then
+   			panelNum = panelNum + 1
+   			tile:addEventListener( "touch", function(event)
+            	if(event.phase == "began") then
+      				hud.openPanel(level.num, panelNum)
+               end
+      			return true
+   			end)
+
+			elseif(tile.num == SPAWNPOINT) then
+   			level.spawnX = tile.x
+   			level.spawnY = tile.y
+   			display.remove(tile)
+   		end
+		end
+		
 		--------------------
 		
 	end 
@@ -90,6 +154,9 @@ function designLevel()
 	------------------------------
 	
 	for k,groupMotion in pairs(groupMotions) do
+		-- k est parfois le num en string dans le json groupMotions (gd num de groupe a priori)
+		if(type(k) == "string") then k = tonumber(k) end
+		
 		if(groupMotion) then
 			addGroupMotion(groups[k], groupMotion)
 		end
@@ -145,7 +212,9 @@ end
 ---------------------------------------------------------------------
 
 function addGroupMotion(group, motion)
-
+	
+	print("addGroupMotion")
+	utils.tprint(motion)
 	local motionStart 	= vector2D:new(motion.x1, motion.y1)
 	local motionEnd		= vector2D:new(motion.x2, motion.y2)
 	local direction 		= vector2D:Sub(motionEnd, motionStart)
@@ -157,6 +226,7 @@ function addGroupMotion(group, motion)
 	
 	for i = 1, #group do
 		group[i].bodyType = "kinematic"
+   	print("movetile", 1)
 		moveTile(group[i], motionVector, 1, duration)
 	end
 end

@@ -27,59 +27,59 @@ CharacterJump.sheet =
     
         {
             -- character.jump.1
-            x=2,
-            y=134,
-            width=64,
-            height=64,
+            x=1,
+            y=67,
+            width=32,
+            height=32,
 
         },
         {
             -- character.jump.2
-            x=68,
-            y=68,
-            width=45,
-            height=63,
+            x=34,
+            y=34,
+            width=23,
+            height=32,
 
         },
         {
             -- character.jump.3
-            x=2,
-            y=68,
-            width=64,
-            height=64,
+            x=1,
+            y=34,
+            width=32,
+            height=32,
 
         },
         {
             -- character.jump.4
-            x=2,
-            y=2,
-            width=64,
-            height=64,
+            x=1,
+            y=1,
+            width=32,
+            height=32,
 
         },
         {
             -- character.jump.5
-            x=68,
-            y=2,
-            width=45,
-            height=64,
+            x=34,
+            y=1,
+            width=23,
+            height=32,
 
         },
         {
             -- character.jump.6
-            x=2,
-            y=200,
-            width=64,
-            height=38,
-   			sourceX = -16,
-   			sourceY = 18,
-   			sourceWidth = 36,
-   			sourceHeight = 49
+            x=1,
+            y=100,
+            width=32,
+            height=19,
+   			sourceX = -8,
+   			sourceY = 9,
+   			sourceWidth = 1,
+   			sourceHeight = 1
         },
     },
     
-    sheetContentWidth = 128,
-    sheetContentHeight = 256
+    sheetContentWidth = 64,
+    sheetContentHeight = 128
 }
 
 CharacterJump.frameIndex =
