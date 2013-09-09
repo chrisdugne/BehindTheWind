@@ -106,8 +106,8 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 --router.openAppHome()
---router.openPlayground()
-router.openLevelEditor()
+router.openPlayground()
+--router.openLevelEditor()
 
 -----------------------------------------------------------------------------------------
 -- DEV ONLY

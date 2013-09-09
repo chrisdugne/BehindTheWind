@@ -95,7 +95,7 @@ function throw( x1,y1, x2,y2 )
 	effectsManager.setItemFire(rock)
 	character.rock = rock
 
-	timer.performWithDelay(4000, function()
+	timer.performWithDelay(7000, function()
 		deleteRock(rock)
 	end)
 
@@ -122,7 +122,7 @@ function grab( x1,y1, x2,y2 )
 	effectsManager.simpleBeam(rock)
 	character.rock = rock
 	
-	timer.performWithDelay(4000, function()
+	timer.performWithDelay(7000, function()
 		deleteRock(rock)
 	end)
 

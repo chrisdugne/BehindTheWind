@@ -23,8 +23,8 @@ ropes		= nil
 
 -------------------------------------
 
-local playerWalk = require("src.game.graphics.PlayerWalk")
-local playerSheet = graphics.newImageSheet( "assets/images/game/player.walk2.png", playerWalk.sheet )
+local playerWalk = require("src.game.graphics.CharacterJump")
+local playerSheet = graphics.newImageSheet( "assets/images/game/CharacterJump.png", playerWalk.sheet )
 
 function init()
 	ropes = {}
@@ -37,14 +37,50 @@ function init()
    	density = 5, 
    	friction = 1, 
    	bounce = 0.12,
-   	shape = { -7,-22,  7,-22,  7,17,  3,22,  -3,22,  -7,17 }
+   	radius = 31
    })
    
    sprite.isFixedRotation = true
 	sprite:addEventListener( "collision", collide )
 	sprite:addEventListener( "preCollision", preCollide )
 
+	Runtime:addEventListener( "enterFrame", refreshCharacterSprite )
 end	
+
+-------------------------------------
+local previousVy = 0
+local nbFramesToKeep = 0
+
+function refreshCharacterSprite(event)
+	
+	if(nbFramesToKeep > 0 ) then
+		nbFramesToKeep = nbFramesToKeep - 1
+	else
+   	
+   	local vx, vy = sprite:getLinearVelocity()
+   	
+   	if(floor ~= nil) then
+   		sprite:setFrame(1)
+   	else
+      	if(previousVy - vy > 0) then
+      		sprite:setFrame(6)
+      	
+      	elseif(vy > 230) then
+      		sprite:setFrame(5)
+      	elseif(vy > 5) then
+      		sprite:setFrame(4)
+      	elseif(vy < -220) then
+      		sprite:setFrame(2)
+      	elseif(vy < -5) then
+      		sprite:setFrame(3)
+      	else
+      		sprite:setFrame(1)
+      	end
+   	end
+   	
+   	previousVy = vy
+   end
+end
 
 -------------------------------------
 
@@ -55,17 +91,21 @@ function preCollide(event)
 end
 
 -------------------------------------
-
+-- vy = -280 is is the start vy when jumping. 
+-- so vy = -200 is around the jump start
+ 
 function collide( event )
 	local vx, vy = event.target:getLinearVelocity()
 
-	if(event.other.y > event.target.y and event.other.isFloor) then
+	if(event.other.y > event.target.y + event.target.height/2 and event.other.isFloor and vy > -200) then
 		floor = event.other
 	-- else : collision from sides or top : not the floor !
 	end
 	
-	if(state == JUMPING and vy > -200) then -- -280 is is the start vy when jumping. -200 is around the jump start 
-		state = NOT_MOVING 
+	if(state == JUMPING and vy > -200) then 
+		state = NOT_MOVING
+		nbFramesToKeep = 2
+		sprite:setFrame(6) 
 	end
 end
 
@@ -96,8 +136,6 @@ function stop()
    	state = NOT_MOVING
  	end
  	
-	sprite:pause()
-	sprite:setFrame(1)
 	local vx, vy = sprite:getLinearVelocity()
 	sprite:setLinearVelocity( 0 , vy )
 	
@@ -105,35 +143,31 @@ function stop()
 end
 
 
-function startMoveLeft()
-	if(state == JUMPING) then return end
+function goLeft()
+	if(state == JUMPING or not floor) then return end
 	local vx, vy = sprite:getLinearVelocity()
 	local floorVx, floorVy = floor:getLinearVelocity()
 	
 	state = GOING_LEFT	
 	lookLeft()
 	sprite:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
-	sprite:play()
 end
 
-function startMoveRight()
-	if(state == JUMPING) then return end
+function goRight()
+	if(state == JUMPING or not floor) then return end
 	local vx, vy = sprite:getLinearVelocity()
 	local floorVx, floorVy = floor:getLinearVelocity()
 
 	state = GOING_RIGHT
 	lookRight()
 	sprite:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )
-	sprite:play()
 end
 
 function jump()
-	if(state == JUMPING) then return end
+	if(state == JUMPING or not floor) then return end
 	
 	floor = nil
 	state = JUMPING
-	sprite:pause()
-	sprite:setFrame(5)
 	
 	local vx, vy = sprite:getLinearVelocity()
 	sprite:setLinearVelocity( vx, -280 )

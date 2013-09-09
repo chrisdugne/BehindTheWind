@@ -5,8 +5,6 @@ module(..., package.seeall)
 -------------------------------------
 
 NONE 					= 0
-SWIPE_RIGHT 		= 1
-SWIPE_LEFT 			= 2
 
 READY_TO_THROW 	= 11
 THROWING 			= 12
@@ -66,21 +64,21 @@ function touchScreen( event )
    	Runtime:addEventListener( "enterFrame", onTouch )
    	
 		
-	elseif event.phase == "moved" then
-		
-		if(currentState == THROWING 
-		or currentState == GRABBING
-		or #character.ropes > 0) then
-			return
-			
-		elseif(event.x - 10 > xStart) then
-			swipping = true
-			setState(SWIPE_RIGHT)
-
-		elseif(event.x + 10 < xStart) then
-			swipping = true
-			setState(SWIPE_LEFT)
-		end
+--	elseif event.phase == "moved" then
+--		
+--		if(currentState == THROWING 
+--		or currentState == GRABBING
+--		or #character.ropes > 0) then
+--			return
+--			
+--		elseif(event.x - 10 > xStart) then
+--			swipping = true
+--			setState(SWIPE_RIGHT)
+--
+--		elseif(event.x + 10 < xStart) then
+--			swipping = true
+--			setState(SWIPE_LEFT)
+--		end
 
 
 	elseif event.phase == "ended" then
@@ -123,13 +121,6 @@ function onTouch( event )
 	local now = system.getTimer()
 	local touchDuration = now - startTouchTime
 
-	if(currentState == SWIPE_LEFT) then
-		swipeLeft()
-
-	elseif(currentState == SWIPE_RIGHT) then
-		swipeRight()
-	end
-	
 	if(tapping == 1) then 
 		setState(THROWING, function() character.setThrowing() end)
 	elseif(tapping == 2) then 
@@ -140,10 +131,11 @@ function onTouch( event )
 	
 		if(tapping == 0) then
    		if(not swipping) then
+   		
    			if(xStart-(character.sprite.x + game.camera.x) > 15) then
-   				swipeRight()
+   				character.goRight()
    			elseif(xStart-(character.sprite.x + game.camera.x) < - 15) then
-   				swipeLeft()
+   				character.goLeft()
    			end
    			
    			character.jump()
@@ -172,16 +164,6 @@ function setState(state, toApply)
 		end
 	end
 	
-end
-
--------------------------------------
-
-function swipeLeft()
-	character.startMoveLeft()
-end
-
-function swipeRight()
-	character.startMoveRight()
 end
 
 -------------------------------------
