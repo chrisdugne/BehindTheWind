@@ -144,6 +144,11 @@ end
 function rockCollision( event )
 	if(event.other ~= character.sprite and not event.other.isSensor) then
 		deleteRock(event.target)
+		
+		if(event.other.trigger) then
+			levelDrawer.hitTrigger(event.other.trigger)
+			removeTrigger(event.other)
+		end
    end
 end
 
@@ -183,6 +188,12 @@ function deleteRock(rock)
 	effectsManager.destroyObjectWithEffect(rock)
 	rock = nil
 	
+end
+
+---------------------------------------------------------------------------
+
+function removeTrigger(trigger)
+	utils.destroyFromDisplay(trigger)
 end
 
 ---------------------------------------------------------------------------

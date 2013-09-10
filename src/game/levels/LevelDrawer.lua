@@ -57,6 +57,7 @@ function designLevel()
 
 	level 					= {}
 	level.checkPoints 	= {}
+	level.triggers 		= {}
 	level.num 				= 1
 	level.bottomY 			= -100000
 			
@@ -83,6 +84,8 @@ function designLevel()
 		tile.destructible = tiles[i].destructible
 		tile.background	= tiles[i].background
 		tile.foreground 	= tiles[i].foreground
+		tile.trigger 		= tiles[i].trigger
+		tile.pack			= tiles[i].pack
 		
 		tile.startX 		= tiles[i].x
 		tile.startY 		= tiles[i].y
@@ -115,10 +118,23 @@ function designLevel()
       		groups[tile.group] = {}
       	end
    
---   		table.insert(groups[tile.group], tile)
 			groups[tile.group][#groups[tile.group] + 1] = tile
    	end
 
+		--------------------
+		-- Triggers
+		
+		if(tile.trigger) then
+			
+      	if(not level.triggers[tile.trigger]) then
+      		level.triggers[tile.trigger] = {
+      			remaining = 0
+      		}
+      	end
+   
+			level.triggers[tile.trigger].remaining = level.triggers[tile.trigger].remaining + 1
+		end
+		
 		--------------------
 		-- Level Misc 
 		-- 
@@ -166,12 +182,21 @@ function designLevel()
 	
 	for k,groupDragLine in pairs(groupDragLines) do
 		if(groupDragLine) then
-			addGroupDraggable(groups[k], groupDragLine)
+			local dragListener = function() addGroupDraggable(groups[k], groupDragLine) end
+			
+			if(groupDragLine.trigger) then
+				level.triggers[groupDragLine.trigger].start = dragListener 
+			else
+   			 dragListener()
+			end
 		end
 	end
 	
 	-----------------------------
 	
+	print("----------")
+	utils.tprint (level)
+	print("----------")
 end
 
 -------------------------------------
@@ -249,5 +274,16 @@ function addGroupDraggable(group, dragLine)
 		group[i]:addEventListener( "touch", function(event)
 			touchController.dragGroup(group, motionLimit, event)
 		end)
+	end
+end
+
+---------------------------------------------------------------------
+
+function hitTrigger(trigger)
+
+	level.triggers[trigger].remaining = level.triggers[trigger].remaining - 1
+	
+	if(level.triggers[trigger].remaining == 0) then
+		level.triggers[trigger].start()
 	end
 end
