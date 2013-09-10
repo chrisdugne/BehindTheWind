@@ -1,0 +1,9 @@
+buttons : 
+ arrows to move scene
+ arrows to move/change tile selection
+ delete / group / groupMotion/ groupDraggable/ destructible/ BG / FG
+ triggers/ energies/ caisse d'energies
+ load / save
+ 
+ -> BG et FG ne s'appliquent que sur des groupes 
+ -> trigger ne peut s'appliquer que sur un tile seul (= trigger) ou sur un group motion/draggable (= action to trigger)
