@@ -1,9 +1,16 @@
-buttons : 
+Buttons : 
  arrows to move scene
  arrows to move/change tile selection
  delete / group / groupMotion/ groupDraggable/ destructible/ BG / FG
  triggers/ energies/ caisse d'energies
  load / save
  
+ ATTENTION
+ 
+ -> NE PAS faire un groupe movable ET draggable
  -> BG et FG ne s'appliquent que sur des groupes 
- -> trigger ne peut s'appliquer que sur un tile seul (= trigger) ou sur un group motion/draggable (= action to trigger)
+ -> trigger ne peut s'appliquer que sur un tile seul (= trigger) 
+ 	ou sur un group motion/draggable (= action to trigger)
+ 	
+ -> draggable groups : groupDragLines
+ 	Cest juste un tool pour voir a peu pres les coordonnées : il faut set les x,y a la mano pour faire des moves verticaux ou horizontaux !!

@@ -84,7 +84,7 @@ viewManager		= require "src.tools.ViewManager"
 
 GLOBALS = {
 	savedData 		= utils.loadUserData("savedData.json"),
-	level1 			= utils.loadFile("levelEditor/level1.json"),
+	level1 			= utils.loadFile("levelEditor/levelTest.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
 }
 
@@ -106,8 +106,8 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 --router.openAppHome()
---router.openPlayground()
-router.openLevelEditor()
+router.openPlayground()
+--router.openLevelEditor()
 
 -----------------------------------------------------------------------------------------
 -- DEV ONLY

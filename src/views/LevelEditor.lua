@@ -16,7 +16,6 @@ local selectedEnergyType
 
 local groups 					= {}
 local groupMotions  			= {} -- contient la liste des lines pour chaque group movable. pour les tiles uniques : tile.motion
-local groupDragLines  		= {}
 
 -----------------------------------------------------------------------------------------
 
@@ -35,12 +34,16 @@ local DRAWING_ENERGY 	= 60
 
 -----------------------------------------------------------------------------------------
 
-local state = DRAWING
 local erase, grouping, enableMove, enableDrag
 local smallEnergyButton, mediumEnergyButton, bigEnergyButton
-local currentGroup = 0
 
+-----------------------------------------------------------------------------------------
+
+local currentGroup 	= 0
+local currentTrigger = 0
 local currentSheet 	= 1
+
+local state = DRAWING
 
 -----------------------------------------------------------------------------------------
 
@@ -63,7 +66,7 @@ local dontListenThisTouchScreen = false
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	display.setDefault( "background", 110, 110, 110 )
+	display.setDefault( "background", 30, 30, 30 )
 end
 
 -----------------------------------------------------------------------------------------
@@ -244,11 +247,12 @@ function scene:refreshScene()
 	-- Spawn point / Checkpoint / Energies
 	------------------------------------------------------------------------------------------------------------
 	
-	setTrigger = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_TRIGGER, 300, 62 )
-	setTrigger:scale(0.5,0.5)
-   setTrigger:addEventListener( "touch", function(event) 
+	setTriggerButton = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_TRIGGER, 300, 62 )
+	setTriggerButton:scale(0.5,0.5)
+   setTriggerButton:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
-   		setState(SET_TRIGGER, setTrigger)
+   		currentTrigger = currentTrigger + 1
+   		setState(SET_TRIGGER, setTriggerButton)
 			return true
    	end 
   	end )
@@ -319,7 +323,7 @@ function resetStates()
 	elseif(state == ENABLING_DRAG) then
 		enableDrag:scale(0.5,0.5)
 	elseif(state == SET_TRIGGER) then
-		setTrigger:scale(0.5,0.5)
+		setTriggerButton:scale(0.5,0.5)
 	elseif(state == SET_PACK) then
 		setPack:scale(0.5,0.5)
 	elseif(state == DRAWING_ENERGY) then
@@ -423,8 +427,7 @@ end
 function scene:initLevel()
 	groups 				= {}
 	groupMotions 		= {}
-	groupDragLines 	= {}
-	editor.dragLines 	= {}
+	editor.dragLines 	= {} -- GLOBALS.levelEditor.groupDragLines contient le json, editor.dragLines les drawLine()
 	editor.energies 	= {}
 end
 
@@ -483,6 +486,10 @@ function scene:import()
    			self:setProperty(tile, "foreground")
 			end
 		
+			if(tiles[i].trigger) then
+   			self:setTrigger(tile, tiles[i].trigger)
+			end
+		
 		end
 	end 
 	
@@ -525,6 +532,11 @@ function scene:import()
 
 		if(groupMotion) then
 			self:drawGroupMotion(k, groupMotion.x1, groupMotion.y1, groupMotion.x2, groupMotion.y2)
+			
+   		if(groupMotion.trigger) then
+   			groupMotions[k].trigger = groupMotion.trigger
+   			self:setTrigger(groups[k][1], groupMotions[k].trigger)
+      	end 
    	end 
 	end 
 	
@@ -533,12 +545,18 @@ function scene:import()
 	for k,groupDraggable in pairs(GLOBALS.levelEditor.groupDragLines) do
 		if(groupDraggable) then
 			self:drawGroupDragLine(k, groupDraggable)
+			
+   		if(groupDraggable.trigger) then
+   			GLOBALS.levelEditor.groupDragLines[k].trigger = groupDraggable.trigger
+   			self:setTrigger(groups[k][1], GLOBALS.levelEditor.groupDragLines[k].trigger)
+      	end 
    	end 
 	end 
 	
 	-----------------------------
 
 	currentGroup 	= GLOBALS.levelEditor.lastGroup
+	currentTrigger = GLOBALS.levelEditor.lastTrigger
 	selectedTile 	= nil
 	selectedGroup 	= nil
 
@@ -579,6 +597,7 @@ function scene:export()
 			tile.num 				= editor[i].num
 			tile.group 				= editor[i].group
 			tile.movable 			= editor[i].movable
+			tile.trigger 			= editor[i].trigger
 			tile.draggable 		= editor[i].draggable
 			tile.destructible 	= editor[i].destructible
 			tile.background 		= editor[i].background
@@ -631,13 +650,14 @@ function scene:export()
 	
 	for k,groupMotion in pairs(groupMotions) do
 
-		local line = groupMotion
+		local motion = groupMotion
 
 		GLOBALS.levelEditor.groupMotions[k]  = {
-			x1 = line.x1,
-			y1 = line.y1,
-			x2 = line.x2,
-			y2 = line.y2
+			x1 = motion.x1,
+			y1 = motion.y1,
+			x2 = motion.x2,
+			y2 = motion.y2,
+			trigger = motion.trigger
 		}
 
 	end
@@ -650,7 +670,8 @@ function scene:export()
 	
 	--------------------------------------
 	
-	GLOBALS.levelEditor.lastGroup = currentGroup
+	GLOBALS.levelEditor.lastGroup 	= currentGroup
+	GLOBALS.levelEditor.lastTrigger 	= currentTrigger
 	
 	--------------------------------------
 
@@ -751,7 +772,6 @@ function scene:removeFromGroup(tile)
 	tile.isInGroup = false
 end
 
-
 -------------------------------------------------------------------------------------
 -- 				MOVABLE PART
 -------------------------------------------------------------------------------------
@@ -793,6 +813,10 @@ function scene:unsetMovable(tile)
 			groups[tile.group][k].movable = false
 		end 
 		
+		if(groupMotions[tile.group].trigger) then
+			self:unsetTrigger(groups[tile.group][1])
+		end	
+	
 		display.remove(groups[tile.group][1].icons["movable"])
 		self:deleteGroupMotion(tile.group)
 	else
@@ -885,6 +909,10 @@ function scene:unsetDraggable(tile)
 			groups[tile.group][k].draggable = false
 		end 
 		
+		if(GLOBALS.levelEditor.groupDragLines[tile.group].trigger) then
+			self:unsetTrigger(groups[tile.group][1])
+		end	
+		
 		display.remove(groups[tile.group][1].icons["draggable"])
 		self:deleteGroupDragLine(tile.group)
 	else
@@ -921,6 +949,7 @@ function scene:drawGroupDragLine(group, groupDraggable)
 	self:deleteGroupDragLine(group)
 	local line = self:drawDragLine(groupDraggable.x1, groupDraggable.y1, groupDraggable.x2, groupDraggable.y2)
 	editor.dragLines[group] = line
+	GLOBALS.levelEditor.groupDragLines[group] = groupDraggable
 end
 
 function scene:drawDragLine(x1,y1, x2,y2)
@@ -934,6 +963,77 @@ function scene:drawDragLine(x1,y1, x2,y2)
 	return line
 end
 
+
+-------------------------------------------------------------------------------------
+-- 		TRIGGERS
+-------------------------------------------------------------------------------------
+
+function scene:changeTrigger(tile)
+
+	if(tile.trigger 
+	or (tile.group 
+	and ((groupMotions[tile.group] and groupMotions[tile.group].trigger) 
+	or (GLOBALS.levelEditor.groupDragLines[tile.group] and GLOBALS.levelEditor.groupDragLines[tile.group].trigger)))) then
+		self:unsetTrigger(tile)
+	else
+		self:setTrigger(tile, currentTrigger)
+	end
+
+end
+
+function scene:setTrigger(tile, trigger)
+
+	if(tile.group) then
+		
+		local triggerApplied = false
+		
+		if(groupMotions[tile.group]) then
+			groupMotions[tile.group].trigger = trigger
+			triggerApplied = true
+		end
+		
+		if(GLOBALS.levelEditor.groupDragLines[tile.group]) then
+			GLOBALS.levelEditor.groupDragLines[tile.group].trigger = trigger
+			triggerApplied = true
+		end
+		
+		if(triggerApplied) then
+			self:drawIcon(groups[tile.group][1], "trigger", trigger)
+			selectedGroup = tile.group
+		end
+		
+	else
+		tile.trigger = trigger
+		self:drawIcon(tile, "trigger", trigger)
+		selectedGroup = nil
+		selectedTile = tile
+	end
+	
+end
+
+function scene:unsetTrigger(tile)
+	
+	if(tile.group) then
+		
+		if(groupMotions[tile.group]) then
+			groupMotions[tile.group].trigger = nil
+		end
+		
+		if(GLOBALS.levelEditor.groupDragLines[tile.group]) then
+			GLOBALS.levelEditor.groupDragLines[tile.group].trigger = nil
+		end
+		
+		display.remove(groups[tile.group][1].icons["trigger"])
+		groups[tile.group][1].icons["trigger"] = nil
+	else
+		tile.trigger = nil
+		display.remove(tile.icons["trigger"])
+		tile.icons["trigger"] = nil
+	end
+	
+	selectedGroup 	= nil
+	selectedTile 	= nil
+end
 
 -------------------------------------------------------------------------------------
 -- 		COMMON ? PART
@@ -1017,7 +1117,7 @@ end
 
 ------------------------------------------
 
-function scene:drawIcon(tile, property)
+function scene:drawIcon(tile, property, value)
 	
 	local image = scene:getImage(property)
 	print("draw icon " .. property .. " image " .. image)
@@ -1027,8 +1127,13 @@ function scene:drawIcon(tile, property)
 		num = num + 1
 	end 
 
-	tile.icons[property]= levelDrawer.drawTile( editor, levelDrawer.TILES, image, tile.x - 15*num , tile.y - 20 )
-	tile.icons[property]:scale(0.4,0.4)
+	if(value) then
+   	tile.icons[property] = display.newText( editor, value, tile.x - 20*num, tile.y- tile.height/2 -20, FONT, 17 )
+   	tile.icons[property]:setTextColor(215, 0, 0)
+	else
+		tile.icons[property]= levelDrawer.drawTile( editor, levelDrawer.TILES, image, tile.x - 15*num , tile.y - 20 )
+		tile.icons[property]:scale(0.4,0.4)
+   end
 end
 
 
@@ -1133,42 +1238,39 @@ function scene:touchTile(tile, event)
 
 		if(state == ERASING) then
 			self:deleteTile(tile)
-			return
+			return true
 
 		elseif(state == GROUPING) then
 			self:changeGroup(tile)
-			return
+			return true
 
 		elseif(state == ENABLING_MOVE) then
 			self:changeMoveAbility(tile)
-			return
+			return true
 
 		elseif(state == ENABLING_DRAG) then
 			self:changeDragAbility(tile)
-			return
+			return true
 
 		elseif(state == SET_DESTRUCTIBLE) then
 			self:changeState(tile, "destructible")
-			return
+			return true
 
 		elseif(state == SET_BACKGROUND) then
 			self:changeState(tile, "background")
-			return
+			return true
 
 		elseif(state == SET_FOREGROUND) then
 			self:changeState(tile, "foreground")
-			return
+			return true
 
 		elseif(state == SET_TRIGGER) then
-			if(tile.group) then
-			else
-				self:changeState(tile, "trigger")
-			end
-			return
+			self:changeTrigger(tile)
+			return true
 
 		end
 
-		if(isDragging) then return end
+		if(isDragging) then return true end
 	end
 
 	if(state == DRAWING) then
@@ -1181,6 +1283,8 @@ function scene:touchTile(tile, event)
    	display.getCurrentStage():setFocus( nil )
 		isDragging = false
 	end
+	
+	return true
 	
 end
 
