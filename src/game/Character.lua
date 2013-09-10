@@ -112,6 +112,7 @@ end
 -- so vy = -200 is around the jump start
  
 function collide( event )
+	print("collide character")
 	local vx, vy = event.target:getLinearVelocity()
 
 	if(event.other.y > event.target.y and event.other.isFloor and vy > -200) then

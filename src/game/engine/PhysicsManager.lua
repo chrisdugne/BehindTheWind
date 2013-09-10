@@ -91,6 +91,7 @@ function throw( x1,y1, x2,y2 )
 	
 	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
 	rock:addEventListener( "collision", rockCollision )
+	rock.isRock = true
 	
 	effectsManager.setItemFire(rock)
 	character.rock = rock
@@ -144,11 +145,6 @@ end
 function rockCollision( event )
 	if(event.other ~= character.sprite and not event.other.isSensor) then
 		deleteRock(event.target)
-		
-		if(event.other.trigger) then
-			levelDrawer.hitTrigger(event.other.trigger)
-			removeTrigger(event.other)
-		end
    end
 end
 
@@ -156,6 +152,7 @@ end
 function grabCollision( event )
 	if(event.other ~= character.sprite 
 	and not event.other.isSensor
+	and not event.other.trigger
 	and not event.other.isAttach) then
 
 		if ( event.phase == "ended" ) then

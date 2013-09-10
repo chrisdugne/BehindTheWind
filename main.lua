@@ -84,7 +84,7 @@ viewManager		= require "src.tools.ViewManager"
 
 GLOBALS = {
 	savedData 		= utils.loadUserData("savedData.json"),
-	level1 			= utils.loadFile("levelEditor/levelTest.json"),
+	level1 			= utils.loadFile("levelEditor/level1.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
 }
 
@@ -115,14 +115,14 @@ router.openPlayground()
 -----------------------------------------------
 -- MEMORY counters
 --
---hud.initTopRightText()
---
---Runtime:addEventListener( "enterFrame", function()
---	local running 			= effectsManager.nbRunning
---	local total 			= #effectsManager.effects
---	
---	hud.refreshTopRightText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
---end )
+hud.initTopRightText()
+
+Runtime:addEventListener( "enterFrame", function()
+	local running 			= effectsManager.nbRunning
+	local total 			= #effectsManager.effects
+	
+	hud.refreshTopRightText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
+end )
 
 -----------------------------------------------
 -- RESET BUTTON

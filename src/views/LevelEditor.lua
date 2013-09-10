@@ -328,8 +328,8 @@ function resetStates()
 		setPack:scale(0.5,0.5)
 	elseif(state == DRAWING_ENERGY) then
 		smallEnergyButton.alpha = 0.7
-		mediumEnergyButton.alpha = 0.7
-		bigEnergyButton.alpha = 0.7
+--		mediumEnergyButton.alpha = 0.7
+--		bigEnergyButton.alpha = 0.7
 	end
 end
 

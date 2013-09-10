@@ -16,33 +16,10 @@ end
 ------------------------------------------------------------------------------------------
 
 function initBack()
-	back = display.newImage( "assets/images/stars.jpg", 0)  
-	back:scale(0.7,0.7)
+	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	back.x = display.viewableContentWidth/2  
 	back.y = display.viewableContentHeight/2  
 	back:toBack();
-	zoomBack(back)
-	
-end
-
-function zoomBack(back)
-	transition.to( back, { 
-		time=113000, 
-		x = back.x*0.4, 
-		xScale = 1.4, 
-		yScale = 1.4, 
-		onComplete= function() unzoomBack(back) end
-	})  
-end
-
-function unzoomBack(back)
-	transition.to( back, { 
-		time=113000, 
-		x = back.x/0.4, 
-		xScale = 0.6, 
-		yScale = 0.6, 
-		onComplete= function() zoomBack(back) end
-	})  
 end
 
 ------------------------------------------------------------------------------------------

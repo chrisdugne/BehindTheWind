@@ -146,7 +146,9 @@ end
 -----------------------------------------------------------------------------
 
 function drawEnergy(x, y, type)
-
+	
+	if(not type) then type = 1 end
+	
 	local light=CBE.VentGroup{
 		{
 			title="light",
@@ -159,9 +161,9 @@ function drawEnergy(x, y, type)
 			emitDelay=250,
 			lifeSpan=400,
 			fadeInTime=700,
-			scale=0.3,
+			scale=0.14,
 			physics={
-				gravityY=0.01,
+				gravityY=0.03,
 			}
 		}
 	}
@@ -232,6 +234,69 @@ function drawFollow( )
 	
 	registerNewEffect(follow)
 	timer.performWithDelay(3000, function() destroyEffect(follow) end)
+end
+
+------------------------------------------------------------------------------------------
+-- TRIGGERS
+------------------------------------------------------------------------------------------
+
+function drawTrigger(x, y, trigger)
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{12,122,211},{55,255,20},{255,255,20}},
+			x = x,
+			y = y,
+			perEmit=3,
+			emissionNum=0,
+			emitDelay=250,
+			lifeSpan=400,
+			fadeInTime=700,
+			scale=0.2,
+			physics={
+				gravityY=0.06,
+			}
+		}
+	}
+	
+	local body = display.newImage("assets/images/game/energy.body.png")
+	body.trigger = trigger
+	body.light = light
+	body.x = x
+	body.y = y
+	
+   physics.addBody( body, "kinematic", { 
+   	density = 0, 
+   	friction = 0, 
+   	bounce = 0,
+   })
+   
+   game.camera:insert(body)
+	body:addEventListener( "preCollision", preCollideTrigger )
+	body:addEventListener( "collision", collideTrigger )
+
+	light.body = body
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+end
+
+function preCollideTrigger( event )
+	if(event.contact) then
+		event.contact.isEnabled = false
+   end
+end
+
+function collideTrigger( event )
+	if(event.other.isRock) then
+		if(not event.target.light.beingDestroyed) then
+   		destroyEffect(event.target.light)
+      end
+      
+		levelDrawer.hitTrigger(event.target.trigger)
+   end
 end
 
 ------------------------------------------------------------------------------------------

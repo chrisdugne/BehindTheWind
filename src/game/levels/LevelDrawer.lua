@@ -133,6 +133,8 @@ function designLevel()
       	end
    
 			level.triggers[tile.trigger].remaining = level.triggers[tile.trigger].remaining + 1
+			effectsManager.drawTrigger(tile.x, tile.y, tile.trigger)
+			display.remove(tile)
 		end
 		
 		--------------------
@@ -202,9 +204,6 @@ function designLevel()
 	
 	-----------------------------
 	
-	print("----------")
-	utils.tprint (level)
-	print("----------")
 end
 
 -------------------------------------
@@ -289,6 +288,7 @@ end
 
 function hitTrigger(trigger)
 
+	print("hit trigger " .. trigger)
 	level.triggers[trigger].remaining = level.triggers[trigger].remaining - 1
 	
 	if(level.triggers[trigger].remaining == 0) then
