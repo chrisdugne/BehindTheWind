@@ -131,6 +131,7 @@ end
 -------------------------------------
 
 function getLaunchVector()
+
 	local direction = vector2D:new(xStart - lastX, yStart - lastY )
 	if(direction:magnitude() > SWIPE_MAX) then
 		direction:normalize()
