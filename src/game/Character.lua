@@ -34,7 +34,7 @@ function init()
    physics.addBody( sprite, { 
    	density = 5, 
    	friction = 1, 
-   	bounce = 0.12,
+   	bounce = 0,
    	radius = 15
    })
    
@@ -61,7 +61,7 @@ local previousVy = 0
 local nbFramesToKeep = 0
 
 function checkCharacter(event)
-	
+
 	if(nbFramesToKeep > 0 ) then
 		nbFramesToKeep = nbFramesToKeep - 1
 	else
@@ -112,8 +112,12 @@ end
 -- so vy = -200 is around the jump start
  
 function collide( event )
-	print("collide character")
+	
 	local vx, vy = event.target:getLinearVelocity()
+
+--	if(not floor and vy > -200 and event.other.y-event.other.height/2 < event.target.y+event.target.height/2 + 20) then
+--		print("SIDE")
+--	else
 
 	if(event.other.y > event.target.y and event.other.isFloor and vy > -200) then
 		floor = event.other

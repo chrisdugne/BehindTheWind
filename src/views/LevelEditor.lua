@@ -1250,13 +1250,23 @@ end
 
 function scene:touchTile(tile, event)
 
+	
 	if(event.phase == "began") then
 
+   	if(dontListenNextTouch) then
+   		return
+   	end
+   	
+   	-- if many tiles are under the touch : listen only the top one.
+   	-- the children order seems to be from front to back so its exactly what we need here
+		dontListenNextTouch = true
+		
 		if(state == ERASING) then
 			self:deleteTile(tile)
 			return true
 
 		elseif(state == GROUPING) then
+			dontListenNextTouch = true
 			self:changeGroup(tile)
 			return true
 
@@ -1297,6 +1307,7 @@ function scene:touchTile(tile, event)
 
 	if(event.phase == "ended") then
    	display.getCurrentStage():setFocus( nil )
+		dontListenNextTouch = false
 		isDragging = false
 	end
 	
