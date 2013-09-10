@@ -118,7 +118,6 @@ function collide( event )
 		floor = event.other
 	else
 		-- collision from sides or top : not the floor !
-		floor = nil
 	end
 	
 	if(state == JUMPING and vy > -200) then 

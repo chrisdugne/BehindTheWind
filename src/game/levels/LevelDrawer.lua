@@ -174,7 +174,15 @@ function designLevel()
 		if(type(k) == "string") then k = tonumber(k) end
 		
 		if(groupMotion) then
-			addGroupMotion(groups[k], groupMotion)
+			-- corona crash sans le performWithDelay ?
+			local startMotion = function() timer.performWithDelay(5, function () addGroupMotion(groups[k], groupMotion) end) end
+			
+			if(groupMotion.trigger) then
+				level.triggers[groupMotion.trigger].start = startMotion 
+			else
+   			 startMotion()
+			end
+			
 		end
 	end
 
@@ -182,12 +190,12 @@ function designLevel()
 	
 	for k,groupDragLine in pairs(groupDragLines) do
 		if(groupDragLine) then
-			local dragListener = function() addGroupDraggable(groups[k], groupDragLine) end
+			local enableDrag = function() addGroupDraggable(groups[k], groupDragLine) end
 			
 			if(groupDragLine.trigger) then
-				level.triggers[groupDragLine.trigger].start = dragListener 
+				level.triggers[groupDragLine.trigger].start = enableDrag 
 			else
-   			 dragListener()
+   			 enableDrag()
 			end
 		end
 	end
