@@ -114,7 +114,7 @@ end
 function collide( event )
 	local vx, vy = event.target:getLinearVelocity()
 
-	if(event.other.y > event.target.y + event.target.height/2 and event.other.isFloor and vy > -200) then
+	if(event.other.y > event.target.y and event.other.isFloor and vy > -200) then
 		floor = event.other
 	else
 		-- collision from sides or top : not the floor !

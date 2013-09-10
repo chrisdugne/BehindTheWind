@@ -15,6 +15,10 @@ DRAGGING_TILE 		= 101
 
 -------------------------------------
 
+SWIPE_MAX 			= 140 
+
+-------------------------------------
+
 local previousState 		= NONE
 local currentState 		= NONE
 local xStart				= 0
@@ -94,9 +98,11 @@ function touchScreen( event )
 	elseif event.phase == "ended" then
    	
    	if(currentState == THROWING) then
-			character.throw( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
+   		local launch = getLaunchVector()
+			character.throw( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	elseif(currentState == GRABBING) then
-			character.grab( lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
+   		local launch = getLaunchVector()
+			character.grab( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
 		---------------------------------------------
 		
@@ -121,6 +127,18 @@ function touchScreen( event )
 	return true
 end
 
+
+-------------------------------------
+
+function getLaunchVector()
+	local direction = vector2D:new(xStart - lastX, yStart - lastY )
+	if(direction:magnitude() > SWIPE_MAX) then
+		direction:normalize()
+		direction:mult(SWIPE_MAX)
+	end
+
+	return vector2D:new(xStart - direction.x, yStart - direction.y)
+end
 
 -------------------------------------
 
@@ -149,7 +167,8 @@ function onTouch( event )
 			character.jump()
 		else
    		if(currentState == THROWING or currentState == GRABBING) then
-   			physicsManager.refreshTrajectory(lastX - game.camera.x,lastY - game.camera.y, xStart - game.camera.x,yStart - game.camera.y) 
+   			local launch = getLaunchVector()
+				physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
 			end
 		end

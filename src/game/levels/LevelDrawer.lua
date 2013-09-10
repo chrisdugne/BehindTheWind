@@ -213,8 +213,6 @@ end
 
 function addGroupMotion(group, motion)
 	
-	print("addGroupMotion")
-	utils.tprint(motion)
 	local motionStart 	= vector2D:new(motion.x1, motion.y1)
 	local motionEnd		= vector2D:new(motion.x2, motion.y2)
 	local direction 		= vector2D:Sub(motionEnd, motionStart)
@@ -226,7 +224,6 @@ function addGroupMotion(group, motion)
 	
 	for i = 1, #group do
 		group[i].bodyType = "kinematic"
-   	print("movetile", 1)
 		moveTile(group[i], motionVector, 1, duration)
 	end
 end
