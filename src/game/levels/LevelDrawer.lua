@@ -71,7 +71,6 @@ function designLevel()
 	---------------------
 	
 	local groups = {}
-	local panelNum = 0
 	
 	for i=1, #tiles do
 
@@ -144,13 +143,9 @@ function designLevel()
 		if(tile.sheet == LEVEL_MISC) then
 		
 			if(tile.num == PANEL) then
-   			panelNum = panelNum + 1
-   			tile:addEventListener( "touch", function(event)
-            	if(event.phase == "began") then
-      				hud.openPanel(level.num, panelNum)
-               end
-      			return true
-   			end)
+				tile.panelNum = tiles[i].panelNum
+				print("found panel " .. tile.panelNum)
+   			tile:addEventListener( "touch", openPanel)
 
 			elseif(tile.num == SPAWNPOINT) then
    			level.spawnX = tile.x
@@ -226,6 +221,16 @@ end
 
 -------------------------------------
 
+function openPanel(event)
+	if(event.phase == "began") then
+		print("open panel " .. event.target.panelNum)
+		hud.openPanel(level.num, event.target.panelNum)
+   end
+	return true
+end
+
+-------------------------------------
+
 function drawTile(view, sheet, num, x, y)
 	
 	if(not sheet) then
@@ -288,7 +293,6 @@ end
 
 function hitTrigger(trigger)
 
-	print("hit trigger " .. trigger)
 	level.triggers[trigger].remaining = level.triggers[trigger].remaining - 1
 	
 	if(level.triggers[trigger].remaining == 0) then

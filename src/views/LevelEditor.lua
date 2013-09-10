@@ -451,11 +451,13 @@ function scene:import()
 		--- just set the boolean movable to be check by group after groups is formed
 		tile.movable 			= tiles[i].movable
 		tile.motion 			= tiles[i].motion
-		tile.trigger 			= tiles[i].trigger
 		tile.draggable 		= tiles[i].draggable
 		tile.destructible 	= tiles[i].destructible
 		tile.background 		= tiles[i].background
 		tile.foreground 		= tiles[i].foreground
+
+		tile.trigger 			= tiles[i].trigger
+		tile.panelNum 			= tiles[i].panelNum
 		
 		if(tiles[i].group) then
 			--- add to group
@@ -588,6 +590,7 @@ function scene:export()
 
 	local numTile 		= 1
 	local numEnergy 	= 1
+	local panelNum 	= 0
 	
 	for i=1, editor.numChildren,1 do
 
@@ -604,6 +607,18 @@ function scene:export()
 			tile.foreground 		= editor[i].foreground
 			tile.x 					= editor[i].x
 			tile.y 					= editor[i].y
+				
+			if(tile.sheet == levelDrawer.LEVEL_MISC) then
+				if(tile.num == levelDrawer.PANEL) then
+					
+					if(editor[i].panelNum) then
+	      			tile.panelNum = editor[i].panelNum -- recup de celui d'avant (change a la mano)
+	      		else
+						panelNum = panelNum + 1
+   					tile.panelNum = panelNum -- set par defaut (a changer a la mano) (car ordre des children pas forcement celui dans lequel on les a pose)
+					end
+				end
+			end
 			
 			if(editor[i].motion) then
 				local line = editor[i].motion
@@ -813,7 +828,7 @@ function scene:unsetMovable(tile)
 			groups[tile.group][k].movable = false
 		end 
 		
-		if(groupMotions[tile.group].trigger) then
+		if(groupMotions[tile.group] and groupMotions[tile.group].trigger) then
 			self:unsetTrigger(groups[tile.group][1])
 		end	
 	
@@ -909,7 +924,8 @@ function scene:unsetDraggable(tile)
 			groups[tile.group][k].draggable = false
 		end 
 		
-		if(GLOBALS.levelEditor.groupDragLines[tile.group].trigger) then
+		if(GLOBALS.levelEditor.groupDragLines[tile.group] 
+		and GLOBALS.levelEditor.groupDragLines[tile.group].trigger) then
 			self:unsetTrigger(groups[tile.group][1])
 		end	
 		
