@@ -172,7 +172,7 @@ function designLevel()
 		
 		if(groupMotion) then
 			-- corona crash sans le performWithDelay ?
-			local startMotion = function() timer.performWithDelay(5, function () addGroupMotion(groups[k], groupMotion) end) end
+			local startMotion = function() timer.performWithDelay(1, function () addGroupMotion(groups[k], groupMotion) end) end
 			
 			if(groupMotion.trigger) then
 				level.triggers[groupMotion.trigger].start = startMotion 

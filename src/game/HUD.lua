@@ -120,6 +120,7 @@ function refreshTopRightText(text)
 		topRightText.text = text
 		topRightText.size = 12
 		topRightText.x 	= display.contentWidth - topRightText.contentWidth/2 - 10
+   	elements:toFront()
 	end
 end
 

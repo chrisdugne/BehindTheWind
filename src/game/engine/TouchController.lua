@@ -157,23 +157,35 @@ function onTouch( event )
 	end
 
 	if(touchDuration > TAP_TIME_LIMIT) then
-	
+
 		if(tapping == 0) then
-		
-   		local vx, vy = character.sprite:getLinearVelocity()
-   		
-			if(not character.collideOnRight and xStart-(character.sprite.x + game.camera.x) > 15) then
-				character.goRight()
-			elseif(not character.collideOnLeft and xStart-(character.sprite.x + game.camera.x) < - 15) then
-				character.goLeft()
+
+			if(not character.hanging 
+			or character.floor 
+			or character.collideOnLeft
+			or character.collideOnRight)
+			then
+
+				if(not character.collideOnRight and xStart-(character.sprite.x + game.camera.x) > 15) then
+					character.goRight()
+				elseif(not character.collideOnLeft and xStart-(character.sprite.x + game.camera.x) < - 15) then
+					character.goLeft()
+				end
+
+				if (character.floor) then
+					print("---> try to jump")
+					character.jump()
+				end
+			else
+				if (character.hanging) then
+   				print("---> hanging")
+				end
 			end
-			
-			character.jump()
 		else
-   		if(currentState == THROWING or currentState == GRABBING) then
-   			local launch = getLaunchVector()
+			if(currentState == THROWING or currentState == GRABBING) then
+				local launch = getLaunchVector()
 				physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
-   			if(lastX > xStart) then character.lookLeft() else character.lookRight() end
+				if(lastX > xStart) then character.lookLeft() else character.lookRight() end
 			end
 		end
 	end

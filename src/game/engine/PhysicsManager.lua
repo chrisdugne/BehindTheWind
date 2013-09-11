@@ -119,6 +119,7 @@ function grab( x1,y1, x2,y2 )
 	
 	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
 	rock:addEventListener( "collision", grabCollision )
+	rock.isGrab = true
 	
 	effectsManager.simpleBeam(rock)
 
@@ -318,9 +319,9 @@ function buildRopeTo(x,y,ground)
 	local joint = physics.newJoint( "distance", character.sprite, attach, character.sprite.x,character.sprite.y, attach.x,attach.y )
 	
 	joint.isSensor = true
-	joint.length = 50
-	joint.frequency = 0.89
-	joint.dampingRatio = 0.39
+	joint.length = 75
+	joint.frequency = 1.7
+	joint.dampingRatio = 0.29
 	
 	rope.joint = joint
 	
@@ -334,6 +335,7 @@ function buildRopeTo(x,y,ground)
 
 	attach:addEventListener ( "touch", detachRope)
 	character.sprite:addEventListener ( "touch", detachRope) 
+	character.setHanging(true)
 end
 
 ---------------------------------------------------------------------------
@@ -360,6 +362,10 @@ function detachRope(event)
 	end
 
 	---------------------
+	
+	if(#character.ropes == 0) then	
+		character.setHanging(false)
+	end
 	
 	character.sprite:removeEventListener ( "touch", detachRope) 
 	

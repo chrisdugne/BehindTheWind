@@ -5,11 +5,12 @@ module(..., package.seeall)
 -------------------------------------
 
 local CHARACTER_SPEED = 135
+local JUMP_SPEED = -267
 local NOT_MOVING 	= 0
 local GOING_LEFT 	= 1
 local GOING_RIGHT = 2
 
-local JUMPING 	= false 
+local RADIUS = 16
 
 -------------------------------------
 
@@ -24,8 +25,11 @@ collideOnRight = nil
 sprite 			= nil
 ropes				= nil
 
-timeOfJump		= 0
+timeLeavingFloor		= 0
 leavingFloor 	= nil
+
+jumping 	= false 
+hanging 	= false 
 
 -------------------------------------
 
@@ -40,8 +44,8 @@ function init()
    physics.addBody( sprite, { 
    	density = 5, 
    	friction = 1, 
-   	bounce = 0,
-   	radius = 15
+   	bounce = 0.2,
+   	radius = RADIUS
    })
    
    sprite.isFixedRotation = true
@@ -67,17 +71,25 @@ local previousVy = 0
 local nbFramesToKeep = 0
 
 function checkCharacter(event)
-	
+
+	local vx, vy = sprite:getLinearVelocity()
+
+--	local s = ""
+--	if(hanging) then s = s .. "hanging, " end
+--	if(jumping) then s = s .. "jumping, " end
+--	if(floor) then s = s .. "on floor, " end
+--	if(collideOnRight) then s = s .. "on right tile, " end
+--	if(collideOnLeft) then s = s .. "on left tile, " end
+--   print(s, vx, vy, previousVy)
+   
 	if(nbFramesToKeep > 0 ) then
 		nbFramesToKeep = nbFramesToKeep - 1
 	else
    	
-   	local vx, vy = sprite:getLinearVelocity()
-   	
    	if(floor ~= nil) then
    		sprite:setFrame(1)
    	else
-      	if(previousVy - vy > 0) then
+      	if(previousVy - vy > 0 and not hanging) then
       		sprite:setFrame(6)
       	
       	elseif(vy > 230) then
@@ -108,8 +120,10 @@ end
 -------------------------------------
 
 function preCollide(event)
-	if(event.contact and event.other.isSensor) then
-		event.contact.isEnabled = false
+	if(event.contact) then
+	 	if(event.other.isSensor) then
+			event.contact.isEnabled = false
+		end
    end
 end
 
@@ -119,33 +133,88 @@ end
  
 function collide( event )
 	
+	-------------------------------------------
+
+	if(event.other.isRock) then return end
+	if(event.other.isGrab) then return end
+	if(event.other.isSensor) then return end
+	if(event.other.isAttach) then print("collide with attach") return end
+
 	local now = system.getTimer()
-	if(now - timeOfJump < 70 and event.other == leavingFloor) then return end
+	if(leavingFloor and event.other.y == leavingFloor.y) then
+		if(now - timeLeavingFloor < 70) then
+   		return
+		end
+	end
+
+	-------------------------------------------
 	
-	local characterBottom = event.target.y + event.target.height/2
-	local tileTop = event.other.y - event.other.height/2 + 5
+	
+	local tileTop 					= event.other.y 	- event.other.height/2 
+	local characterBottom 		= event.target.y 	+ RADIUS
+	
+	-------------------------------------------
+
+	local characterTop 			= event.target.y 	- RADIUS
+	local characterLeft 			= event.target.x 	- RADIUS
+	local characterRight 		= event.target.x 	+ RADIUS
+	local tileBottom 				= event.other.y 	+ event.other.height/2
+	local tileLeft 				= event.other.x 	- event.other.width/2
+	local tileRight 				= event.other.x 	+ event.other.width/2
+--
+--	display.remove(line1)
+--	display.remove(line2)
+--	display.remove(line3)
+--	display.remove(line4)
+--
+--	line1 = display.newLine(game.camera, tileLeft,tileTop, tileRight, tileTop)
+--	line2 = display.newLine(game.camera, tileRight,tileTop, tileRight, tileBottom)
+--	line3 = display.newLine(game.camera, tileRight,tileBottom, tileLeft, tileBottom)
+--	line4 = display.newLine(game.camera, tileLeft,tileBottom, tileLeft, tileTop)
+--
+--	display.remove(line5)
+--	display.remove(line6)
+--	display.remove(line7)
+--	display.remove(line8)
+--
+--	line5 = display.newLine(game.camera, characterLeft,characterTop, characterRight, characterTop)
+--	line6 = display.newLine(game.camera, characterRight,characterTop, characterRight, characterBottom)
+--	line7 = display.newLine(game.camera, characterRight,characterBottom, characterLeft, characterBottom)
+--	line8 = display.newLine(game.camera, characterLeft,characterBottom, characterLeft, characterTop)
+
+	-------------------------------------------
 	
 	local vx, vy = event.target:getLinearVelocity()
 	
 	if(tileTop > characterBottom and event.other.isFloor and vy > -200) then
+--		print("touch floor")
 		floor = event.other
 		collideOnLeft, collideOnRight = nil, nil
+		jumping = false
+	elseif(tileBottom < characterTop and event.other.isFloor) then
+--		print("touch top")
 	else
 		-- vx on move is 135
 		-- less is a "bounce" due to collision : to ignore !
-		if(vx > 100) then
+--		print("touch side ? ", characterLeft, characterRight, tileLeft, tileRight, " right :  " .. tostring(characterLeft < tileLeft and tileLeft < characterRight) .. " |  left : " .. tostring(characterLeft < tileRight and tileRight < characterRight) .. " | vx = " .. vx)
+		if(characterLeft < tileLeft and tileLeft < characterRight ) then
+--			print("collideOnRight")
 			collideOnRight = event.other
-		elseif(vx < -100) then
+		elseif(characterLeft < tileRight and tileRight < characterRight) then
+--			print("collideOnLeft")
 			collideOnLeft = event.other
+		else
+			collideOnLeft = nil
+			collideOnRight = nil
 		end
 
-		floor = nil
 	end
 	
-	if(state == JUMPING and vy > -200) then 
+	if((jumping or hanging) and vy > -200) then 
 		state = NOT_MOVING
 		
 		if(floor) then
+			print("scratch")
    		nbFramesToKeep = 2
 			sprite:setFrame(6) 
    	end
@@ -172,10 +241,31 @@ function setThrowing()
 	effectsManager.setCharacterThrowing()
 end
 
+function setHanging(value)
+	hanging = value
+	if(hanging) then
+		timeLeavingFloor  = system.getTimer()
+		
+		timer.performWithDelay(100, function()
+         if(hanging) then
+				local vx, vy = sprite:getLinearVelocity()
+         	if(math.abs(vy) > 1) then 
+         		floor = nil 
+         		collideOnRight	= nil
+         		collideOnLeft 	= nil
+         	end
+         end
+		end)
+	end
+end
+
 -------------------------------------
 
 function stop(tapping)
-	if(state ~= JUMPING) then 
+	
+	print("stop")
+
+	if(not jumping and not hanging) then 
    	state = NOT_MOVING
  	end
  
@@ -211,19 +301,18 @@ function goRight()
 end
 
 function jump()
-	if(state == JUMPING or not floor) then return end
-	
-	timeOfJump = system.getTimer()
-	leavingFloor = floor
+	if(jumping or (not hanging and not floor)) then return end
+	print("--> perform jump")
+	timeLeavingFloor = system.getTimer()
+	leavingFloor 	= floor
+	jumping 			= true
 	
 	floor = nil
 	collideOnLeft = nil
 	collideOnRight = nil
-	state = JUMPING
-	
 	
 	local vx, vy = sprite:getLinearVelocity()
-	sprite:setLinearVelocity( vx, -255 )
+	sprite:setLinearVelocity( vx, JUMP_SPEED )
 end
 
 -------------------------------------

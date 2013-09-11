@@ -7,6 +7,7 @@ module(..., package.seeall)
 local fires = {}
 local elements = {}
 
+local mist1, mist2, back
 -----------------------------------------------------------------------------------------
 
 function initView(view)
@@ -16,6 +17,10 @@ end
 ------------------------------------------------------------------------------------------
 
 function initBack()
+	display.remove(mist1)
+	display.remove(mist2)
+	display.remove(back)
+	
 	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist1.x = display.viewableContentWidth/2  
 	mist1.y = display.viewableContentHeight/2
@@ -45,6 +50,11 @@ function replaceMists()
 	mist1.x = display.viewableContentWidth/2  
 	mist2.x = display.viewableContentWidth/2  + display.contentWidth
 	moveMists()
+end
+
+function resetToBack()
+	mist1:toBack();
+	mist2:toBack();
 end
 
 ------------------------------------------------------------------------------------------

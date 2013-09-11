@@ -66,7 +66,7 @@ local dontListenThisTouchScreen = false
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	display.setDefault( "background", 30, 30, 30 )
+	viewManager.initBack()
 end
 
 -----------------------------------------------------------------------------------------
@@ -570,7 +570,8 @@ function scene:import()
 		end
 	end
 	
-	editor:toBack()	
+	editor:toBack()
+	viewManager.initBack()	
 end
 
 ------------------------------------------
@@ -1375,9 +1376,11 @@ function scene:dragTile(tile, event)
 			tile.motion.y2 = tile.motion.y2 + tile.motion.y - previousY
 		end
 
-		for k,icon in pairs(tile.icons) do
-			if(icon) then
-   			touchController.drag(icon, event)
+		if(tile.icons) then
+   		for k,icon in pairs(tile.icons) do
+   			if(icon) then
+      			touchController.drag(icon, event)
+      		end
    		end
 		end
 	end
