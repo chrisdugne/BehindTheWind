@@ -161,17 +161,14 @@ function onTouch( event )
 		if(tapping == 0) then
 		
    		local vx, vy = character.sprite:getLinearVelocity()
-			if(not character.floor) then
-			else
-				print("---------->  ", vy)
-   			if(xStart-(character.sprite.x + game.camera.x) > 15) then
-   				character.goRight()
-   			elseif(xStart-(character.sprite.x + game.camera.x) < - 15) then
-   				character.goLeft()
-   			end
-   			
-   			character.jump()
+   		
+			if(not character.collideOnRight and xStart-(character.sprite.x + game.camera.x) > 15) then
+				character.goRight()
+			elseif(not character.collideOnLeft and xStart-(character.sprite.x + game.camera.x) < - 15) then
+				character.goLeft()
 			end
+			
+			character.jump()
 		else
    		if(currentState == THROWING or currentState == GRABBING) then
    			local launch = getLaunchVector()

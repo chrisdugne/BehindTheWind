@@ -17,9 +17,15 @@ state = NOT_MOVING
 
 -------------------------------------
 
-floor 	= nil
-sprite 	= nil
-ropes		= nil
+floor 			= nil
+collideOnLeft 	= nil
+collideOnRight = nil
+
+sprite 			= nil
+ropes				= nil
+
+timeOfJump		= 0
+leavingFloor 	= nil
 
 -------------------------------------
 
@@ -61,7 +67,7 @@ local previousVy = 0
 local nbFramesToKeep = 0
 
 function checkCharacter(event)
-
+	
 	if(nbFramesToKeep > 0 ) then
 		nbFramesToKeep = nbFramesToKeep - 1
 	else
@@ -108,21 +114,32 @@ function preCollide(event)
 end
 
 -------------------------------------
--- vy = -280 is is the start vy when jumping. 
+-- vy = -260 is is the start vy when jumping. 
 -- so vy = -200 is around the jump start
  
 function collide( event )
 	
+	local now = system.getTimer()
+	if(now - timeOfJump < 70 and event.other == leavingFloor) then return end
+	
+	local characterBottom = event.target.y + event.target.height/2
+	local tileTop = event.other.y - event.other.height/2 + 5
+	
 	local vx, vy = event.target:getLinearVelocity()
-
---	if(not floor and vy > -200 and event.other.y-event.other.height/2 < event.target.y+event.target.height/2 + 20) then
---		print("SIDE")
---	else
-
-	if(event.other.y > event.target.y and event.other.isFloor and vy > -200) then
+	
+	if(tileTop > characterBottom and event.other.isFloor and vy > -200) then
 		floor = event.other
+		collideOnLeft, collideOnRight = nil, nil
 	else
-		-- collision from sides or top : not the floor !
+		-- vx on move is 135
+		-- less is a "bounce" due to collision : to ignore !
+		if(vx > 100) then
+			collideOnRight = event.other
+		elseif(vx < -100) then
+			collideOnLeft = event.other
+		end
+
+		floor = nil
 	end
 	
 	if(state == JUMPING and vy > -200) then 
@@ -196,11 +213,17 @@ end
 function jump()
 	if(state == JUMPING or not floor) then return end
 	
+	timeOfJump = system.getTimer()
+	leavingFloor = floor
+	
 	floor = nil
+	collideOnLeft = nil
+	collideOnRight = nil
 	state = JUMPING
 	
+	
 	local vx, vy = sprite:getLinearVelocity()
-	sprite:setLinearVelocity( vx, -280 )
+	sprite:setLinearVelocity( vx, -255 )
 end
 
 -------------------------------------
