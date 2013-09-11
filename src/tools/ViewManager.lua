@@ -7,7 +7,7 @@ module(..., package.seeall)
 local fires = {}
 local elements = {}
 
-local mist1, mist2, back
+local mist1, mist2, moon, back
 -----------------------------------------------------------------------------------------
 
 function initView(view)
@@ -17,23 +17,34 @@ end
 ------------------------------------------------------------------------------------------
 
 function initBack()
+	if(mist1 and mist1.tween) then transition.cancel(mist1.tween) end
+	if(mist2 and mist2.tween) then transition.cancel(mist2.tween) end
+	if(moon and moon.tween) then transition.cancel(moon.tween) end
 	display.remove(mist1)
 	display.remove(mist2)
 	display.remove(back)
+	display.remove(moon)
 	
 	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist1.x = display.viewableContentWidth/2  
 	mist1.y = display.viewableContentHeight/2
-	mist1.alpha = 0.27
+	mist1.alpha = 0.37
 	mist1:toBack();
 
 	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
-	mist2.x = display.viewableContentWidth/2  + display.contentWidth
+	mist2.x = display.viewableContentWidth/2  - display.contentWidth
 	mist2.y = display.viewableContentHeight/2
-	mist2.alpha = 0.27 
+	mist2.alpha = 0.37 
 	mist2:toBack();
 	
 	moveMists()
+	
+	moon = display.newImageRect( "assets/images/moon.png", 320, 320)  
+	moon.x = display.contentWidth-150  
+	moon.y = display.contentHeight/2-130 
+	moon:toBack();
+	
+	moveMoon()
 	
 	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	back.x = display.viewableContentWidth/2  
@@ -42,19 +53,22 @@ function initBack()
 end
 
 function moveMists()
-	transition.to( mist1, { time=80000, x=mist1.x-display.contentWidth })
-	transition.to( mist2, { time=80000, x=mist2.x-display.contentWidth, onComplete = function() replaceMists() end })
+	mist1.tween = transition.to( mist1, { time=30000, x=mist1.x+display.contentWidth })
+	mist2.tween = transition.to( mist2, { time=30000, x=mist2.x+display.contentWidth, onComplete = function() replaceMists() end })
+end
+
+function moveMoon()
+	moon.tween = transition.to( moon, { time=170000, x=0, y =display.contentHeight,onComplete = function() moveMoonBack() end })
 end
 
 function replaceMists()
 	mist1.x = display.viewableContentWidth/2  
-	mist2.x = display.viewableContentWidth/2  + display.contentWidth
+	mist2.x = display.viewableContentWidth/2 - display.contentWidth
 	moveMists()
 end
 
-function resetToBack()
-	mist1:toBack();
-	mist2:toBack();
+function moveMoonBack()
+	transition.to( moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoon() end })
 end
 
 ------------------------------------------------------------------------------------------
