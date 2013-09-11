@@ -16,10 +16,35 @@ end
 ------------------------------------------------------------------------------------------
 
 function initBack()
+	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	mist1.x = display.viewableContentWidth/2  
+	mist1.y = display.viewableContentHeight/2
+	mist1.alpha = 0.27
+	mist1:toBack();
+
+	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	mist2.x = display.viewableContentWidth/2  + display.contentWidth
+	mist2.y = display.viewableContentHeight/2
+	mist2.alpha = 0.27 
+	mist2:toBack();
+	
+	moveMists()
+	
 	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	back.x = display.viewableContentWidth/2  
 	back.y = display.viewableContentHeight/2  
 	back:toBack();
+end
+
+function moveMists()
+	transition.to( mist1, { time=80000, x=mist1.x-display.contentWidth })
+	transition.to( mist2, { time=80000, x=mist2.x-display.contentWidth, onComplete = function() replaceMists() end })
+end
+
+function replaceMists()
+	mist1.x = display.viewableContentWidth/2  
+	mist2.x = display.viewableContentWidth/2  + display.contentWidth
+	moveMists()
 end
 
 ------------------------------------------------------------------------------------------
