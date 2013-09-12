@@ -71,6 +71,11 @@ function init()
 	Runtime:addEventListener( "enterFrame", checkCharacter )
 end	
 
+function destroy()
+	utils.destroyFromDisplay(sprite)
+	Runtime:removeEventListener( "enterFrame", checkCharacter )
+end
+
 -------------------------------------
 
 function spawn()

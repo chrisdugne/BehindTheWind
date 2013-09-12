@@ -24,11 +24,10 @@ end
 
 function scene:refreshScene()
 	utils.emptyGroup(levels)
-	viewManager.initView(self.view);
 
+	game.level = 0
 	game.scene = self.view
-	hud.initHUD()
-	hud.setExit(exitSelection)
+	hud.setBackToHome()
 	
 	local margin = display.contentWidth/2 -5*38 
 
@@ -37,17 +36,20 @@ function scene:refreshScene()
    	local j = math.floor((level-1)/10) + 1
 		local levelLocked = not GLOBALS.savedData.levels[level]
 	
-		viewManager.buildSmallButton(
-			levels, 
-			level, 
-			21, 
+	
+   	viewManager.buildButton(
+   		level,
+   		"white",
+   		21, 
+   		0.13,
 			margin + 42 * i, 
 			65 * j, 
 			function() 
 				openLevel(level) 
 			end, 
 			levelLocked
-		)
+   	)
+
    end
 	
 	self.view:insert(levels)
@@ -55,22 +57,14 @@ end
 
 ------------------------------------------
 
-function exitSelection()
-	for i = levels.numChildren,1,-1  do
-		hud.explode(levels[i], 1, 200, levels[i].color)
-		table.remove(levels, i)
-	end
-	
-	hud.explodeHUD()
-end
-
 function openLevel( level )
-	if(not GLOBALS.savedData.fullGame and level > 10) then
-		router.openBuy()
-	else
-   	game.level = level
-   	exitSelection()
-   	timer.performWithDelay(1500, router.openPlayground)
+	if(game.level == 0) then
+   	if(not GLOBALS.savedData.fullGame and level > 10) then
+   		router.openBuy()
+   	else
+      	game.level = level
+      	router.openPlayground()
+      end
    end
 end
 

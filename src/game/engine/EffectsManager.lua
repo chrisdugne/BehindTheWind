@@ -10,21 +10,26 @@ nbRunning   	= 0
 
 -------------------------------------
 
-function init()
+function start()
    effects 	 		= {}
    nbDestroyed   	= 0
    nbRunning   	= 0
 	Runtime:addEventListener( "enterFrame", refreshEffects )
 end
 
-function stop()
+function stop(now)
 	Runtime:removeEventListener( "enterFrame", refreshEffects )
 	
 	if(effects) then
 		for i=1,#effects do
-			destroyEffect(effects[i], true)
+			destroyEffect(effects[i], now)
 		end
 	end
+end
+
+function restart()
+	stop(true)
+	start()
 end
 
 -----------------------------------------------------------------------------
@@ -99,6 +104,15 @@ end
 -----------------------------------------------------------------------------
 --- CHECK level effects in screen
 -----------------------------------------------------------------------------
+--
+-- An effect on hud has no body => onScreen
+-- 
+-- An effect on camera must have a body (sensor (energy or trigger)) 
+-- 	-> wake up if onScreen only
+-- 	
+-- An effect not static has its coordinates refreshed
+-- 
+-----------------------------------------------------------------------------
 
 function refreshEffects()
 	
@@ -140,6 +154,39 @@ function refreshEffectsCoordinates(effect)
    	effect:get("light").y = effect.body.y
    end
 end
+
+
+-----------------------------------------------------------------------------
+--- Buttons
+-----------------------------------------------------------------------------
+
+function buttonEffect(x,y, scale)
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{65,65,262},{55,55,220}},
+			x = x,
+			y = y,
+			perEmit=2,
+			emissionNum=0,
+			emitDelay=220,
+			lifeSpan=400,
+			fadeInTime=500,
+			scale=0.4,
+			physics={
+				gravityY=.07,
+			}
+		}
+	}
+	
+	light.static = true
+	registerNewEffect(light)	
+	game.hud:insert(light:get("light").content)
+	
+end
+
 
 -----------------------------------------------------------------------------
 --- Spawn point
@@ -191,14 +238,14 @@ function reachExitEffect(x,y)
 			color={{65,65,262},{55,55,220}},
 			x = x,
 			y = y,
-			perEmit=5,
+			perEmit=2,
 			emissionNum=3,
-			emitDelay=20,
+			emitDelay=220,
 			lifeSpan=400,
-			fadeInTime=700,
-			scale=1,
+			fadeInTime=500,
+			scale=0.4,
 			physics={
-				gravityY=1.07,
+				gravityY=.07,
 			}
 		}
 	}
@@ -207,7 +254,7 @@ function reachExitEffect(x,y)
 	registerNewEffect(light)	
 	game.camera:insert(light:get("light").content)
 	
-	transition.to(character.sprite, { time=500, alpha = 0 })
+	transition.to(character.sprite, { time=200, alpha = 0 })
 end
 
 -----------------------------------------------------------------------------
@@ -263,33 +310,11 @@ function preCollideExit( event, displayScore )
 	if(event.contact) then
 		event.contact.isEnabled = false
 		
-		if(event.other == character.sprite) then
-   		displayScore()
-   		reachExitEffect(event.target.x, event.target.y)
-
-   		if(not event.target.light.beingDestroyed) then
-      		destroyEffect(event.target.light)
-      	end
-      	
+		if(event.other == character.sprite) then 
+			reachExitEffect(event.target.x, event.target.y)
+   		game:stop()
    	end
          	
-   end
-end
-
-function touchEnergy( energy, event )
-	if(event.contact) then
-		event.contact.isEnabled = false
-   	
-   	if(event.other == character.sprite) then
-   		
-   		if(not energy.light.beingDestroyed) then
-      		destroyEffect(energy.light)
-         	
-         	timer.performWithDelay(200, function() drawFollow() end)
-         	timer.performWithDelay(600, function() drawFollow() end)
-         	timer.performWithDelay(1000, function() drawFollow() end)
-         end
-      end
    end
 end
 

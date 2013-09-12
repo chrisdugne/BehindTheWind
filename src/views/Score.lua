@@ -24,7 +24,6 @@ end
 
 function scene:refreshScene()
 	utils.emptyGroup(scoreMenu)
-	viewManager.initView(self.view);
 	
 	hud.setExit()
    
@@ -104,7 +103,6 @@ end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
-	viewManager.cleanupFires()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

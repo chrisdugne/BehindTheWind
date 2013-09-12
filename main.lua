@@ -15,6 +15,10 @@ SIMULATOR 			= system.getInfo( "environment" )  == "simulator"
 
 -----------------------------------------------------------------------------------------
 
+--EDITOR 		= 1
+
+-----------------------------------------------------------------------------------------
+
 SMALL_ENERGY 		= 1
 MEDIUM_ENERGY 		= 2
 BIG_ENERGY 			= 3
@@ -102,12 +106,16 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 --musicManager.playMusic()
+viewManager.initBack(1)
 
 ------------------------------------------
 
---router.openAppHome()
-router.openPlayground()
---router.openLevelEditor()
+if(EDITOR) then
+   router.openLevelEditor()
+else
+--	router.openPlayground()
+   router.openAppHome()
+end
 
 -----------------------------------------------------------------------------------------
 -- DEV ONLY
@@ -115,13 +123,28 @@ router.openPlayground()
 -----------------------------------------------
 -- MEMORY counters
 --
-hud.initTopRightText()
+
+
+display.remove(memText)
+memText = display.newText( "0", 0, 0, FONT, 12 )
+memText:setTextColor( 255 )	
+memText:setReferencePoint( display.CenterReferencePoint )
+memText.x = display.contentWidth - memText.contentWidth/2 - 10
+memText.y = display.contentHeight - 20
+
+function refreshMemText(text)
+	if(memText.contentWidth) then
+		memText.text = text
+		memText.size = 12
+		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
+	end
+end
 
 Runtime:addEventListener( "enterFrame", function()
 	local running 			= effectsManager.nbRunning
 	local total 			= #effectsManager.effects
 	
-	hud.refreshTopRightText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
+	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
 end )
 
 -----------------------------------------------

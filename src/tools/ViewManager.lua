@@ -4,26 +4,36 @@ module(..., package.seeall)
 
 -----------------------------------------------------------------------------------------
 
-local fires = {}
-local elements = {}
-
+-- level 1 background
 local mist1, mist2, moon, back
+
 -----------------------------------------------------------------------------------------
 
-function initView(view)
-	cleanupFires()
-end
+function initBack(level)
 
-------------------------------------------------------------------------------------------
+	-- try to remove level 1 background
 
-function initBack()
 	if(mist1 and mist1.tween) then transition.cancel(mist1.tween) end
 	if(mist2 and mist2.tween) then transition.cancel(mist2.tween) end
 	if(moon and moon.tween) then transition.cancel(moon.tween) end
 	display.remove(mist1)
 	display.remove(mist2)
-	display.remove(back)
 	display.remove(moon)
+
+	-- try to remove global background
+	display.remove(back)
+
+	-- level 0 : App global background
+	if(level == 0) then
+		initBackLevel1()
+	end
+
+	if(level == 1) then
+		initBackLevel1()
+	end
+end
+
+function initBackLevel1()
 	
 	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist1.x = display.viewableContentWidth/2  
@@ -77,164 +87,92 @@ function moveMoonBack()
 end
 
 ------------------------------------------------------------------------------------------
+-- INTRO TOOLS
+------------------------------------------------------------------------------------------
 
-function buildButton(view, title, color, titleSize, x, y, action, lock, condition )
+function displayIntroText(text, x, y, fade)
 
+	if(not text) then
+		return
+	end
+
+	local introText = display.newText( screen, text, 0, 0, FONT, 45 )
+	introText:setTextColor( 255 )	
+	introText.x = x
+	introText.y = y
+	introText.alpha = 0
+	introText:setReferencePoint( display.CenterReferencePoint )
+	
+	transition.to( introText, { time=1200, alpha=1, onComplete=function()
+		if(fade) then
+      	timer.performWithDelay(500, function()
+      			transition.to( introText, { time=1000, alpha=0 })
+			end)
+		end
+	end})
+end
+
+------------------------------------------------------------------------------------------
+-- MENU TOOLS
+-----------------------------------------------------------------------------------------
+
+
+function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocked )
+	
+	--------------------------------------
+
+	local slash = string.find(titleOrIcon,"/")
 	local colors={{255, 255, 255}, {255, 70, 70}}
 
+	--------------------------------------
+
 	local planet = display.newImage( "assets/images/game/planet.".. color ..".png")
-	planet:scale(display.contentHeight/1000,display.contentHeight/1000)
+	planet:scale(scale,scale)
 	planet.x = x
 	planet.y = y
 	planet.alpha = 0
 	planet.color = color
-	view:insert(planet)
-	
-	
-	local text = display.newText( title, 0, 0, FONT, titleSize )
-	text:setTextColor( 0 )	
-	text.x = x
-	text.y = y
-	text.alpha = 0
-	view:insert(text)
-	
+	game.hud:insert(planet)
 	transition.to( planet, { time=2000, alpha=1 })
-	transition.to( text, { time=2000, alpha=1 })
+
+	--------------------------------------
 	
-	if(lock and condition) then
+	if(slash) then
+   	local icon = display.newImage(titleOrIcon)
+   	icon:scale(scale*2,scale*2)
+   	icon.x = planet.x
+   	icon.y = planet.y
+   	icon.alpha = 0
+   	game.hud:insert(icon)
+   	
+   	transition.to( icon, { time=2000, alpha=1 }) 
+	else
+   	local text = display.newText( titleOrIcon, 0, 0, FONT, titleSize )
+   	text:setTextColor( 0 )	
+   	text.x = x
+   	text.y = y
+   	text.alpha = 0
+   	game.hud:insert(text)
+   	
+   	transition.to( text, { time=2000, alpha=1 })
+	end
+
+	--------------------------------------
+	
+	if(isLocked) then
    	local lock = display.newImage("assets/images/hud/lock.png")
-   	lock:scale(0.50,0.50)
+   	lock:scale(scale*1.3,scale*1.3)
    	lock.x = x
    	lock.y = y
    	lock.alpha = 0
-   	view:insert(lock)
+   	game.hud:insert(lock)
    	transition.to( lock, { time=2000, alpha=0.6 })
    	planet:setFillColor(30,30,30)
    	
    	return planet, text, lock
    else
-		planet:addEventListener	("touch", function(event) action() end)
-
-   	local fire=CBE.VentGroup{
-   		{
-   			title="fire",
-   			preset="burn",
-   			color=colors,
-   			build=function()
-   				local size=math.random(24, 38)
-   				return display.newImageRect("CBEffects/textures/generic_particle.png", size, size)
-   			end,
-   			onCreation=function()end,
-   			perEmit=2,
-   			emissionNum=0,
-   			x=x,
-   			y=y,
-   			positionType="inRadius",
-   			posRadius=38,
-   			emitDelay=50,
-   			fadeInTime=1500,
-   			lifeSpan=250,
-   			lifeStart=250,
-   			endAlpha=0,
-   			physics={
-   				velocity=0.5,
-   				xDamping=1,
-   				gravityY=0.6,
-   				gravityX=0
-   			}
-   		}
-   	}
-   	
-   	table.insert(fires, fire)
-		fire:start("fire")
-		
-   	return planet, text
-	end
-
-end
-
-------------------------------------------------------------------------------------------
-
-function buildSmallButton(view, title, titleSize, x, y, action, lock )
-
-	local colors={{181, 255, 111}, {120, 255, 70}}
-
-	local planet = display.newImage( "assets/images/game/planet.white.png")
-	planet:scale(0.13,0.13)
-	planet.x = x
-	planet.y = y
-	planet.alpha = 0
-	planet.color = color
-	view:insert(planet)
-	
-	local text = display.newText( title, 0, 0, FONT, titleSize )
-	text:setTextColor( 0 )	
-	text.x = x
-	text.y = y-2
-	text.alpha = 0
-	view:insert(text)
-	
-	transition.to( planet, 	{ time=2000, alpha=1 })
-	transition.to( text, 	{ time=2000, alpha=1 })
-	
-	if(lock) then
-   	local lock = display.newImage("assets/images/hud/lock.png")
-   	lock:scale(0.15,0.15)
-   	lock.x = x
-   	lock.y = y
-   	lock.alpha = 0
-   	view:insert(lock)
-   	transition.to( lock, { time=2000, alpha=0.6 })
-   	planet:setFillColor(30,30,30)
-   	
-   else
-		planet:addEventListener	("touch", function(event) action() end)
-
-   	local fire=CBE.VentGroup{
-   		{
-   			title="fire",
-   			preset="burn",
-   			color=colors,
-   			build=function()
-   				local size=math.random(31, 38) -- Particles are a bit bigger than ice comet particles
-   				return display.newImageRect("CBEffects/textures/generic_particle.png", size, size)
-   			end,
-   			onCreation=function()end,
-   			perEmit=1,
-   			emissionNum=0,
-   			x=x,
-   			y=y,
-   			positionType="inRadius",
-   			posRadius=12,
-   			emitDelay=500,
-   			fadeInTime=1500,
-   			lifeSpan=1000, -- Particles are removed sooner than the ice comet
-   			lifeStart=250,
-   			endAlpha=0,
-   			physics={
-   				velocity=0.4,
-   				gravityY=0.3,
-   				gravityX=0
-   			}
-   		}
-   	}
-   	
-   	table.insert(fires, fire)
-		fire:start("fire")
-	end
-end
-
-------------------------------------------
-
-function cleanupFires()	
-
-	for fire = 1, #fires do 
-		fires[fire]:destroy("fire")
+   	utils.onTouch(planet, action)
+		effectsManager.buttonEffect(x,y,scale)
 	end
 	
-	while #fires > 0 do
-   	table.remove(fires, 1)
-	end
-	
-	collectgarbage("collect")
 end

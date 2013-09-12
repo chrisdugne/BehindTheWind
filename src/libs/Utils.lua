@@ -14,8 +14,18 @@
 module(..., package.seeall)
 
 -----------------------------------------------------------------------------------------
---
---
+
+function onTouch(object, action)
+	object:addEventListener	("touch", function(event)
+		if(event.phase == "began") then
+			action() 
+		end
+		return true 
+	end)
+end
+
+-----------------------------------------------------------------------------------------
+
 function getMinSec(seconds)
 	local min = math.floor(seconds/60)
 	local sec = seconds - min * 60

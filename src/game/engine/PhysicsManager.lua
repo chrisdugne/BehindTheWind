@@ -4,21 +4,32 @@ module(..., package.seeall)
 
 -------------------------------------
 
+local physics = require("physics")
+physics.start()
+
+-------------------------------------
+
 local trajectory = nil
 
 -------------------------------------
 
-function init( )
-	local physics = require("physics")
-	physics.start()
+function start( )
+	
 	physics.setGravity( 0, 20 )
+--	physics.setDrawMode( "hybrid" )
+--	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
 	game.camera:insert (trajectory)
-	
---	physics.setDrawMode( "hybrid" )
---	physics.setDrawMode( "debug" )
 end
+
+-------------------------------------
+
+function stop( )
+	utils.emptyGroup(trajectory)
+end
+
+-------------------------------------
 
 function dragBody( event, params )
 	local body = event.target

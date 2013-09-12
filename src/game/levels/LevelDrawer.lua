@@ -267,8 +267,12 @@ function addGroupMotion(group, motion)
 	end
 end
 
+---------------------------------------------------------------------
+
 function moveTile(tile, motionVector, way, duration)
 	
+	if(game.state == game.STOPPED) then return end
+		
 	tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
 
 	timer.performWithDelay(duration, function()

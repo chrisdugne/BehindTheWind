@@ -38,10 +38,13 @@ local TAP_TIME_LIMIT		= 250
 
 -------------------------------------
 
-function init()
-	display.getCurrentStage():addEventListener( "touch", function(event)
-		touchScreen(event)
-	end)
+function start()
+	display.getCurrentStage():addEventListener( "touch", touchScreen )
+end
+
+function stop()
+	display.getCurrentStage():removeEventListener( "touch", touchScreen )
+	Runtime:removeEventListener( "enterFrame", onTouch )
 end
 
 -------------------------------------

@@ -74,7 +74,6 @@ end
 -- Called when the scene's view does not exist:
 function scene:refreshScene()
 	
-	viewManager.initView(self.view);
 	self:initLevel()
 	
 	------------------------------

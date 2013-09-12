@@ -1,14 +1,18 @@
 -----------------------------------------------------------------------------------------
 
-Game = {}
+Game = {}	
 
 -----------------------------------------------------------------------------------------
 
 function Game:new()  
 
-	local object = { 
+	local object = {
+		RUNNING  = 1, 
+		STOPPED  = 2, 
 		camera 	= display.newGroup(),
-		focus 	= CHARACTER
+		hud 		= display.newGroup(),
+		focus 	= CHARACTER,
+		state		= STOPPED
 	}
 
 	setmetatable(object, { __index = Game })  
@@ -19,10 +23,113 @@ end
 
 function Game:init()
 	utils.emptyGroup(self.camera)
-	Runtime:addEventListener( "enterFrame", self.refreshCamera )
 	--camera:scale(0.3,0.3)
 end
 
+-----------------------------------------------------------------------------------------
+
+function Game:start()
+
+	---------------------
+
+	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	hud.initFollowRockButton()
+	
+	---------------------
+	-- engines
+
+	physicsManager.start()
+	touchController.start()
+	
+	------------------------------
+	-- level content
+	
+	levelDrawer.designLevel(function() self:displayScore() end)
+	
+	-----------------------------
+	-- camera
+
+	character.init()
+
+	------------------------------
+	-- level foregrounds
+
+	levelDrawer.bringForegroundToFront()
+	levelDrawer.putBackgroundToBack()
+
+	------------------------------
+
+   effectsManager.spawnEffect()
+   self.state = game.RUNNING
+end
+
+function Game:stop()
+
+	if(self.state == game.STOPPED) then return end
+	
+	Runtime:removeEventListener( "enterFrame", self.refreshCamera )
+   self.state = game.STOPPED
+
+	touchController.stop()
+
+	timer.performWithDelay(700, function()
+		self:reset()
+		self:displayScore()
+	end)
+	
+end
+
+------------------------------------------
+
+function Game:reset()
+	character.destroy()
+	touchController.stop()
+	physicsManager.stop()
+end
+
+------------------------------------------
+
+function Game:displayScore()
+	
+	local top = display.newRect(self.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+   top.alpha = 0
+   top:setFillColor(0)
+   self.hud.top = top
+   
+   local bottom = display.newRect(self.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+   bottom.alpha = 0
+   bottom:setFillColor(0)
+   self.hud.bottom = bottom
+
+   local board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth/2, display.contentHeight/2, 20)
+   board.x = display.contentWidth/2
+   board.y = display.contentHeight/2
+   board.alpha = 0
+   board:setFillColor(0)
+   self.hud.board = board
+   
+	transition.to( top, { time=800, alpha=1, y = top.contentHeight/2 })
+	transition.to( bottom, { time=800, alpha=1, y = display.contentHeight - top.contentHeight/2 })  
+	transition.to( board, { time=800, alpha=0.7, onComplete= function() self:fillBoard() end})  
+end
+------------------------------------------
+
+function Game:fillBoard()
+
+	viewManager.buildButton(
+		"assets/images/hud/play.png", 
+		"white", 
+		21, 
+		0.26,
+		display.contentWidth*0.5, 	
+		display.contentHeight*0.5, 	
+		function()
+			router.openAppHome() 
+		end
+	)
+	
+end
+	
 ------------------------------------------
 
 function Game:refreshCamera(event)

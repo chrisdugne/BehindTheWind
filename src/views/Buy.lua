@@ -73,7 +73,6 @@ end
 function scene:refreshScene()
 
 	utils.emptyGroup(buyMenu)
-	viewManager.initView(self.view);
 
 	hud.setBackToHome()
    
@@ -114,32 +113,19 @@ function scene:displayContent()
 	lockImage:scale(0.40,0.40)
 	lockImage.x = buyMenu.board.x - buyMenu.board.contentWidth/2 + 30
 	lockImage.y = buyMenu.board.y/2 + 30
-	lockImage:addEventListener	("touch", function(event) buy() end)
+	utils.onTouch(lockImage, buy)
 
 	display.remove(statusText)
 	statusText = display.newText( buyMenu, "", 0, 0, FONT, 22 )
 	statusText:setTextColor( 255 )	
 	
---	display.remove(coffeeImage)
---	coffeeImage = display.newImage(buyMenu, "assets/images/hud/coffee.png")
---	coffeeImage:scale(0.40,0.40)
---	coffeeImage.x = buyMenu.board.x + 35
---	coffeeImage.y = buyMenu.board.y + 15
---	coffeeImage:addEventListener	("touch", function(event) buy() end)
-	
---	display.remove(secondText)
---	secondText = display.newText( buyMenu, T "- No more ads", 0, 0, 170, 100, FONT, 14 )
---	secondText:setTextColor( 255 )	
---	secondText.x = buyMenu.board.x - buyMenu.board.contentWidth/2 + secondText.contentWidth + 13
---	secondText.y = buyMenu.board.y + 85
-
 	display.remove(buyButton)
 	display.remove(textBuyButton)
-	buyButton, textBuyButton = viewManager.buildButton(buyMenu, T "Buy",	"white", 26, buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
+	buyButton, textBuyButton = viewManager.buildButton( T "Buy",	"white", 26, 0.36,  buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
 
 	display.remove(restoreButton)
 	display.remove(textRestoreButton)
-	restoreButton, textRestoreButton = viewManager.buildButton(buyMenu, T "Restore", "white", 20, buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
+	restoreButton, textRestoreButton = viewManager.buildButton( T "Restore", "white", 20, 0.36,  buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
 
 end
 
@@ -154,7 +140,6 @@ function buy()
 	display.remove(textRestoreButton)
 	display.remove(coffeeImage)
 	display.remove(secondText)
-	viewManager.cleanupFires()
 	
 	store.purchase( { "com.uralys.kodo.1.0" } )
 	
@@ -179,7 +164,6 @@ function restore()
 	display.remove(textRestoreButton)
 	display.remove(coffeeImage)
 	display.remove(secondText)
-	viewManager.cleanupFires()
 	
 	store.restore(  )
 	
@@ -221,7 +205,6 @@ end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
-	viewManager.cleanupFires()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:

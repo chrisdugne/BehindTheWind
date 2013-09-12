@@ -5,7 +5,6 @@
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
-local optionsMenu
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -17,41 +16,30 @@ local optionsMenu
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	optionsMenu = display.newGroup()
-	game.scene = optionsMenu
-	
-	print("created")
 end
 
 -----------------------------------------------------------------------------------------
 
 function scene:refreshScene()
-	print("ref")
 
-	utils.emptyGroup(optionsMenu)
-	viewManager.initView(self.view);
-
-	hud.setBackToHome()
-   
-   local top = display.newRect(optionsMenu, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+   local top = display.newRect(game.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
    top:setFillColor(0)
    
-   local bottom = display.newRect(optionsMenu, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+   local bottom = display.newRect(game.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
    bottom:setFillColor(0)
 
-   local board = display.newRoundedRect(optionsMenu, 0, 0, display.contentWidth*0.75, display.contentHeight/2, 20)
+   local board = display.newRoundedRect(game.hud, 0, 0, display.contentWidth*0.75, display.contentHeight/2, 20)
    board.x = display.contentWidth/2
    board.y = display.contentHeight/2
    board.alpha = 0
    board:setFillColor(0)
-   optionsMenu.board = board
+   game.hud.board = board
    
 	transition.to( top, { time=500, y = top.contentHeight/2 })
 	transition.to( bottom, { time=500, y = display.contentHeight - top.contentHeight/2 })  
 	transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})  
 
-	self.view:insert(optionsMenu)
-	
+	hud.setBackToHome()
 end
 
 function scene:displayContent()
@@ -59,49 +47,50 @@ function scene:displayContent()
 	-----------------------------------------------------------------------------------------------
 
 	if(not GLOBALS.savedData.fullGame) then
-		viewManager.buildButton(optionsMenu, T "Full version", "white", 12, display.contentWidth*0.77, 	display.contentHeight*0.38, 	router.openBuy)
+		viewManager.buildButton( T "Full version", "white", 12, 0.36, display.contentWidth*0.77, 	display.contentHeight*0.38, 	router.openBuy)
 	else
-		thanksText = display.newText(optionsMenu, "Thank you for purchasing the full version !", 0, 0, 70, 100, FONT, 12 )
+		thanksText = display.newText(game.hud, "Thank you for purchasing the full version !", 0, 0, 70, 100, FONT, 12 )
 		thanksText.x = display.contentWidth*0.75
 		thanksText.y = display.contentHeight*0.4
 	end
-	viewManager.buildButton(optionsMenu, "Reset", "white", 	21, display.contentWidth*0.77, 	display.contentHeight*0.61, function()	self:reset() end)
+	viewManager.buildButton( "Reset", "white", 	21, 0.36, display.contentWidth*0.77, 	display.contentHeight*0.61, function()	self:reset() end)
 	
 	-----------------------------------------------------------------------------------------------
 
-	uralysText = display.newText(optionsMenu, "Created by ", 0, 0, FONT, 13 )
-	uralysText.x = optionsMenu.board.x - optionsMenu.board.contentWidth/2 + uralysText.contentWidth/2 + 30
-	uralysText.y = optionsMenu.board.y/2 + 25
+	uralysText = display.newText(game.hud, "Created by ", 0, 0, FONT, 13 )
+	uralysText.x = game.hud.board.x - game.hud.board.contentWidth/2 + uralysText.contentWidth/2 + 30
+	uralysText.y = game.hud.board.y/2 + 25
 
-	uralysImage = display.newImage(optionsMenu, "assets/images/others/logo.png")
-	uralysImage.x = optionsMenu.board.x - optionsMenu.board.contentWidth/2 + uralysImage.contentWidth/2 + 100
-	uralysImage.y = optionsMenu.board.y/2 + 25
-	uralysImage:addEventListener	("touch", function(event) system.openURL( "http://www.uralys.com" ) end)
+	uralysImage = display.newImage(game.hud, "assets/images/others/logo.png")
+	uralysImage.x = game.hud.board.x - game.hud.board.contentWidth/2 + uralysImage.contentWidth/2 + 100
+	uralysImage.y = game.hud.board.y/2 + 25
+	
+	utils.onTouch(uralysImage,  function(event) system.openURL( "http://www.uralys.com" ) end)
 
 	-----------------------------------------------------------------------------------------------
 
-	coronaImage = display.newImage(optionsMenu, "assets/images/others/corona.png")
+	coronaImage = display.newImage(game.hud, "assets/images/others/corona.png")
 	coronaImage:scale(0.3,0.3)
-	coronaImage.x = optionsMenu.board.x - optionsMenu.board.contentWidth/2 + coronaImage.contentWidth/2 + 20
-	coronaImage.y = optionsMenu.board.y/2 + 110
-	coronaImage:addEventListener	("touch", function(event) system.openURL( "http://www.coronalabs.com" ) end)
+	coronaImage.x = game.hud.board.x - game.hud.board.contentWidth/2 + coronaImage.contentWidth/2 + 20
+	coronaImage.y = game.hud.board.y/2 + 110
+	utils.onTouch(coronaImage,  function(event) system.openURL( "http://www.coronalabs.com" ) end)
 
-	cbeffectsImage = display.newImage(optionsMenu, "assets/images/others/cbeffects.png")
+	cbeffectsImage = display.newImage(game.hud, "assets/images/others/cbeffects.png")
 	cbeffectsImage:scale(0.2,0.2)
-	cbeffectsImage.x = optionsMenu.board.x - optionsMenu.board.contentWidth/2 + cbeffectsImage.contentWidth/2 + 130
-	cbeffectsImage.y = optionsMenu.board.y/2 + 100
-	cbeffectsImage:addEventListener	("touch", function(event) system.openURL( "http://gymbyl.com" ) end)
+	cbeffectsImage.x = game.hud.board.x - game.hud.board.contentWidth/2 + cbeffectsImage.contentWidth/2 + 130
+	cbeffectsImage.y = game.hud.board.y/2 + 100
+	utils.onTouch(cbeffectsImage,  function(event) system.openURL( "http://gymbyl.com" ) end)
 
-	velvetText = display.newText(optionsMenu, "Music by Velvet Coffee", 0, 0, FONT, 13 )
-	velvetText.x = optionsMenu.board.x - optionsMenu.board.contentWidth/2 + velvetText.contentWidth/2 + 100
+	velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 13 )
+	velvetText.x = game.hud.board.x - game.hud.board.contentWidth/2 + velvetText.contentWidth/2 + 100
 	velvetText.y = cbeffectsImage.y + 45
-	velvetText:addEventListener	("touch", function(event) system.openURL( "https://soundcloud.com/velvetcoffee" ) end)
+	utils.onTouch(velvetText,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
 
-	playImage = display.newImage(optionsMenu, "assets/images/hud/play.png")
+	playImage = display.newImage(game.hud, "assets/images/hud/play.png")
 	playImage:scale(0.2,0.2)
 	playImage.x = velvetText.x + 80
 	playImage.y = velvetText.y
-	playImage:addEventListener	("touch", function(event) system.openURL( "https://soundcloud.com/velvetcoffee" ) end)
+	utils.onTouch(playImage,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
 end
 
 ------------------------------------------
@@ -130,7 +119,6 @@ end
 
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
-	viewManager.cleanupFires()
 end
 
 -- If scene's view is removed, scene:destroyScene() will be called just prior to:
