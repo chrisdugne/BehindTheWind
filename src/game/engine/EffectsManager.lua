@@ -166,17 +166,16 @@ function buttonEffect(x,y, scale)
 		{
 			title="light",
 			preset="wisps",
-			color={{65,65,262},{55,55,220}},
+			color={{45,35,23},{55,55,20},{15,15,30}},
 			x = x,
 			y = y,
-			perEmit=2,
+			perEmit=math.random(3,7),
 			emissionNum=0,
-			emitDelay=220,
-			lifeSpan=400,
-			fadeInTime=500,
-			scale=0.4,
+			emitDelay=520,
+			fadeInTime=1800,
+			scale=3*scale,
 			physics={
-				gravityY=.07,
+				gravityY=.036,
 			}
 		}
 	}

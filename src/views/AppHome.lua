@@ -29,6 +29,10 @@ function scene:refreshScene()
 	title.x = display.contentWidth/2
 	title.y = 45
 	title:setReferencePoint( display.CenterReferencePoint )
+	
+	effectsManager.buttonEffect(title.x - title.width/3, title.y, 0.4)
+	effectsManager.buttonEffect(title.x + title.width/2, title.y - title.height*0.4, 0.3)
+	effectsManager.buttonEffect(display.contentWidth - 100, display.contentHeight -20, 0.45)
 
 	---------------------------------------------------------------
 
