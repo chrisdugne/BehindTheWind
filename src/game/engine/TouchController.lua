@@ -45,6 +45,7 @@ end
 function stop()
 	display.getCurrentStage():removeEventListener( "touch", touchScreen )
 	Runtime:removeEventListener( "enterFrame", onTouch )
+	display.getCurrentStage():setFocus( nil )
 end
 
 -------------------------------------

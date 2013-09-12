@@ -37,13 +37,14 @@ hanging 	= false
 
 -------------------------------------
 
-local playerWalk = require("src.game.graphics.CharacterJump")
-local playerSheet = graphics.newImageSheet( "assets/images/game/CharacterJump.png", playerWalk.sheet )
+local previousVy = 0
+local nbFramesToKeep = 0
 
 -------------------------------------
 
-local previousVy = 0
-local nbFramesToKeep = 0
+local playerWalk = require("src.game.graphics.CharacterJump")
+local playerSheet = graphics.newImageSheet( "assets/images/game/CharacterJump.png", playerWalk.sheet )
+
 
 -------------------------------------
 -- sprite.x, sprite.y : coordonnees dans le monde, dans la camera
@@ -79,6 +80,26 @@ function init()
    sprite.x = levelDrawer.level.spawnX
    sprite.y = levelDrawer.level.spawnY
    sprite.alpha = 0
+   
+   ---------------------------
+   -- reset
+      
+   floor 			= nil
+   collideOnLeft 	= nil
+   collideOnRight = nil
+   
+   timeLeavingFloor	= 0
+   leavingFloor 	= nil
+   
+   timeLastThrow	= 0
+   
+   jumping 	= false 
+   hanging 	= false 
+   
+   previousVy = 0
+   nbFramesToKeep = 0
+
+   ---------------------------
    
 	Runtime:addEventListener( "enterFrame", checkCharacter )
 end	

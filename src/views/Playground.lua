@@ -31,7 +31,6 @@ function scene:refreshScene()
 	
 	------------------------------
 		
-	game:init()
 	game:start()
 	
 end

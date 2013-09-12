@@ -82,7 +82,6 @@ end
 router 			= require "src.tools.Router"
 viewManager		= require "src.tools.ViewManager"
 
-
 -----------------------------------------------------------------------------------------
 ---- App globals
 
@@ -90,8 +89,6 @@ GLOBALS = {
 	savedData 		= utils.loadUserData("savedData.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
 }
-
-camera = display.newGroup()
 
 -----------------------------------------------------------------------------------------
 

@@ -163,6 +163,7 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
 	planet.color = color
 	game.hud:insert(planet)
 	transition.to( planet, { time=2000, alpha=1 })
+	planet:toFront()
 
 	--------------------------------------
 	
@@ -175,6 +176,7 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
    	game.hud:insert(icon)
    	
    	transition.to( icon, { time=2000, alpha=1 }) 
+   	icon:toFront()
 	else
    	local text = display.newText( titleOrIcon, 0, 0, FONT, titleSize )
    	text:setTextColor( 0 )	
@@ -184,6 +186,7 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
    	game.hud:insert(text)
    	
    	transition.to( text, { time=2000, alpha=1 })
+   	text:toFront()
 	end
 
 	--------------------------------------
@@ -197,8 +200,7 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
    	game.hud:insert(lock)
    	transition.to( lock, { time=2000, alpha=0.6 })
    	planet:setFillColor(30,30,30)
-   	
-   	return planet, text, lock
+   	lock:toFront()
    else
    	utils.onTouch(planet, action)
 		effectsManager.buttonEffect(x,y,scale)

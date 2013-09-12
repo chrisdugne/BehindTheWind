@@ -6,34 +6,37 @@ Game = {}
 
 function Game:new()  
 
+	local startZoom = 2.5
+	local camera = display.newGroup()
+	camera:scale(startZoom,startZoom)
+	  
 	local object = {
 	
 		RUNNING  = 1, 
 		STOPPED  = 2, 
 	
-		zoom  	= 2, 
+		zoom  	= startZoom, 
 		level  	= 0, 
-		camera 	= display.newGroup(),
+		camera 	= camera,
 		hud 		= display.newGroup(),
 		focus 	= CHARACTER,
 		state		= STOPPED
 	}
 
-	setmetatable(object, { __index = Game })  
+	setmetatable(object, { __index = Game })
 	return object
 end
 
 -----------------------------------------------------------------------------------------
 
-function Game:init()
+function Game:start()
+
+   self.state = game.RUNNING
+
+	---------------------
+
 	utils.emptyGroup(self.camera)
 	self.camera.alpha = 0
-	self.camera:scale(self.zoom,self.zoom)
-end
-
------------------------------------------------------------------------------------------
-
-function Game:start()
 
 	---------------------
 
@@ -64,7 +67,6 @@ function Game:start()
 	
 	transition.to( self.camera, { time=1000, alpha=1 })
    effectsManager.spawnEffect()
-   self.state = game.RUNNING
 	touchController.start()
 	Runtime:addEventListener( "enterFrame", self.refreshCamera )
 	
@@ -107,23 +109,34 @@ function Game:displayScore()
 	local top = display.newRect(self.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
    top.alpha = 0
    top:setFillColor(0)
-   self.hud.top = top
    
    local bottom = display.newRect(self.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
    bottom.alpha = 0
    bottom:setFillColor(0)
-   self.hud.bottom = bottom
 
    local board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth/2, display.contentHeight/2, 20)
    board.x = display.contentWidth/2
    board.y = display.contentHeight/2
    board.alpha = 0
    board:setFillColor(0)
-   self.hud.board = board
    
 	transition.to( top, { time=800, alpha=1, y = top.contentHeight/2 })
 	transition.to( bottom, { time=800, alpha=1, y = display.contentHeight - top.contentHeight/2 })  
 	transition.to( board, { time=800, alpha=0.7, onComplete= function() self:fillBoard() end})  
+	
+	timer.performWithDelay(4000, function()
+   	viewManager.buildButton(
+   		"assets/images/hud/play.png", 
+   		"white", 
+   		21, 
+   		0.26,
+   		display.contentWidth*0.8, 	
+   		display.contentHeight*0.1, 	
+   		function()
+   			router.openAppHome() 
+   		end
+   	)
+	end)
 end
 ------------------------------------------
 
@@ -148,6 +161,7 @@ end
 -- car les x,y de position du character sont ceux du screen
 
 function Game:refreshCamera(event)
+
 	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
 		if(not character.rock or game.focus == CHARACTER) then	
       	
