@@ -34,7 +34,7 @@ local swipping				= false
 
 -------------------------------------
 
-local TAP_TIME_LIMIT		= 150
+local TAP_TIME_LIMIT		= 250
 
 -------------------------------------
 

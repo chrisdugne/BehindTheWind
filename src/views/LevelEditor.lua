@@ -493,6 +493,16 @@ function scene:import()
 			end
 		
 		end
+		
+		--------------------
+		-- placing editor on spawn point
+		
+		if(tiles[i].sheet == levelDrawer.LEVEL_MISC) then
+			if(tiles[i].num == levelDrawer.SPAWNPOINT) then
+   			editor.x = display.contentWidth/2 - tile.x
+   			editor.y = display.contentHeight/2 - tile.y
+   		end
+		end
 	end 
 	
 	-----------------------------
@@ -734,7 +744,21 @@ function scene:deleteTile(tile)
 	selectedTile.y = tile.y
 	selectedTile.width = tile.width
 	
-	self:unsetMovable(tile)
+	if(tile.movable) then
+		self:unsetMovable(tile)
+	end
+
+	if(tile.background) then
+		self:unsetProperty("background")
+	end
+
+	if(tile.foreground) then
+		self:unsetProperty("foreground")
+	end
+
+	if(tile.destructible) then
+		self:unsetProperty("destructible")
+	end
 
 	if(tile.group) then
 		self:removeFromGroup(tile)
@@ -765,7 +789,7 @@ end
 function scene:addToGroup(tile)
 	
 	tile.group = currentGroup
-	tile.iconGroup = display.newText( editor, tile.group, tile.x, tile.y- tile.height/2, FONT, 22 )
+	tile.iconGroup = display.newText( editor, tile.group, tile.x- tile.width/3, tile.y- tile.height/2, FONT, 22 )
 	tile.iconGroup:setTextColor(0, 0, 0)
 	
 	tile.isInGroup = true

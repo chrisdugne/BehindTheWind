@@ -34,10 +34,10 @@ function Game:refreshCamera(event)
       	local topDistance 		= character.sprite.y + game.camera.y
       	local bottomDistance 	= display.contentHeight - topDistance
       	
-      	if(rightDistance < display.contentWidth*0.38) then
-      		game.camera.x = - character.sprite.x + display.contentWidth*0.62
-      	elseif(leftDistance < display.contentWidth*0.38) then
-      		game.camera.x = - character.sprite.x + display.contentWidth*0.38
+      	if(rightDistance < display.contentWidth*0.43) then
+      		game.camera.x = - character.sprite.x + display.contentWidth*0.57
+      	elseif(leftDistance < display.contentWidth*0.43) then
+      		game.camera.x = - character.sprite.x + display.contentWidth*0.43
       	end
       
       	if(bottomDistance < display.contentHeight*0.28) then

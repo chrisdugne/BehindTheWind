@@ -40,6 +40,13 @@ hanging 	= false
 local playerWalk = require("src.game.graphics.CharacterJump")
 local playerSheet = graphics.newImageSheet( "assets/images/game/CharacterJump.png", playerWalk.sheet )
 
+-------------------------------------
+
+local previousVy = 0
+local nbFramesToKeep = 0
+
+-------------------------------------
+
 function init()
 	ropes = {}
 	
@@ -81,9 +88,6 @@ function spawn()
 end
 
 -------------------------------------
-
-local previousVy = 0
-local nbFramesToKeep = 0
 
 function checkCharacter(event)
 
@@ -287,8 +291,6 @@ end
 
 function stop(tapping)
 	
-	print("stop")
-
 	if(not jumping and not hanging) then 
    	state = NOT_MOVING
  	end
