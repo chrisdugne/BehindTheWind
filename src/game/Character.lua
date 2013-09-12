@@ -46,6 +46,18 @@ local previousVy = 0
 local nbFramesToKeep = 0
 
 -------------------------------------
+-- sprite.x, sprite.y : coordonnees dans le monde, dans la camera
+-- screenX, screenY : coordonnees a lecran, pour les touches
+
+function screenX()
+	return sprite.x*game.zoom
+end
+
+function screenY()
+	return sprite.y*game.zoom
+end
+
+-------------------------------------
 
 function init()
 	ropes = {}

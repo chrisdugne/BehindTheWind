@@ -11,6 +11,7 @@ function Game:new()
 		RUNNING  = 1, 
 		STOPPED  = 2, 
 	
+		zoom  	= 2, 
 		level  	= 0, 
 		camera 	= display.newGroup(),
 		hud 		= display.newGroup(),
@@ -27,7 +28,7 @@ end
 function Game:init()
 	utils.emptyGroup(self.camera)
 	self.camera.alpha = 0
-	--camera:scale(0.3,0.3)
+	self.camera:scale(self.zoom,self.zoom)
 end
 
 -----------------------------------------------------------------------------------------
@@ -62,13 +63,17 @@ function Game:start()
 	------------------------------
 	
 	transition.to( self.camera, { time=1000, alpha=1 })
+   effectsManager.spawnEffect()
+   self.state = game.RUNNING
+	touchController.start()
+	Runtime:addEventListener( "enterFrame", self.refreshCamera )
 	
-	timer.performWithDelay(3000, function()
-      effectsManager.spawnEffect()
-      self.state = game.RUNNING
-   	touchController.start()
-   	Runtime:addEventListener( "enterFrame", self.refreshCamera )
-	end)
+--	timer.performWithDelay(3000, function()
+--      effectsManager.spawnEffect()
+--      self.state = game.RUNNING
+--   	touchController.start()
+--   	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+--	end)
 end
 
 function Game:stop()
@@ -139,32 +144,35 @@ function Game:fillBoard()
 end
 	
 ------------------------------------------
+--- ici on prend en compte le game.zoom
+-- car les x,y de position du character sont ceux du screen
 
 function Game:refreshCamera(event)
 	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
 		if(not character.rock or game.focus == CHARACTER) then	
-      	local leftDistance 		= character.sprite.x + game.camera.x
-      	local rightDistance 		= display.contentWidth - leftDistance
-      
-      	local topDistance 		= character.sprite.y + game.camera.y
-      	local bottomDistance 	= display.contentHeight - topDistance
       	
+      	local leftDistance 	= character.screenX() + game.camera.x
+      	local rightDistance 	= display.contentWidth - leftDistance
+      
+      	local topDistance 	= character.screenY() + game.camera.y
+      	local bottomDistance = display.contentHeight - topDistance
+
       	if(rightDistance < display.contentWidth*0.43) then
-      		game.camera.x = - character.sprite.x + display.contentWidth*0.57
+      		game.camera.x = display.contentWidth*0.57 - character.screenX() 
       	elseif(leftDistance < display.contentWidth*0.43) then
-      		game.camera.x = - character.sprite.x + display.contentWidth*0.43
+      		game.camera.x = display.contentWidth*0.43 - character.screenX()
       	end
       
-      	if(bottomDistance < display.contentHeight*0.28) then
-      		game.camera.y = - character.sprite.y + display.contentHeight*0.72
-      	elseif(topDistance < display.contentHeight*0.28) then
-      		game.camera.y = - character.sprite.y + display.contentHeight*0.28
+      	if(bottomDistance < display.contentHeight*0.18) then
+      		game.camera.y = display.contentHeight*0.82 - character.screenY()
+      	elseif(topDistance < display.contentHeight*0.18) then
+      		game.camera.y = display.contentHeight*0.18 - character.screenY() 
       	end
       
       elseif(game.focus == ROCK) then
       	if(character.rock.x) then 
-      		game.camera.x = -character.rock.x + display.contentWidth*0.5
-      		game.camera.y = -character.rock.y + display.contentHeight*0.5
+      		game.camera.x = -character.rock.x*game.zoom + display.contentWidth*0.5
+      		game.camera.y = -character.rock.y*game.zoom + display.contentHeight*0.5
       	end
       end
 	end

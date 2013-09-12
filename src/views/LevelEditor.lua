@@ -67,6 +67,7 @@ local dontListenThisTouchScreen = false
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 	viewManager.initBack()
+	editor:scale(game.zoom, game.zoom)
 end
 
 -----------------------------------------------------------------------------------------
@@ -95,7 +96,7 @@ function scene:refreshScene()
 	down.y = 80
 	down:scale(0.12,0.12)
    down:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then editor.y = editor.y + 100 end
+   	if(event.phase == "began") then editor.y = editor.y + 200 end
 		return true
 	end )
 
@@ -104,7 +105,7 @@ function scene:refreshScene()
 	up.y = 55
 	up:scale(0.12,0.12)
    up:addEventListener( "touch", function(event)
-   	if(event.phase == "began") then editor.y = editor.y - 100 end
+   	if(event.phase == "began") then editor.y = editor.y - 200 end
 		return true
    end )
 
@@ -113,7 +114,7 @@ function scene:refreshScene()
 	left.y = 67
 	left:scale(0.12,0.12)
    left:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then editor.x = editor.x - 190 end 
+   	if(event.phase == "began") then editor.x = editor.x - 390 end 
 		return true
   	end )
 
@@ -122,7 +123,7 @@ function scene:refreshScene()
 	right.y = 67
 	right:scale(0.12,0.12)
    right:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then editor.x = editor.x + 190 end
+   	if(event.phase == "began") then editor.x = editor.x + 390 end
 		return true
    end )
 
@@ -136,7 +137,7 @@ function scene:refreshScene()
 	selectionLeft.y = 62
 	selectionLeft:scale(0.1,0.1)
    selectionLeft:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then tileSelection.x = tileSelection.x + 300 end
+   	if(event.phase == "began") then tileSelection.x = tileSelection.x + 700 end
 		return true
    end )
 
@@ -145,7 +146,7 @@ function scene:refreshScene()
 	selectionRight.y = 62
 	selectionRight:scale(0.1,0.1)
    selectionRight:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then tileSelection.x = tileSelection.x - 300 end	 
+   	if(event.phase == "began") then tileSelection.x = tileSelection.x - 700 end	 
 		return true
    end )
    
@@ -161,6 +162,31 @@ function scene:refreshScene()
    	end
 		return true
 	end )
+	
+	
+	------------------------------------------------------------------------------------------------------------
+	-- Zoom / Unzoom
+	------------------------------------------------------------------------------------------------------------
+
+	local zoom = display.newImage( "assets/images/tutorial/arrow.top.png" )
+	zoom.x = 30
+	zoom.y = display.contentHeight - 62
+	zoom:scale(0.1,0.1)
+	utils.onTouch(zoom, function()
+		editor:scale(1/game.zoom,1/game.zoom) 
+		game.zoom = game.zoom+0.2 
+		editor:scale(game.zoom,game.zoom) 
+	end)
+
+	local unzoom = display.newImage( "assets/images/tutorial/arrow.down.png" )
+	unzoom.x = 60
+	unzoom.y = display.contentHeight - 62
+	unzoom:scale(0.1,0.1)
+	utils.onTouch(unzoom, function() 
+		editor:scale(1/game.zoom,1/game.zoom) 
+		game.zoom = game.zoom-0.2 
+		editor:scale(game.zoom,game.zoom) 
+	end)
 
 
 	------------------------------------------------------------------------------------------------------------
@@ -498,8 +524,8 @@ function scene:import()
 		
 		if(tiles[i].sheet == levelDrawer.LEVEL_MISC) then
 			if(tiles[i].num == levelDrawer.SPAWNPOINT) then
-   			editor.x = display.contentWidth/2 - tile.x
-   			editor.y = display.contentHeight/2 - tile.y
+   			editor.x = display.contentWidth/2 - tile.x*game.zoom
+   			editor.y = display.contentHeight/2 - tile.y*game.zoom
    		end
 		end
 	end 
@@ -713,8 +739,8 @@ function scene:addTile(sheet, num, x, y)
 	if(not x) then
    	if(not selectedTile) then
    	   selectedTile = {}
-      	selectedTile.x = display.contentWidth/2 - editor.x
-      	selectedTile.y = display.contentHeight/2 - editor.y
+      	selectedTile.x = (display.contentWidth/2 - editor.x)/game.zoom
+      	selectedTile.y = (display.contentHeight/2 - editor.y)/game.zoom
       	selectedTile.width = 0
    	end
    	
@@ -1219,8 +1245,8 @@ function scene:touchScreen( event )
    		if(selectedGroup) then
 				local x1 = (groups[selectedGroup][1].x + groups[selectedGroup][#groups[selectedGroup]].x  )/2
 				local y1 = (groups[selectedGroup][1].y + groups[selectedGroup][#groups[selectedGroup]].y  )/2
-				local x2 = event.x - editor.x
-				local y2 = event.y - editor.y
+				local x2 = (event.x - editor.x)/game.zoom
+				local y2 = (event.y - editor.y)/game.zoom
 				self:drawGroupMotion(selectedGroup, x1,y1, x2,y2)
 			
 			elseif(selectedTile) then
@@ -1229,8 +1255,8 @@ function scene:touchScreen( event )
    			local line = display.newLine( editor, selectedTile.x,selectedTile.y, event.x, event.y )
    			line.x1 = selectedTile.x
    			line.y1 = selectedTile.y
-   			line.x2 = event.x - editor.x
-   			line.y2 = event.y - editor.y
+   			line.x2 = (event.x - editor.x)/game.zoom
+   			line.y2 = (event.y - editor.y)/game.zoom
 
 				selectedTile.motion = line
       	end
@@ -1242,8 +1268,8 @@ function scene:touchScreen( event )
 				local groupDraggable = GLOBALS.levelEditor.groupDragLines[selectedGroup]
 				groupDraggable.x1 = (groups[selectedGroup][1].x + groups[selectedGroup][#groups[selectedGroup]].x  )/2
 				groupDraggable.y1 = (groups[selectedGroup][1].y + groups[selectedGroup][#groups[selectedGroup]].y  )/2
-				groupDraggable.x2 = event.x - editor.x
-				groupDraggable.y2 = event.y - editor.y
+				groupDraggable.x2 = (event.x - editor.x)/game.zoom
+				groupDraggable.y2 = (event.y - editor.y)/game.zoom
 				
 				self:drawGroupDragLine(selectedGroup, groupDraggable)
 			
@@ -1253,16 +1279,16 @@ function scene:touchScreen( event )
    			local line = display.newLine( editor, selectedTile.x,selectedTile.y, event.x, event.y )
    			line.x1 = selectedTile.x
    			line.y1 = selectedTile.y
-   			line.x2 = event.x - editor.x
-   			line.y2 = event.y - editor.y
+   			line.x2 = (event.x - editor.x)/game.zoom
+   			line.y2 = (event.y - editor.y)/game.zoom
 
 				selectedTile.dragLine = line
       	end
    	
 		
 		elseif(state == DRAWING_ENERGY) then
-   		local x = event.x - editor.x
-   		local y = event.y - editor.y
+   		local x = (event.x - editor.x)/game.zoom
+   		local y = (event.y - editor.y)/game.zoom
    		self:drawEnergy(x, y, selectedEnergyType)
 
    	end

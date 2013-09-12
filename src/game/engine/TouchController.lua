@@ -164,9 +164,9 @@ function onTouch( event )
 			or character.collideOnRight)
 			then
 
-				if(not character.collideOnRight and xStart-(character.sprite.x + game.camera.x) > 15) then
+				if(not character.collideOnRight and xStart-(character.screenX() + game.camera.x) > 30) then
 					character.goRight()
-				elseif(not character.collideOnLeft and xStart-(character.sprite.x + game.camera.x) < - 15) then
+				elseif(not character.collideOnLeft and xStart-(character.screenX() + game.camera.x) < - 30) then
 					character.goLeft()
 				end
 
@@ -241,17 +241,20 @@ function dragGroup( group, motionLimit, event )
 end
 	
 -------------------------------------
+--- ici on prend en compte le game.zoom
+-- car les x,y des events sont ceux du screen
+-- or on bouge les x,y dans le monde, la camera => il faut compter le zoom
 
 function drag( tile, event, motionLimit )
 	
 	if event.phase == "began" then
 		tile.moving = true
-		tile.markX = tile.x    -- store x location of object
-		tile.markY = tile.y    -- store y location of object
+		tile.markX = tile.x*game.zoom    -- store x location of object
+		tile.markY = tile.y*game.zoom    -- store y location of object
 	
 	elseif event.phase == "moved" and tile.moving then
-		local x = (event.x - event.xStart) + tile.markX
-		local y = (event.y - event.yStart) + tile.markY
+		local x = ((event.x - event.xStart) + tile.markX)/game.zoom
+		local y = ((event.y - event.yStart) + tile.markY)/game.zoom
 		
 		if(motionLimit) then
 			if(motionLimit.horizontal > 0) then
@@ -273,6 +276,7 @@ function drag( tile, event, motionLimit )
       	else
       		y = tile.startY
    		end
+
 		end
 		
 		tile.x, tile.y = x, y    -- move object based on calculations above

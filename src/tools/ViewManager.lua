@@ -48,9 +48,9 @@ function initBackLevel1()
 	
 	moveMists()
 	
-	moon = display.newImageRect( "assets/images/moon.png", 320, 320)  
-	moon.x = 100
-	moon.y = display.contentHeight-100
+	moon = display.newImageRect( "assets/images/moon.png", 640, 640)  
+	moon.x = 200
+	moon.y = display.contentHeight-200
 	
 	moveMoon()
 	
@@ -76,9 +76,9 @@ function initBackMenu()
 	
 	moveMists()
 	
-	moon = display.newImageRect( "assets/images/moon.png", 320, 320)  
-	moon.x = display.contentWidth-150  
-	moon.y = display.contentHeight/2-130 
+	moon = display.newImageRect( "assets/images/moon.png", 640, 640)  
+	moon.x = display.contentWidth-300  
+	moon.y = display.contentHeight/2-260 
 	
 	moveMoonBack()
 	
