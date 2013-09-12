@@ -147,6 +147,9 @@ end
 
 function spawnEffect()
 	
+	-- a rope has been attached during the fall : cancel the respawn
+	if(#character.ropes > 0) then return end
+		
 	local x,y = levelDrawer.level.spawnX, levelDrawer.level.spawnY
 		
 	local light=CBE.VentGroup{

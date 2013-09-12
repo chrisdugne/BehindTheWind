@@ -6,11 +6,13 @@ module(..., package.seeall)
 
 local CHARACTER_SPEED = 135
 local JUMP_SPEED = -267
-local NOT_MOVING 	= 0
-local GOING_LEFT 	= 1
-local GOING_RIGHT = 2
-
 local RADIUS = 16
+
+NOT_MOVING 	= 0
+GOING_LEFT 	= 1
+GOING_RIGHT = 2
+OUT		 	= 100
+
 
 -------------------------------------
 
@@ -25,8 +27,10 @@ collideOnRight = nil
 sprite 			= nil
 ropes				= nil
 
-timeLeavingFloor		= 0
+timeLeavingFloor	= 0
 leavingFloor 	= nil
+
+timeLastThrow	= 0
 
 jumping 	= false 
 hanging 	= false 
@@ -72,6 +76,8 @@ function spawn()
    
 	sprite:setFrame(1)
    sprite:setLinearVelocity(0,6)
+   
+	nbFramesToKeep = 0
 end
 
 -------------------------------------
@@ -116,9 +122,18 @@ function checkCharacter(event)
    	
    	previousVy = vy
 	   
+	   -------------------------------------------------------
+	   -- checking out of limit
+	   
 	   if(sprite.y > levelDrawer.level.bottomY) then
-			nbFramesToKeep = 100
-   		timer.performWithDelay(400, function()
+			nbFramesToKeep = 10000
+			state = OUT
+			
+			local now = system.getTimer()
+			local time = 400
+			if(now - timeLastThrow < 2000) then	time = 3000	end
+			
+   		timer.performWithDelay(time, function()
    			effectsManager.spawnEffect()
    		end)
    	end
@@ -223,7 +238,6 @@ function collide( event )
 		state = NOT_MOVING
 		
 		if(floor) then
-			print("scratch")
    		nbFramesToKeep = 2
 			sprite:setFrame(6) 
    	end
@@ -254,6 +268,7 @@ function setHanging(value)
 	hanging = value
 	if(hanging) then
 		timeLeavingFloor  = system.getTimer()
+		nbFramesToKeep = 0 -- could be locked while checking OUT and waiting for grab : reset ok here
 		
 		timer.performWithDelay(100, function()
          if(hanging) then
@@ -311,7 +326,6 @@ end
 
 function jump()
 	if(jumping or (not hanging and not floor)) then return end
-	print("--> perform jump")
 	timeLeavingFloor = system.getTimer()
 	leavingFloor 	= floor
 	jumping 			= true
@@ -327,11 +341,13 @@ end
 -------------------------------------
 
 function throw( x1,y1, x2,y2 )
+	timeLastThrow = system.getTimer()
 	physicsManager.throw(x1,y1, x2,y2)
 end
 
 -------------------------------------
 
 function grab( x1,y1, x2,y2 )
+	timeLastThrow = system.getTimer()
 	physicsManager.grab(x1,y1, x2,y2)
 end

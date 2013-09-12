@@ -19,8 +19,9 @@ SWIPE_MAX 			= 140
 
 -------------------------------------
 
+currentState 				= NONE
+
 local previousState 		= NONE
-local currentState 		= NONE
 local xStart				= 0
 local yStart				= 0
 local lastX					= 0
@@ -79,23 +80,18 @@ function touchScreen( event )
 		if(currentState == READY_TO_GRAB) then
 			setState(GRABBING, function() character.setGrabbing() end)
 		end 
---		
---		if(currentState == THROWING 
---		or currentState == GRABBING
---		or #character.ropes > 0) then
---			return
---			
---		elseif(event.x - 10 > xStart) then
---			swipping = true
---			setState(SWIPE_RIGHT)
---
---		elseif(event.x + 10 < xStart) then
---			swipping = true
---			setState(SWIPE_LEFT)
---		end
 
 
 	elseif event.phase == "ended" then
+
+   	display.getCurrentStage():setFocus( nil )
+   	Runtime:removeEventListener( "enterFrame", onTouch )
+		
+		---------------------------------------------
+		--	OUT  : dont listen action
+		if(character.state == character.OUT) then return end
+
+		---------------------------------------------
    	
    	if(currentState == THROWING) then
    		local launch = getLaunchVector()
@@ -104,6 +100,7 @@ function touchScreen( event )
    		local launch = getLaunchVector()
 			character.grab( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
+		
 		---------------------------------------------
 		
 		local now = system.getTimer()
@@ -118,8 +115,6 @@ function touchScreen( event )
 		
 		character.stop(tapping)
 		setState(NONE)
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", onTouch )
 		
 		---------------------------------------------
 	end
@@ -173,12 +168,10 @@ function onTouch( event )
 				end
 
 				if (character.floor) then
-					print("---> try to jump")
 					character.jump()
 				end
 			else
 				if (character.hanging) then
-   				print("---> hanging")
 				end
 			end
 		else
