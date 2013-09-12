@@ -1,7 +1,7 @@
-print(system.getInfo("model"), display.pixelWidth, display.pixelHeight)
 
 --calculate the aspect ratio of the device
 local aspectRatio = display.pixelHeight / display.pixelWidth
+
 application = {
    content = {
       width = aspectRatio > 1.5 and 800 or math.ceil( 1200 / aspectRatio ),
@@ -16,6 +16,3 @@ application = {
       },
    },
 }
-
-
-print(application.content.width, application.content.height)

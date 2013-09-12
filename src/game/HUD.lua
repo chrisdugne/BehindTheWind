@@ -32,18 +32,11 @@ end
 local panel
 function openPanel(level, num)
 	display.remove(panel)
-   panel = display.newImage( "assets/images/tutorial/tuto" .. level .. "." .. num .. ".png")
-   panel.x = display.contentWidth/2
-   panel.y = display.contentHeight/2
+   panel = display.newImageRect( "assets/images/tutorial/tuto" .. level .. "." .. num .. ".png", 840, 480)
+   panel.x = display.contentWidth*0.5
+   panel.y = display.contentHeight*0.5
    
-	panel:addEventListener( "touch", closePanel)
-end
-
-function closePanel(event)
-	if(event.phase == "began") then
-		display.remove(panel)
-   end
-   return true
+   utils.onTouch(panel, function() display.remove(panel) end)
 end
 
 -----------------------------------------------------------------------------------------

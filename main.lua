@@ -63,6 +63,11 @@ levelDrawer 		= require "src.game.levels.LevelDrawer"
 
 -----------------------------------------------------------------------------------------
 
+aspectRatio = display.pixelHeight / display.pixelWidth
+print(system.getInfo("model"), display.pixelWidth, display.pixelHeight, aspectRatio)
+
+-----------------------------------------------------------------------------------------
+
 game = Game:new()
 
 -----------------------------------------------------------------------------------------
@@ -122,7 +127,7 @@ end
 
 
 display.remove(memText)
-memText = display.newText( "0", 0, 0, FONT, 12 )
+memText = display.newText( "0", 0, 0, FONT, 25 )
 memText:setTextColor( 255 )	
 memText:setReferencePoint( display.CenterReferencePoint )
 memText.x = display.contentWidth - memText.contentWidth/2 - 10
@@ -131,7 +136,7 @@ memText.y = display.contentHeight - 20
 function refreshMemText(text)
 	if(memText.contentWidth) then
 		memText.text = text
-		memText.size = 12
+		memText.size = 25
 		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
 	end
 end

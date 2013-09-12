@@ -24,15 +24,15 @@ function scene:refreshScene()
 
 	---------------------------------------------------------------
 	
-	title = display.newText( game.hud, APP_NAME, 0, 0, FONT, 30 )
-	title:setTextColor( 255 )	
-	title.x = display.contentWidth/2
-	title.y = 45
-	title:setReferencePoint( display.CenterReferencePoint )
+--	title = display.newText( game.hud, APP_NAME, 0, 0, FONT, 50 )
+--	title:setTextColor( 255 )	
+--	title.x = display.contentWidth*0.5
+--	title.y = display.contentHeight*0.1
+--	title:setReferencePoint( display.CenterReferencePoint )
 	
-	effectsManager.buttonEffect(title.x - title.width/3, title.y, 0.4)
-	effectsManager.buttonEffect(title.x + title.width/2, title.y - title.height*0.4, 0.3)
-	effectsManager.buttonEffect(display.contentWidth - 100, display.contentHeight -20, 0.45)
+	effectsManager.buttonEffect(display.contentWidth*0.1, 180, 0.8)
+	effectsManager.buttonEffect(display.contentWidth*0.7, 80, 0.6)
+	effectsManager.buttonEffect(display.contentWidth - 100, display.contentHeight - 40, 0.9)
 
 	---------------------------------------------------------------
 
@@ -40,7 +40,7 @@ function scene:refreshScene()
 		"assets/images/hud/play.png", 
 		"white", 
 		21, 
-		0.36,
+		0.46*aspectRatio,
 		display.contentWidth*0.5, 	
 		display.contentHeight*0.5, 	
 		function()
@@ -55,13 +55,16 @@ function scene:refreshScene()
 
 	---------------------------------------------------------------
 	
+	local scale = 0.13*aspectRatio
+	print(scale)
+	
 	viewManager.buildButton(
 		"assets/images/hud/settings.png", 
 		"white",
-		20,
-		0.13,
-		30, 
-		display.contentHeight - 30, 
+		0,
+		scale,
+		60, 
+		display.contentHeight - 60, 
 		function() 
 			self:openOptions() 
 		end

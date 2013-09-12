@@ -129,10 +129,10 @@ function refreshEffects()
    			
    			if( effect.body
    			and effect.body.x
-   			and effect.body.x > -game.camera.x - 50
-   			and effect.body.x < display.contentWidth - game.camera.x + 50 
-   			and effect.body.y > -game.camera.y - 50
-   			and effect.body.y < display.contentHeight - game.camera.y + 50) then
+   			and effect.body.x > (-game.camera.x - 50)/game.zoom
+   			and effect.body.x < (display.contentWidth - game.camera.x + 50)/game.zoom 
+   			and effect.body.y > (-game.camera.y - 50)/game.zoom
+   			and effect.body.y < (display.contentHeight - game.camera.y + 50)/game.zoom) then
    				isOnscreen = true
    			end
    			
@@ -172,10 +172,10 @@ function buttonEffect(x,y, scale)
 			perEmit=math.random(3,7),
 			emissionNum=0,
 			emitDelay=520,
-			fadeInTime=1800,
+			fadeInTime=3800,
 			scale=3*scale,
 			physics={
-				gravityY=.036,
+				gravityY=.027,
 			}
 		}
 	}

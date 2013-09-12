@@ -34,7 +34,12 @@ function scene:refreshScene()
    for level = 1, 40 do
    	local i = (level-1)%10 
    	local j = math.floor((level-1)/10) + 1
-		local levelLocked = not GLOBALS.savedData.levels[level]
+   	local levelLocked
+   	
+   	if(level > 1) then
+   		print("--> " .. level)
+			levelLocked = not GLOBALS.savedData.levels[level - 1] or not GLOBALS.savedData.levels[level - 1].complete
+		end
 	
 	
    	viewManager.buildButton(

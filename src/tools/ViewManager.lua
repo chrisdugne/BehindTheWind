@@ -28,7 +28,7 @@ function initBack(level)
 		initBackMenu()
 	end
 
-	if(level == 1) then
+	if(level >= 1) then
 		initBackLevel1()
 	end
 end

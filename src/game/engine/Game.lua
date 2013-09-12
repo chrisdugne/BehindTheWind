@@ -6,7 +6,7 @@ Game = {}
 
 function Game:new()  
 
-	local startZoom = 2.5
+	local startZoom = 1.5*aspectRatio
 	local camera = display.newGroup()
 	camera:scale(startZoom,startZoom)
 	  
@@ -86,7 +86,13 @@ function Game:stop()
    self.state = game.STOPPED
 
 	touchController.stop()
+	
+	if(game.level == 1) then
+		GLOBALS.savedData.requireTutorial = false
+	end
 
+	GLOBALS.savedData.levels[game.level].complete = true
+	
 	timer.performWithDelay(700, function()
 		self:reset()
 		self:displayScore()
@@ -124,19 +130,6 @@ function Game:displayScore()
 	transition.to( bottom, { time=800, alpha=1, y = display.contentHeight - top.contentHeight/2 })  
 	transition.to( board, { time=800, alpha=0.7, onComplete= function() self:fillBoard() end})  
 	
-	timer.performWithDelay(4000, function()
-   	viewManager.buildButton(
-   		"assets/images/hud/play.png", 
-   		"white", 
-   		21, 
-   		0.26,
-   		display.contentWidth*0.8, 	
-   		display.contentHeight*0.1, 	
-   		function()
-   			router.openAppHome() 
-   		end
-   	)
-	end)
 end
 ------------------------------------------
 
@@ -146,7 +139,7 @@ function Game:fillBoard()
 		"assets/images/hud/play.png", 
 		"white", 
 		21, 
-		0.26,
+		0.26*aspectRatio,
 		display.contentWidth*0.5, 	
 		display.contentHeight*0.5, 	
 		function()
