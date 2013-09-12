@@ -60,7 +60,7 @@ function designLevel()
 	level.triggers 		= {}
 	level.num 				= 1
 	level.bottomY 			= -100000
-			
+	
 	---------------------
 
 	local tiles 			= GLOBALS.level1.tiles
@@ -144,7 +144,6 @@ function designLevel()
 		
 			if(tile.num == PANEL) then
 				tile.panelNum = tiles[i].panelNum
-				print("found panel " .. tile.panelNum)
    			tile:addEventListener( "touch", openPanel)
 
 			elseif(tile.num == SPAWNPOINT) then
@@ -223,7 +222,6 @@ end
 
 function openPanel(event)
 	if(event.phase == "began") then
-		print("open panel " .. event.target.panelNum)
 		hud.openPanel(level.num, event.target.panelNum)
    end
 	return true

@@ -142,6 +142,41 @@ function refreshEffectsCoordinates(effect)
 end
 
 -----------------------------------------------------------------------------
+--- Spawn point
+-----------------------------------------------------------------------------
+
+function spawnEffect()
+	
+	local x,y = levelDrawer.level.spawnX, levelDrawer.level.spawnY
+		
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{65,65,262},{55,55,220}},
+			x = x,
+			y = y,
+			perEmit=5,
+			emissionNum=3,
+			emitDelay=20,
+			lifeSpan=400,
+			fadeInTime=700,
+			scale=0.6,
+			physics={
+				gravityY=0.07,
+			},
+			on
+		}
+	}
+	
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+	
+	timer.performWithDelay(500, function() character.spawn() end)
+end
+
+-----------------------------------------------------------------------------
 --- Level energies
 -----------------------------------------------------------------------------
 

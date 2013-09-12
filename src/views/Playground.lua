@@ -52,7 +52,7 @@ function scene:refreshScene()
 	-- camera
 
 	character.init()
-	character.spawn()
+   effectsManager.spawnEffect()
 
 	------------------------------
 	-- level foregrounds

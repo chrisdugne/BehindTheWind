@@ -52,6 +52,11 @@ function init()
 	sprite:addEventListener( "collision", collide )
 	sprite:addEventListener( "preCollision", preCollide )
 
+	-- set coordinates to center on spawnpoint
+   sprite.x = levelDrawer.level.spawnX
+   sprite.y = levelDrawer.level.spawnY
+   sprite.alpha = 0
+   
 	Runtime:addEventListener( "enterFrame", checkCharacter )
 end	
 
@@ -59,9 +64,13 @@ end
 
 function spawn()
 	stop()
-	sprite:setFrame(1)
+	
+	-- replace the character on the spawn point
    sprite.x = levelDrawer.level.spawnX
    sprite.y = levelDrawer.level.spawnY
+   sprite.alpha = 1
+   
+	sprite:setFrame(1)
    sprite:setLinearVelocity(0,6)
 end
 
@@ -109,8 +118,8 @@ function checkCharacter(event)
 	   
 	   if(sprite.y > levelDrawer.level.bottomY) then
 			nbFramesToKeep = 100
-   		timer.performWithDelay(2000, function()
-   			character.spawn()
+   		timer.performWithDelay(400, function()
+   			effectsManager.spawnEffect()
    		end)
    	end
    end
