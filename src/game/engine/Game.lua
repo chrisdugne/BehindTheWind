@@ -7,8 +7,11 @@ Game = {}
 function Game:new()  
 
 	local object = {
+	
 		RUNNING  = 1, 
 		STOPPED  = 2, 
+	
+		level  	= 0, 
 		camera 	= display.newGroup(),
 		hud 		= display.newGroup(),
 		focus 	= CHARACTER,
@@ -23,6 +26,7 @@ end
 
 function Game:init()
 	utils.emptyGroup(self.camera)
+	self.camera.alpha = 0
 	--camera:scale(0.3,0.3)
 end
 
@@ -32,14 +36,12 @@ function Game:start()
 
 	---------------------
 
-	Runtime:addEventListener( "enterFrame", self.refreshCamera )
 	hud.initFollowRockButton()
 	
 	---------------------
 	-- engines
 
 	physicsManager.start()
-	touchController.start()
 	
 	------------------------------
 	-- level content
@@ -58,9 +60,15 @@ function Game:start()
 	levelDrawer.putBackgroundToBack()
 
 	------------------------------
-
-   effectsManager.spawnEffect()
-   self.state = game.RUNNING
+	
+	transition.to( self.camera, { time=1000, alpha=1 })
+	
+	timer.performWithDelay(3000, function()
+      effectsManager.spawnEffect()
+      self.state = game.RUNNING
+   	touchController.start()
+   	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	end)
 end
 
 function Game:stop()

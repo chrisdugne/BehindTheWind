@@ -25,7 +25,7 @@ function initBack(level)
 
 	-- level 0 : App global background
 	if(level == 0) then
-		initBackLevel1()
+		initBackMenu()
 	end
 
 	if(level == 1) then
@@ -33,7 +33,36 @@ function initBack(level)
 	end
 end
 
+
 function initBackLevel1()
+	
+	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	mist1.x = display.viewableContentWidth/2  
+	mist1.y = display.viewableContentHeight/2
+	mist1.alpha = 0.37
+
+	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	mist2.x = display.viewableContentWidth/2  - display.contentWidth
+	mist2.y = display.viewableContentHeight/2
+	mist2.alpha = 0.37 
+	
+	moveMists()
+	
+	moon = display.newImageRect( "assets/images/moon.png", 320, 320)  
+	moon.x = 100
+	moon.y = display.contentHeight-100
+	
+	moveMoon()
+	
+	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
+	back.x = display.viewableContentWidth/2  
+	back.y = display.viewableContentHeight/2
+	
+	putBackgroundToBack()  
+end
+
+
+function initBackMenu()
 	
 	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist1.x = display.viewableContentWidth/2  
@@ -51,7 +80,7 @@ function initBackLevel1()
 	moon.x = display.contentWidth-150  
 	moon.y = display.contentHeight/2-130 
 	
-	moveMoon()
+	moveMoonBack()
 	
 	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	back.x = display.viewableContentWidth/2  
@@ -72,10 +101,6 @@ function moveMists()
 	mist2.tween = transition.to( mist2, { time=30000, x=mist2.x+display.contentWidth, onComplete = function() replaceMists() end })
 end
 
-function moveMoon()
-	moon.tween = transition.to( moon, { time=170000, x=0, y =display.contentHeight,onComplete = function() moveMoonBack() end })
-end
-
 function replaceMists()
 	mist1.x = display.viewableContentWidth/2  
 	mist2.x = display.viewableContentWidth/2 - display.contentWidth
@@ -83,7 +108,11 @@ function replaceMists()
 end
 
 function moveMoonBack()
-	transition.to( moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoon() end })
+	moon.tween = transition.to( moon, { time=170000, x=0, y =display.contentHeight,onComplete = function() moveMoon() end })
+end
+
+function moveMoon()
+	transition.to( moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoonBack() end })
 end
 
 ------------------------------------------------------------------------------------------

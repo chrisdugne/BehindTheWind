@@ -24,7 +24,7 @@ function scene:refreshScene()
 
 	---------------------------------------------------------------
 	
-	title = display.newText( game.hud, APP_NAME, 0, 0, FONT, 45 )
+	title = display.newText( game.hud, APP_NAME, 0, 0, FONT, 30 )
 	title:setTextColor( 255 )	
 	title.x = display.contentWidth/2
 	title.y = 45
@@ -44,7 +44,12 @@ function scene:refreshScene()
 		display.contentWidth*0.5, 	
 		display.contentHeight*0.5, 	
 		function()
-			router.openLevelSelection() 
+			if(GLOBALS.savedData.requireTutorial) then
+				game.level = 1
+				router.openPlayground()
+			else
+				router.openLevelSelection()
+   		end
 		end
 	)
 

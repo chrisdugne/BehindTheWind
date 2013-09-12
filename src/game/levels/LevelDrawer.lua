@@ -58,15 +58,19 @@ function designLevel(displayScore)
 	level 					= {}
 	level.checkPoints 	= {}
 	level.triggers 		= {}
-	level.num 				= 1
+	level.num 				= game.level
 	level.bottomY 			= -100000
 	
 	---------------------
 
-	local tiles 			= GLOBALS.level1.tiles
-	local energies 		= GLOBALS.level1.energies
-	local groupMotions 	= GLOBALS.level1.groupMotions
-	local groupDragLines = GLOBALS.level1.groupDragLines
+	level.content 			= utils.loadFile("levelEditor/level".. level.num ..".json")
+
+	---------------------
+
+	local tiles 			= level.content.tiles
+	local energies 		= level.content.energies
+	local groupMotions 	= level.content.groupMotions
+	local groupDragLines = level.content.groupDragLines
 	
 	---------------------
 	

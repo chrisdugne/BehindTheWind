@@ -88,7 +88,6 @@ viewManager		= require "src.tools.ViewManager"
 
 GLOBALS = {
 	savedData 		= utils.loadUserData("savedData.json"),
-	level1 			= utils.loadFile("levelEditor/level1.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
 }
 
@@ -106,7 +105,7 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 --musicManager.playMusic()
-viewManager.initBack(1)
+viewManager.initBack(0)
 
 ------------------------------------------
 
@@ -147,41 +146,27 @@ Runtime:addEventListener( "enterFrame", function()
 	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
 end )
 
------------------------------------------------
--- RESET BUTTON
-
---local reset = display.newCircle( 20, 20, 15 )
---reset.alpha = 0.01
---
---reset:addEventListener ( "touch", function(event) 
---	if(event.phase == "began") then
---		router.openAppHome()
---	end
---	
---	return true
---end )
-
-
 -----------------------------------------------------------------------------------------
---	
---if(not GLOBALS.savedData) then
---	initGameData()
---end
---
---function initGameData()
---
---	GLOBALS.savedData = {
---		user = "New player",
---		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
---		requireTutorial = true,
---		levels = {{available = true}}, 
---		scores = {
---			classic={},
---		}
---	}
---
---	utils.saveTable(GLOBALS.savedData, "savedData.json")
---end
+
+function initGameData()
+
+	GLOBALS.savedData = {
+		user = "New player",
+		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
+		requireTutorial = true,
+		levels = {
+			{
+				complete = false 
+			}
+		}, 
+	}
+
+	utils.saveTable(GLOBALS.savedData, "savedData.json")
+end
+
+if(not GLOBALS.savedData) then
+	initGameData()
+end
 
 -----------------------------------------------------------------------------------------
 --- iOS Status Bar
