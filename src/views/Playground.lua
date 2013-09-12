@@ -46,7 +46,7 @@ function scene:refreshScene()
 	------------------------------
 	-- level content
 	
-	levelDrawer.designLevel()
+	levelDrawer.designLevel(function() self:displayScore() end)
 	
 	-----------------------------
 	-- camera
@@ -59,6 +59,31 @@ function scene:refreshScene()
 
 	levelDrawer.bringForegroundToFront()
 	levelDrawer.putBackgroundToBack()
+end
+
+------------------------------------------
+
+function scene:displayScore()
+	local top = display.newRect(self.view, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+   top.alpha = 0
+   top:setFillColor(0)
+   
+   local bottom = display.newRect(self.view, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+   bottom.alpha = 0
+   bottom:setFillColor(0)
+
+   local board = display.newRoundedRect(self.view, 0, 0, display.contentWidth/2, display.contentHeight/2, 20)
+   board.x = display.contentWidth/2
+   board.y = display.contentHeight/2
+   board.alpha = 0
+   board:setFillColor(0)
+   
+   game.camera:toBack()
+   viewManager.putBackgroundToBack()
+   
+	transition.to( top, { time=800, alpha=1, y = top.contentHeight/2 })
+	transition.to( bottom, { time=800, alpha=1, y = display.contentHeight - top.contentHeight/2 })  
+	transition.to( board, { time=800, alpha=0.7, onComplete= function()  end})  
 end
 
 ------------------------------------------

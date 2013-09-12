@@ -51,7 +51,7 @@ local MOTION_SPEED = 60
 
 -------------------------------------
 
-function designLevel()
+function designLevel(displayScore)
 
 	---------------------
 
@@ -149,6 +149,10 @@ function designLevel()
 			elseif(tile.num == SPAWNPOINT) then
    			level.spawnX = tile.x
    			level.spawnY = tile.y
+   			display.remove(tile)
+
+			elseif(tile.num == EXIT) then
+				effectsManager.drawExit(tile.x, tile.y, displayScore)
    			display.remove(tile)
    		end
 		end

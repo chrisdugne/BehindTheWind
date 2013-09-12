@@ -29,29 +29,34 @@ function initBack()
 	mist1.x = display.viewableContentWidth/2  
 	mist1.y = display.viewableContentHeight/2
 	mist1.alpha = 0.37
-	mist1:toBack();
 
 	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist2.x = display.viewableContentWidth/2  - display.contentWidth
 	mist2.y = display.viewableContentHeight/2
 	mist2.alpha = 0.37 
-	mist2:toBack();
 	
 	moveMists()
 	
 	moon = display.newImageRect( "assets/images/moon.png", 320, 320)  
 	moon.x = display.contentWidth-150  
 	moon.y = display.contentHeight/2-130 
-	moon:toBack();
 	
 	moveMoon()
 	
 	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	back.x = display.viewableContentWidth/2  
-	back.y = display.viewableContentHeight/2  
-	back:toBack();
+	back.y = display.viewableContentHeight/2
+	
+	putBackgroundToBack()  
 end
 
+function putBackgroundToBack()
+	mist1:toBack();
+	mist2:toBack();
+	moon:toBack();
+	back:toBack();
+end
+	
 function moveMists()
 	mist1.tween = transition.to( mist1, { time=30000, x=mist1.x+display.contentWidth })
 	mist2.tween = transition.to( mist2, { time=30000, x=mist2.x+display.contentWidth, onComplete = function() replaceMists() end })

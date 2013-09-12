@@ -167,8 +167,7 @@ function spawnEffect()
 			scale=0.6,
 			physics={
 				gravityY=0.07,
-			},
-			on
+			}
 		}
 	}
 	
@@ -177,6 +176,121 @@ function spawnEffect()
 	game.camera:insert(light:get("light").content)
 	
 	timer.performWithDelay(500, function() character.spawn() end)
+end
+
+-----------------------------------------------------------------------------
+--- When character reach the exit
+-----------------------------------------------------------------------------
+
+function reachExitEffect(x,y)
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{65,65,262},{55,55,220}},
+			x = x,
+			y = y,
+			perEmit=5,
+			emissionNum=3,
+			emitDelay=20,
+			lifeSpan=400,
+			fadeInTime=700,
+			scale=1,
+			physics={
+				gravityY=1.07,
+			}
+		}
+	}
+	
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+	
+	transition.to(character.sprite, { time=500, alpha = 0 })
+end
+
+-----------------------------------------------------------------------------
+--- Level Exit
+-----------------------------------------------------------------------------
+
+function drawExit(x, y, displayScore)
+	
+	if(not type) then type = 1 end
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{65,5,2},{55,55,20},{15,15,120}},
+			x = x,
+			y = y,
+			perEmit=math.random(1,5),
+			emissionNum=0,
+			emitDelay=320,
+			lifeSpan=1800,
+			fadeInTime=1800,
+			scale=0.5,
+			physics={
+				gravityY=0.025,
+			}
+		}
+	}
+	
+	local exit = display.newImage("assets/images/game/energy.body.png")
+	exit.light = light
+	exit.x = x
+	exit.y = y
+	exit.isSensor = true
+	
+   physics.addBody( exit, "kinematic", { 
+   	density = 0, 
+   	friction = 0, 
+   	bounce = 0,
+   })
+   
+   game.camera:insert(exit)
+	exit:addEventListener( "preCollision", function(event) preCollideExit(event, displayScore) end )
+
+	light.body = exit
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+end
+
+
+function preCollideExit( event, displayScore )
+	if(event.contact) then
+		event.contact.isEnabled = false
+		
+		if(event.other == character.sprite) then
+   		displayScore()
+   		reachExitEffect(event.target.x, event.target.y)
+
+   		if(not event.target.light.beingDestroyed) then
+      		destroyEffect(event.target.light)
+      	end
+      	
+   	end
+         	
+   end
+end
+
+function touchEnergy( energy, event )
+	if(event.contact) then
+		event.contact.isEnabled = false
+   	
+   	if(event.other == character.sprite) then
+   		
+   		if(not energy.light.beingDestroyed) then
+      		destroyEffect(energy.light)
+         	
+         	timer.performWithDelay(200, function() drawFollow() end)
+         	timer.performWithDelay(600, function() drawFollow() end)
+         	timer.performWithDelay(1000, function() drawFollow() end)
+         end
+      end
+   end
 end
 
 -----------------------------------------------------------------------------
