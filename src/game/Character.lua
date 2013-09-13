@@ -220,6 +220,8 @@ function collide( event )
 		end
 	end
 
+	print("sbum", event.target.iszizi)
+
 	-------------------------------------------
 	
 	

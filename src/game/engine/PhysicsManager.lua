@@ -255,29 +255,14 @@ end
 --- ROPES
 -----------------------------------------------------------------------------------------------------------------
 
-function refreshRopeCoordinates()
-	
-	local from = vector2D:new(character.sprite.x, character.sprite.y)
-	
-	for k,rope in pairs(character.ropes) do
-		if(rope.attach.ground and rope.attach.ground.x) then
-      	rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
-      	rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
-      end
-   	
-   	local to = vector2D:new(rope.attach.x, rope.attach.y)
-   	local points = utils.getPointsBetween(from, to, #rope.beamPoints)
-   	
-   	for i,point in pairs(rope.beamPoints) do
-			point.x,point.y = points[i].x,points[i].y      	
-   	end
-   	
-	end
-end
-
--------------------------------------
-
 function buildRopeTo(x,y,ground)
+	
+	--------------------------
+
+	local rope = {}
+	rope.num = #character.ropes+1
+
+	--------------------------
 
 	ground.lastBodyType = ground.bodyType
 	ground.bodyType = "kinematic"
@@ -294,52 +279,31 @@ function buildRopeTo(x,y,ground)
 	attach.offsetY = ground.y - y
 	attach.isAttach = true
 
-	--------------------------
-
-	local rope = {
-		num = #character.ropes+1,
-		beamPoints = {}
-	}
-
 	rope.attach = attach
 	
-	--------------------------
-	-- calculate beam points
-
-	local from 		= vector2D:new(character.sprite.x, character.sprite.y)
-	local to 		= vector2D:new(rope.attach.x, rope.attach.y)
-
-	local nbPoints = 18
-	local points 	= utils.getPointsBetween(from, to, nbPoints)
-	
-	--------------------------
-	-- draw beam points
-
-	for i=1,nbPoints do
-		local point = display.newCircle( game.camera, points[i].x, points[i].y, 2 )
-		point.alpha = 0
-		point.isSensor = true
-		physics.addBody( point, "static", {radius=2, isSensor=true } )
-   	effectsManager.beamPath(point)
-   	table.insert(rope.beamPoints, point)
-	end
-
 	--------------------------
 	-- joint
 
 	local joint = physics.newJoint( "distance", character.sprite, attach, character.sprite.x,character.sprite.y, attach.x,attach.y )
 	
-	joint.isSensor = true
 	joint.length = 75
 	joint.frequency = 1.7
 	joint.dampingRatio = 0.29
-	
+
 	rope.joint = joint
 	
+	-- anchor point at x,y... dont really understand why but joint doesnt "start" without this physics.addBody at x,y !		
+	rope.startAnchor = display.newCircle( game.camera, character.sprite.x, character.sprite.y, 2 )
+	rope.startAnchor.alpha = 0
+	physics.addBody( rope.startAnchor, "static", {radius=2, isSensor = true } )
+
+	--------------------------
+	
+   rope.beam = effectsManager.drawBeam(rope.attach.x, rope.attach.y, character.sprite.x, character.sprite.y)
+
 	--------------------------
 
 	table.insert(character.ropes, rope)
-	Runtime:addEventListener( "enterFrame", refreshRopeCoordinates )
 	
 	--------------------------
 	--  remove rope
@@ -354,15 +318,13 @@ end
 function detachRope(event)
 
 	local rope = character.ropes[1]	
-
-	for i=1,#rope.beamPoints do
-		effectsManager.destroyObjectWithEffect(rope.beamPoints[i])
-	end
-	
 	rope.attach.ground.bodyType = rope.attach.ground.lastBodyType
 
 	effectsManager.destroyObjectWithEffect(rope.attach)
-	display.remove(rope.joint)
+	effectsManager.destroyEffect(rope.beam)
+	
+	utils.destroyFromDisplay(rope.startAnchor)
+	utils.destroyFromDisplay(rope.joint)
 	
 	---------------------
 	

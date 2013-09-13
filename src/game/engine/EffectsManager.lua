@@ -126,6 +126,10 @@ function refreshEffects()
    			if(not effect.static) then
    				refreshEffectsCoordinates(effect)
    			end
+
+   			if(effect.isRope) then
+   				refreshRopeCoordinates(effect)
+   			end
    			
    			if( effect.body
    			and effect.body.x
@@ -155,6 +159,10 @@ function refreshEffectsCoordinates(effect)
    end
 end
 
+function refreshRopeCoordinates(effect)
+	effect:get("light").point2={character.sprite.x,character.sprite.y}
+	effect:get("light").resetPoints()
+end
 
 -----------------------------------------------------------------------------
 --- Menu Atmospheres
@@ -730,34 +738,52 @@ function setItemFire(body)
 	registerNewEffect(fire)
 end
 
-function beamPath(body)
 
-	local beam = CBE.VentGroup{
+
+-----------------------------------------------------------------------------
+--- test
+-----------------------------------------------------------------------------
+
+function drawBeam(x1,y1, x2,y2)
+	
+	-- bug tell Caleb : scale doesnt work with alongline
+	local beam=CBE.VentGroup{
 		{
+			title="light",
 			preset="wisps",
-			title="light", -- The pop that appears when a mortar shot explodes
 			color={{255,155,115}},
-			perEmit=1,
+   		build=function()
+   			local size=math.random(16, 25) -- Particles are a bit bigger than ice comet particles
+   			return display.newImageRect("CBEffects/textures/generic_particle.png", size, size)
+			end,
+			onCreation=function()end,
+			point1={x1,y1},
+			point2={x2,y2},
+			positionType="alongLine",
+			perEmit=5,
 			emissionNum=0,
-			emitDelay=3,
-			fadeInTime=10,
-			startAlpha=0.5,
-			scale=0.12,
+			emitDelay=20,
+   		fadeInTime=250,
+   		startAlpha=0,
+   		endAlpha=0.2,
 			physics={
-				xDamping = 7,
-				yDamping = 1,
+				xDamping = 32,
+				yDamping = 15,
 				gravityY=0.06,
 			}
-		}
+			
+   	}
 	}
 	
-	beam.body = body
-	body.effect = beam
-	
+	beam.isRope = true
+	beam.static = true
+	registerNewEffect(beam)	
 	game.camera:insert(beam:get("light").content)
 	
-	registerNewEffect(beam)
+	return beam
 end
+
+---------------------------
 
 function simpleBeam(body)
 
@@ -800,7 +826,7 @@ function lightAttach(body)
 			emitDelay=30,
 			fadeInTime=400,
 			startAlpha=0.5,
-			scale=0.16,
+			scale=0.12,
 			physics={
 				xDamping = 7,
 				yDamping = 1,
