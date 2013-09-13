@@ -30,9 +30,10 @@ function scene:refreshScene()
 --	title.y = display.contentHeight*0.1
 --	title:setReferencePoint( display.CenterReferencePoint )
 	
-	effectsManager.buttonEffect(display.contentWidth*0.1, 180, 0.8)
-	effectsManager.buttonEffect(display.contentWidth*0.7, 80, 0.6)
-	effectsManager.buttonEffect(display.contentWidth - 100, display.contentHeight - 40, 0.9)
+	effectsManager.buttonEffect(display.contentWidth*0.1, 280, 0.27)
+	effectsManager.buttonEffect(display.contentWidth*0.7, 140, 0.36)
+	effectsManager.buttonEffect(display.contentWidth - 200, display.contentHeight - 240, 0.28)
+	effectsManager.buttonEffect(display.contentWidth*0.24, display.contentHeight*.7, 0.36)
 
 	---------------------------------------------------------------
 
