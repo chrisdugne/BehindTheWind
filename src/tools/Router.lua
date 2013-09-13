@@ -11,7 +11,7 @@ module(..., package.seeall)
 function resetScreen()
 	effectsManager.restart()
 	utils.emptyGroup(game.camera)
-	utils.emptyGroup(game.hud)
+	hud.destroy()
 end
 
 -----------------------------------------------------------------------------------------

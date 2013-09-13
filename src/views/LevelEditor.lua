@@ -66,7 +66,7 @@ local dontListenThisTouchScreen = false
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	viewManager.initBack()
+	viewManager.initBack(0)
 	editor:scale(game.zoom, game.zoom)
 end
 
@@ -157,7 +157,7 @@ function scene:refreshScene()
    selectionDown:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		currentSheet = currentSheet + 1
-   		if(currentSheet > #levelDrawer.imageSheets) then currentSheet = 1 end
+   		if(currentSheet > 5) then currentSheet = 1 end
    		self:refreshTileSelection()
    	end
 		return true
@@ -282,11 +282,11 @@ function scene:refreshScene()
    	end 
   	end )
 	
-	smallEnergyButton = display.newImage( "assets/images/game/planet.white.png" )
-	smallEnergyButton.x = 320
+	smallEnergyButton = display.newImage( "assets/images/hud/energy.png" )
+	smallEnergyButton.x = 340
 	smallEnergyButton.y = 60
 	smallEnergyButton.alpha = 0.7
-	smallEnergyButton:scale(0.04,0.04)
+	smallEnergyButton:scale(0.5,0.5)
    smallEnergyButton:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
    		selectedEnergyType = SMALL_ENERGY
@@ -295,7 +295,7 @@ function scene:refreshScene()
    	end 
   	end )
   	
-	setPack = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_PACK, 340, 62 )
+	setPack = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_PACK, 380, 62 )
 	setPack:scale(0.5,0.5)
    setPack:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -591,7 +591,9 @@ function scene:import()
 	end 
 	
 	-----------------------------
-
+	print("-----")
+	utils.tprint(GLOBALS.levelEditor.properties)
+	print("-----")
 	currentGroup 	= GLOBALS.levelEditor.lastGroup
 	currentTrigger = GLOBALS.levelEditor.lastTrigger
 	selectedTile 	= nil
@@ -606,7 +608,7 @@ function scene:import()
 	end
 	
 	editor:toBack()
-	viewManager.initBack()	
+	viewManager.putBackgroundToBack(0)	
 end
 
 ------------------------------------------
@@ -614,13 +616,18 @@ end
 function scene:export()
 
 	--------------------------------------
-
+	-- backup previous data to keep
+	
 	local groupDragLines = (GLOBALS.levelEditor and GLOBALS.levelEditor.groupDragLines) or {}
+	local properties 		= (GLOBALS.levelEditor and GLOBALS.levelEditor.properties) 		or {}
+
+	--------------------------------------
 	
 	GLOBALS.levelEditor 						= {}
 	GLOBALS.levelEditor.tiles 				= {}
 	GLOBALS.levelEditor.energies 			= {}
 	GLOBALS.levelEditor.groupDragLines 	= groupDragLines
+	GLOBALS.levelEditor.properties 		= properties
 
 	--------------------------------------
 
@@ -1210,16 +1217,13 @@ end
 
 function scene:drawEnergy(x, y, type)
 
-	local energy = display.newImage( editor, "assets/images/game/planet.white.png" )
+	local energy = display.newImage( editor, "assets/images/hud/energy.png" )
 	energy.x = x 
 	energy.y = y
 	energy.isEnergy 	= true
 	energy.type 		= type 
 
-	local scaleAmount = 0.04
-	if(type == MEDIUM_ENERGY) then scaleAmount = 0.08 end
-	if(type == BIG_ENERGY) then scaleAmount = 0.12 end
-
+	local scaleAmount = 0.3
 	energy:scale(scaleAmount, scaleAmount)
 
 	energy:addEventListener( "touch", function(event)

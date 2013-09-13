@@ -157,6 +157,37 @@ end
 
 
 -----------------------------------------------------------------------------
+--- Menu Atmospheres
+-----------------------------------------------------------------------------
+
+function atmosphere(x,y, scale)
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{65,5,2},{55,55,20},{15,15,120}},
+			x = x,
+			y = y,
+			perEmit=math.random(1,5),
+			emissionNum=0,
+			emitDelay=320,
+			lifeSpan=1800,
+			fadeInTime=1800,
+			scale=0.5*scale,
+			physics={
+				gravityY=0.025,
+			}
+		}
+	}
+	
+	light.static = true
+	registerNewEffect(light)	
+	game.hud:insert(light:get("light").content)
+	
+end
+
+-----------------------------------------------------------------------------
 --- Buttons
 -----------------------------------------------------------------------------
 
@@ -222,6 +253,7 @@ function spawnEffect()
 	game.camera:insert(light:get("light").content)
 	
 	timer.performWithDelay(500, function() character.spawn() end)
+	timer.performWithDelay(2000, function() destroyEffect(light) end)
 end
 
 -----------------------------------------------------------------------------
@@ -253,7 +285,9 @@ function reachExitEffect(x,y)
 	registerNewEffect(light)	
 	game.camera:insert(light:get("light").content)
 	
-	transition.to(character.sprite, { time=200, alpha = 0 })
+	print("reach Exit")
+	character.exit()
+	game:stop()
 end
 
 -----------------------------------------------------------------------------
@@ -296,7 +330,7 @@ function drawExit(x, y, displayScore)
    })
    
    game.camera:insert(exit)
-	exit:addEventListener( "preCollision", function(event) preCollideExit(event, displayScore) end )
+	exit:addEventListener( "preCollision", preCollideExit )
 
 	light.body = exit
 	light.static = true
@@ -305,13 +339,13 @@ function drawExit(x, y, displayScore)
 end
 
 
-function preCollideExit( event, displayScore )
+function preCollideExit( event )
 	if(event.contact) then
 		event.contact.isEnabled = false
 		
 		if(event.other == character.sprite) then 
+      	event.target:removeEventListener( "preCollision", preCollideExit )
 			reachExitEffect(event.target.x, event.target.y)
-   		game:stop()
    	end
          	
    end
@@ -374,6 +408,8 @@ function touchEnergy( energy, event )
    	if(event.other == character.sprite) then
    		
    		if(not energy.light.beingDestroyed) then
+   			game.energiesCaught 	= game.energiesCaught + 1
+   			game.energiesRemaining = game.energiesRemaining + 1
       		destroyEffect(energy.light)
          	
          	timer.performWithDelay(200, function() drawFollow() end)
@@ -410,6 +446,93 @@ function drawFollow( )
 	
 	registerNewEffect(follow)
 	timer.performWithDelay(3000, function() destroyEffect(follow) end)
+end
+
+-----------------------------------------------------------------------------
+--- Level pieces
+-----------------------------------------------------------------------------
+
+function lightPiece(piece)
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color={{65,65,62},{55,55,20}},
+			x = piece.x,
+			y = piece.y,
+			perEmit=2,
+			emissionNum=0,
+			emitDelay=250,
+			lifeSpan=400,
+			fadeInTime=700,
+			scale=0.14,
+			physics={
+				gravityY=0.03,
+			}
+		}
+	}
+	
+	piece.light = light
+	piece.isSensor = true
+	
+   physics.addBody( piece, "kinematic", { 
+   	density = 0, 
+   	friction = 0, 
+   	bounce = 0,
+   })
+   
+	piece:addEventListener( "preCollision", touchPiece )
+
+	light.body = piece
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+end
+
+
+
+function touchPiece( event )
+	local piece = event.target
+	
+	if(event.contact) then
+		event.contact.isEnabled = false
+   	
+   	if(event.other == character.sprite) then
+   		
+   		if(not piece.caught) then
+
+   			---------------------------------------------------------
+
+   			piece.caught = true
+   			game.hud:insert(piece)	
+   			piece.x = piece.x*game.zoom + game.camera.x
+   			piece.y = piece.y*game.zoom + game.camera.y
+   			
+   			---------------------------------------------------------
+   			
+   			local xTo, yTo
+   			
+   			if(piece.type == levelDrawer.SIMPLE_PIECE) then 
+   				xTo, yTo = hud.SIMPLE_PIECE_ICON_LEFT, hud.SIMPLE_PIECE_ICON_TOP
+   				game.ringsCaught 	= game.ringsCaught + 1
+   			else	 
+   				xTo, yTo = hud.PIECE_ICON_LEFT, hud.PIECE_ICON_TOP
+   				game.piecesCaught = game.piecesCaught + 1
+   			end
+
+   			---------------------------------------------------------
+
+   			transition.to(piece, {time = 1000, x = xTo, y = yTo})
+
+   			---------------------------------------------------------
+   			
+   			-- detach piece body (body only useful to find out if piece is onScreen, now it's on HUD)
+   			piece.light.body = nil
+   			destroyEffect(piece.light)
+         end
+      end
+   end
 end
 
 ------------------------------------------------------------------------------------------

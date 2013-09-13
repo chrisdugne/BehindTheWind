@@ -31,7 +31,13 @@ end
 
 function Game:start()
 
-   self.state = game.RUNNING
+	---------------------
+
+   self.state 					= game.RUNNING
+   self.energiesRemaining 	= 0
+   self.energiesCaught 		= 0
+   self.piecesCaught 		= 0
+   self.ringsCaught 		= 0
 
 	---------------------
 
@@ -64,11 +70,16 @@ function Game:start()
 	levelDrawer.putBackgroundToBack()
 
 	------------------------------
+
+	hud.start()
+
+	------------------------------
 	
 	transition.to( self.camera, { time=1000, alpha=1 })
    effectsManager.spawnEffect()
 	touchController.start()
 	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	self.startTime = system.getTimer()
 	
 --	timer.performWithDelay(3000, function()
 --      effectsManager.spawnEffect()
@@ -82,16 +93,24 @@ function Game:stop()
 
 	if(self.state == game.STOPPED) then return end
 	
+	------------------------------------------
+
 	Runtime:removeEventListener( "enterFrame", self.refreshCamera )
+
    self.state = game.STOPPED
+   self.elapsedTime = system.getTimer() - game.startTime
 
 	touchController.stop()
+	
+	------------------------------------------
 	
 	if(game.level == 1) then
 		GLOBALS.savedData.requireTutorial = false
 	end
 
 	GLOBALS.savedData.levels[game.level].complete = true
+
+	------------------------------------------
 	
 	timer.performWithDelay(700, function()
 		self:reset()
@@ -103,6 +122,7 @@ end
 ------------------------------------------
 
 function Game:reset()
+	hud.destroy()
 	character.destroy()
 	touchController.stop()
 	physicsManager.stop()
@@ -131,17 +151,118 @@ function Game:displayScore()
 	transition.to( board, { time=800, alpha=0.7, onComplete= function() self:fillBoard() end})  
 	
 end
-------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------
+--- RESULT BOARD
+--------------------------------------------------------------------------------------------------------------------------
 
 function Game:fillBoard()
 
+	------------------
+
+	local timeIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
+	timeIcon.x = display.contentWidth*0.3
+	timeIcon.y = display.contentHeight*0.35
+	timeIcon:scale(0.5,0.5)
+	
+	-- 10 ms 		= 1pts
+	-- timeMax 		= sec
+	-- elapsedTime = millis
+	local timePoints = GLOBALS.levels[game.level].properties.timeMax*10 - math.floor(game.elapsedTime/100)
+	local min,sec,ms = utils.getMinSecMillis(math.floor(game.elapsedTime))
+	local time = min .. "'" .. sec .. "''" .. ms  
+	
+	local timeResult = time .. " -> " .. timePoints
+   local timeText = display.newText( game.hud, timeResult, 0, 0, FONT, 25 )
+   timeText:setTextColor( 255 )	
+   timeText:setReferencePoint( display.TopLeftReferencePoint )
+	timeText.x = display.contentWidth*0.34
+	timeText.y = display.contentHeight*0.32
+
+	------------------
+	
+	local energiesCaughtIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
+	energiesCaughtIcon.x = display.contentWidth*0.3
+	energiesCaughtIcon.y = display.contentHeight*0.4
+	energiesCaughtIcon:scale(0.5,0.5)
+	
+	local energiesCaught = game.energiesCaught
+   local energiesCaughtText = display.newText( game.hud, energiesCaught, 0, 0, FONT, 25 )
+   energiesCaughtText:setReferencePoint( display.TopLeftReferencePoint )
+   energiesCaughtText:setTextColor( 255 )	
+	energiesCaughtText.x = display.contentWidth*0.35
+	energiesCaughtText.y = display.contentHeight*0.37
+
+	------------------
+
+	local energiesRemainingIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
+	energiesRemainingIcon.x = display.contentWidth*0.3
+	energiesRemainingIcon.y = display.contentHeight*0.45
+	energiesRemainingIcon:scale(0.5,0.5)
+	
+	local energiesRemaining = game.energiesRemaining
+   local energiesRemainingText = display.newText( game.hud, energiesRemaining, 0, 0, FONT, 25 )
+   energiesRemainingText:setReferencePoint( display.TopLeftReferencePoint )
+   energiesRemainingText:setTextColor( 255 )	
+	energiesRemainingText.x = display.contentWidth*0.35
+	energiesRemainingText.y = display.contentHeight*0.42
+
+	------------------
+
+	local piece = display.newSprite( game.hud, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+	piece.x 			= display.contentWidth*0.3
+	piece.y 			= display.contentHeight*0.5
+	piece:play()
+
+	local piecesCaught = game.piecesCaught
+   local piecesCaughtText = display.newText( game.hud, piecesCaught, 0, 0, FONT, 25 )
+   piecesCaughtText:setReferencePoint( display.TopLeftReferencePoint )
+   piecesCaughtText:setTextColor( 255 )	
+	piecesCaughtText.x = display.contentWidth*0.35
+	piecesCaughtText.y = display.contentHeight*0.47
+
+	
+	------------------
+
+	local ring = display.newSprite( game.hud, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+	ring.x 		= display.contentWidth*0.3
+	ring.y 		= display.contentHeight*0.55
+	ring:play()
+
+	local ringsCaught = game.ringsCaught
+   local ringsCaughtText = display.newText( game.hud, ringsCaught, 0, 0, FONT, 25 )
+   ringsCaughtText:setReferencePoint( display.TopLeftReferencePoint )
+   ringsCaughtText:setTextColor( 255 )	
+	ringsCaughtText.x = display.contentWidth*0.35
+	ringsCaughtText.y = display.contentHeight*0.52
+
+	------------------
+	-- score final
+
+	local piecesBonus = 1
+	local ringsBonus  = 1
+	 
+	if(piecesCaught > 0) then piecesBonus = 3*piecesCaught end 
+	if(ringsCaught > 0) then ringsBonus = 2*piecesCaught end 
+
+	local score = timePoints + energiesCaught * energiesRemaining * 10 * piecesBonus * ringsBonus
+	
+   local scoreText = display.newText( game.hud, score .. " pts", 0, 0, FONT, 35 )
+   scoreText:setReferencePoint( display.TopLeftReferencePoint )
+   scoreText:setTextColor( 255 )	
+	scoreText.x = display.contentWidth*0.6
+	scoreText.y = display.contentHeight*0.35
+	
+	------------------
+	-- play button
+	
 	viewManager.buildButton(
 		"assets/images/hud/play.png", 
 		"white", 
 		21, 
 		0.26*aspectRatio,
-		display.contentWidth*0.5, 	
-		display.contentHeight*0.5, 	
+		display.contentWidth*0.65, 	
+		display.contentHeight*0.65, 	
 		function()
 			router.openAppHome() 
 		end
@@ -149,7 +270,10 @@ function Game:fillBoard()
 	
 end
 	
-------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------
+--- CAMERA
+--------------------------------------------------------------------------------------------------------------------------
+	
 --- ici on prend en compte le game.zoom
 -- car les x,y de position du character sont ceux du screen
 

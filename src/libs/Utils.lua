@@ -37,6 +37,26 @@ function getMinSec(seconds)
 	return min, sec
 end
 
+function getMinSecMillis(millis)
+	local min = math.floor(millis/60000)
+	local sec = math.floor((millis - min * 60 * 1000)/1000)
+	local ms = math.floor(millis - min * 60 * 1000 - sec * 1000)
+
+	if(sec < 10) then
+		sec = "0" .. sec
+	end
+
+	if(ms < 10) then
+		ms = "00" .. ms
+	end
+
+	if(ms < 100) then
+		ms = "0" .. ms
+	end
+
+	return min, sec, ms
+end
+
 function getUrlParams(url)
 
 	local index = string.find(url,"?")

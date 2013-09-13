@@ -30,10 +30,10 @@ function scene:refreshScene()
 --	title.y = display.contentHeight*0.1
 --	title:setReferencePoint( display.CenterReferencePoint )
 	
-	effectsManager.buttonEffect(display.contentWidth*0.1, 280, 0.27)
-	effectsManager.buttonEffect(display.contentWidth*0.7, 140, 0.36)
-	effectsManager.buttonEffect(display.contentWidth - 200, display.contentHeight - 240, 0.28)
-	effectsManager.buttonEffect(display.contentWidth*0.24, display.contentHeight*.7, 0.36)
+	effectsManager.atmosphere(display.contentWidth*0.1, 280, 2)
+	effectsManager.atmosphere(display.contentWidth*0.7, 180, 1.86)
+	effectsManager.atmosphere(display.contentWidth - 200, display.contentHeight - 240, 1.58)
+	effectsManager.atmosphere(display.contentWidth*0.24, display.contentHeight*.7, 1.36)
 
 	---------------------------------------------------------------
 
@@ -41,7 +41,7 @@ function scene:refreshScene()
 		"assets/images/hud/play.png", 
 		"white", 
 		21, 
-		0.46*aspectRatio,
+		0.66*aspectRatio,
 		display.contentWidth*0.5, 	
 		display.contentHeight*0.5, 	
 		function()

@@ -58,7 +58,7 @@ function initBackLevel1()
 	back.x = display.viewableContentWidth/2  
 	back.y = display.viewableContentHeight/2
 	
-	putBackgroundToBack()  
+	putBackgroundToBack(1)  
 end
 
 
@@ -86,14 +86,17 @@ function initBackMenu()
 	back.x = display.viewableContentWidth/2  
 	back.y = display.viewableContentHeight/2
 	
-	putBackgroundToBack()  
+	putBackgroundToBack(0)  
 end
 
-function putBackgroundToBack()
-	mist1:toBack();
-	mist2:toBack();
-	moon:toBack();
-	back:toBack();
+function putBackgroundToBack(level)
+
+	if(level == 0 or level == 1) then
+   	mist1:toBack();
+   	mist2:toBack();
+   	moon:toBack();
+   	back:toBack();
+   end
 end
 	
 function moveMists()
@@ -169,7 +172,7 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
 	
 	if(slash) then
    	local icon = display.newImage(titleOrIcon)
-   	icon:scale(scale*2,scale*2)
+   	icon:scale(scale*1.5,scale*1.5)
    	icon.x = planet.x
    	icon.y = planet.y
    	icon.alpha = 0
@@ -179,7 +182,7 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
    	icon:toFront()
 	else
    	local text = display.newText( titleOrIcon, 0, 0, FONT, titleSize )
-   	text:setTextColor( 0 )	
+   	text:setTextColor( 111 )	
    	text.x = x
    	text.y = y
    	text.alpha = 0

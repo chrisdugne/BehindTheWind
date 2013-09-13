@@ -3,14 +3,14 @@
 --
 -- $TexturePacker:SmartUpdate:bae9d597a053e5cb7cc251b7f6830564:1/1$
 --
--- local sheetInfo = require("mysheet")
--- local myImageSheet = graphics.newImageSheet( "mysheet.png", sheetInfo:getSheet() )
--- local sprite = display.newSprite( myImageSheet , {frames={sheetInfo:getFrameIndex("sprite")}} )
+-- local Piece = require("mysheet")
+-- local myImageSheet = graphics.newImageSheet( "mysheet.png", Piece:getSheet() )
+-- local sprite = display.newSprite( myImageSheet , {frames={Piece:getFrameIndex("sprite")}} )
 --
 
-local SheetInfo = {}
+local Piece = {}
 
-SheetInfo.sheet =
+Piece.sheet =
 {
     frames = {
     
@@ -26,54 +26,6 @@ SheetInfo.sheet =
             -- powerpiece powerup1
             x=2,
             y=206,
-            width=32,
-            height=32,
-
-        },
-        {
-            -- powerpiece powerup10
-            x=2,
-            y=172,
-            width=32,
-            height=32,
-
-        },
-        {
-            -- powerpiece powerup11
-            x=2,
-            y=138,
-            width=32,
-            height=32,
-
-        },
-        {
-            -- powerpiece powerup12
-            x=70,
-            y=104,
-            width=32,
-            height=32,
-
-        },
-        {
-            -- powerpiece powerup13
-            x=36,
-            y=104,
-            width=32,
-            height=32,
-
-        },
-        {
-            -- powerpiece powerup14
-            x=2,
-            y=104,
-            width=32,
-            height=32,
-
-        },
-        {
-            -- powerpiece powerup15
-            x=70,
-            y=70,
             width=32,
             height=32,
 
@@ -142,15 +94,62 @@ SheetInfo.sheet =
             height=32,
 
         },
+        {
+            -- powerpiece powerup10
+            x=2,
+            y=172,
+            width=32,
+            height=32,
+
+        },
+        {
+            -- powerpiece powerup11
+            x=2,
+            y=138,
+            width=32,
+            height=32,
+
+        },
+        {
+            -- powerpiece powerup12
+            x=70,
+            y=104,
+            width=32,
+            height=32,
+
+        },
+        {
+            -- powerpiece powerup13
+            x=36,
+            y=104,
+            width=32,
+            height=32,
+
+        },
+        {
+            -- powerpiece powerup14
+            x=2,
+            y=104,
+            width=32,
+            height=32,
+
+        },
+        {
+            -- powerpiece powerup15
+            x=70,
+            y=70,
+            width=32,
+            height=32,
+
+        },
     },
     
     sheetContentWidth = 128,
     sheetContentHeight = 256
 }
 
-SheetInfo.frameIndex =
+Piece.frameIndex =
 {
-
     ["powerpiece powerup"] = 1,
     ["powerpiece powerup1"] = 2,
     ["powerpiece powerup10"] = 3,
@@ -169,12 +168,23 @@ SheetInfo.frameIndex =
     ["powerpiece powerup9"] = 16,
 }
 
-function SheetInfo:getSheet()
+function Piece:newSequence()
+    return { 
+   		name = "turn",  --name of animation sequence
+   		start = 1,  --starting frame index
+   		count = 16,  --total number of frames to animate consecutively before stopping or looping
+   		time = math.random(800,1200),  --optional, in milliseconds; if not supplied, the sprite is frame-based
+   		loopCount = 0,  --optional. 0 (default) repeats forever; a positive integer specifies the number of loops
+   		loopDirection = "forward"  --optional, either "forward" (default) or "bounce" which will play forward then backwards through the sequence of frames
+   	}  --if defining more sequences, place a comma here and proceed to the next sequence sub-table
+end
+
+function Piece:getSheet()
     return self.sheet;
 end
 
-function SheetInfo:getFrameIndex(name)
+function Piece:getFrameIndex(name)
     return self.frameIndex[name];
 end
 
-return SheetInfo
+return Piece

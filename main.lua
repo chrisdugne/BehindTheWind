@@ -11,11 +11,16 @@ APP_VERSION 		= "1.0"
 
 IOS 					= system.getInfo( "platformName" )  == "iPhone OS"
 ANDROID 				= system.getInfo( "platformName" )  == "Android"
-SIMULATOR 			= system.getInfo( "environment" )  == "simulator"
+SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
 
 -----------------------------------------------------------------------------------------
 
+DEV				= 1
 --EDITOR 		= 1
+
+-----------------------------------------------------------------------------------------
+
+NB_LEVELS 		= 2
 
 -----------------------------------------------------------------------------------------
 
@@ -93,7 +98,35 @@ viewManager		= require "src.tools.ViewManager"
 GLOBALS = {
 	savedData 		= utils.loadUserData("savedData.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
+	levels			= {}
 }
+
+for i=1,NB_LEVELS do
+	GLOBALS.levels[i] = utils.loadFile("levelEditor/level".. i ..".json")
+end
+
+-----------------------------------------------------------------------------------------
+
+function initGameData()
+
+	GLOBALS.savedData = {
+		user = "New player",
+		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
+		requireTutorial = true,
+		levels = {} 
+	}
+
+   for i=1,NB_LEVELS do
+   	GLOBALS.savedData.levels[i] = {complete = false}
+   end
+
+	utils.saveTable(GLOBALS.savedData, "savedData.json")
+end
+
+if(not GLOBALS.savedData) then
+	initGameData()
+end
+
 
 -----------------------------------------------------------------------------------------
 
@@ -106,7 +139,28 @@ CBE = require("CBEffects.Library")
 
 ------------------------------------------
 
---musicManager.playMusic()
+if(DEV) then
+
+   display.remove(memText)
+   memText = display.newText( "0", 0, 0, FONT, 25 )
+   memText:setTextColor( 255 )	
+   memText:setReferencePoint( display.CenterReferencePoint )
+   memText.x = display.contentWidth - memText.contentWidth/2 - 10
+   memText.y = display.contentHeight - 20
+   
+   Runtime:addEventListener( "enterFrame", function()
+   	local running 			= effectsManager.nbRunning
+   	local total 			= #effectsManager.effects
+   	
+   	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
+   end )
+    
+else
+	musicManager.playMusic()
+end
+
+------------------------------------------
+
 viewManager.initBack(0)
 
 ------------------------------------------
@@ -119,19 +173,8 @@ else
 end
 
 -----------------------------------------------------------------------------------------
--- DEV ONLY
+-- MEMORY counters (DEV)
 --
------------------------------------------------
--- MEMORY counters
---
-
-
-display.remove(memText)
-memText = display.newText( "0", 0, 0, FONT, 25 )
-memText:setTextColor( 255 )	
-memText:setReferencePoint( display.CenterReferencePoint )
-memText.x = display.contentWidth - memText.contentWidth/2 - 10
-memText.y = display.contentHeight - 20
 
 function refreshMemText(text)
 	if(memText.contentWidth) then
@@ -139,35 +182,6 @@ function refreshMemText(text)
 		memText.size = 25
 		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
 	end
-end
-
-Runtime:addEventListener( "enterFrame", function()
-	local running 			= effectsManager.nbRunning
-	local total 			= #effectsManager.effects
-	
-	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
-end )
-
------------------------------------------------------------------------------------------
-
-function initGameData()
-
-	GLOBALS.savedData = {
-		user = "New player",
-		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
-		requireTutorial = true,
-		levels = {
-			{
-				complete = false 
-			}
-		}, 
-	}
-
-	utils.saveTable(GLOBALS.savedData, "savedData.json")
-end
-
-if(not GLOBALS.savedData) then
-	initGameData()
 end
 
 -----------------------------------------------------------------------------------------

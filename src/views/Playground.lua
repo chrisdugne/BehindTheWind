@@ -30,7 +30,7 @@ function scene:refreshScene()
 	viewManager.initBack(game.level)
 	
 	------------------------------
-		
+	
 	game:start()
 	
 end

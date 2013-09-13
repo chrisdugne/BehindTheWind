@@ -22,11 +22,6 @@
         }
         
     },
-	"properties":{
-		"nbPieces":1,
-		"nbRings":1,
-		"timeMax":480
-	},
     "tiles":[
         {
             "y":-293,

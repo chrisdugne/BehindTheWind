@@ -63,7 +63,7 @@ end
 ------------------------------------------
 
 function openLevel( level )
-	if(game.level == 0) then
+	if(game.level == 0 and level <= NB_LEVELS) then
    	if(not GLOBALS.savedData.fullGame and level > 10) then
    		router.openBuy()
    	else

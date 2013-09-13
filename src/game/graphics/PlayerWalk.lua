@@ -3,17 +3,6 @@
 
 local PlayerWalk = {}
 
-PlayerWalk.sequence = {
-	{ 
-		name = "normalRun",  --name of animation sequence
-		start = 1,  --starting frame index
-		count = 11,  --total number of frames to animate consecutively before stopping or looping
-		time = 600,  --optional, in milliseconds; if not supplied, the sprite is frame-based
-		loopCount = 0,  --optional. 0 (default) repeats forever; a positive integer specifies the number of loops
-		loopDirection = "forward"  --optional, either "forward" (default) or "bounce" which will play forward then backwards through the sequence of frames
-	}  --if defining more sequences, place a comma here and proceed to the next sequence sub-table
-}
-
 PlayerWalk.sheet =
 {
 	frames = {

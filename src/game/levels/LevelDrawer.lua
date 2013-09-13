@@ -10,22 +10,29 @@ TILES_GREY 		= 3
 TILES_DARK 		= 4
 LEVEL_MISC 		= 5
 
-CHECKPOINT 		= 1 
-SPAWNPOINT 		= 2 
-EXIT 				= 3
-PANEL				= 4 
+PIECE 			= 6
+SIMPLE_PIECE 	= 7
+
+BAD 				= 1 
+CHECKPOINT 		= 2 
+SPAWNPOINT 		= 3 
+EXIT 				= 4
+PANEL				= 5 
 
 -------------------------------------
 
-local tilesSheetConfig 		= require("src.game.graphics.Tiles")
-local treesSheetConfig 		= require("src.game.graphics.Trees")
-local levelMiscSheetConfig 	= require("src.game.graphics.LevelMisc")
+tilesSheetConfig 			= require("src.game.graphics.Tiles")
+treesSheetConfig 			= require("src.game.graphics.Trees")
+levelMiscSheetConfig 	= require("src.game.graphics.LevelMisc")
+pieceSheetConfig 			= require("src.game.graphics.Piece")
 
-local tilesImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
-local tilesGreyImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
-local tilesDarkImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.dark.png", tilesSheetConfig.sheet )
-local treesImageSheet 		= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
-local levelMiscImageSheet 	= graphics.newImageSheet( "assets/images/game/LevelMisc.png", levelMiscSheetConfig.sheet )
+tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
+tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
+tilesDarkImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.dark.png", tilesSheetConfig.sheet )
+treesImageSheet 			= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
+levelMiscImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelMisc.png", levelMiscSheetConfig.sheet )
+pieceImageSheet 			= graphics.newImageSheet( "assets/images/game/Piece.png", pieceSheetConfig.sheet )
+simplePieceImageSheet	= graphics.newImageSheet( "assets/images/game/SimplePiece.png", pieceSheetConfig.sheet )
 
 -------------------------------------
 
@@ -35,6 +42,8 @@ sheetConfigs[TREES] 			= treesSheetConfig
 sheetConfigs[TILES_GREY] 	= tilesSheetConfig
 sheetConfigs[TILES_DARK] 	= tilesSheetConfig
 sheetConfigs[LEVEL_MISC] 	= levelMiscSheetConfig
+sheetConfigs[PIECE] 			= pieceSheetConfig
+sheetConfigs[SIMPLE_PIECE] = pieceSheetConfig
 
 imageSheets = {}
 imageSheets[TILES] 			= tilesImageSheet
@@ -42,6 +51,8 @@ imageSheets[TREES] 			= treesImageSheet
 imageSheets[TILES_GREY] 	= tilesGreyImageSheet
 imageSheets[TILES_DARK] 	= tilesDarkImageSheet
 imageSheets[LEVEL_MISC] 	= levelMiscImageSheet
+imageSheets[PIECE] 			= pieceImageSheet
+imageSheets[SIMPLE_PIECE]  = simplePieceImageSheet
 
 level = {}
 
@@ -63,7 +74,7 @@ function designLevel(displayScore)
 	
 	---------------------
 
-	level.content 			= utils.loadFile("levelEditor/level".. level.num ..".json")
+	level.content 			= GLOBALS.levels[game.level]
 
 	---------------------
 
@@ -158,6 +169,24 @@ function designLevel(displayScore)
 			elseif(tile.num == EXIT) then
 				effectsManager.drawExit(tile.x, tile.y, displayScore)
    			display.remove(tile)
+
+			elseif(tile.num == PIECE) then
+   			display.remove(tile)
+				local piece = display.newSprite( game.camera, pieceImageSheet, pieceSheetConfig:newSequence() )
+         	piece.x 			= tiles[i].x
+         	piece.y 			= tiles[i].y
+         	piece.type 		= tile.num
+				piece:play()
+				effectsManager.lightPiece(piece)
+
+			elseif(tile.num == SIMPLE_PIECE) then
+   			display.remove(tile)
+				local piece = display.newSprite( game.camera, simplePieceImageSheet, pieceSheetConfig:newSequence() )
+         	piece.x 			= tiles[i].x
+         	piece.y 			= tiles[i].y
+         	piece.type 		= tile.num
+				piece:play()
+				effectsManager.lightPiece(piece)
    		end
 		end
 		

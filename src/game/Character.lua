@@ -60,6 +60,13 @@ end
 
 -------------------------------------
 
+function exit()
+	sprite:setLinearVelocity(0,0)
+	transition.to( sprite, { time=500, alpha=0})
+end
+
+-------------------------------------
+
 function init()
 	ropes = {}
 	
