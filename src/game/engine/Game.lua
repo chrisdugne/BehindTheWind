@@ -42,7 +42,6 @@ function Game:start()
 	---------------------
 
 	utils.emptyGroup(self.camera)
-	self.camera.alpha = 0
 
 	---------------------
 
@@ -71,23 +70,29 @@ function Game:start()
 
 	------------------------------
 
-	hud.start()
+	Runtime:addEventListener( "enterFrame", self.refreshCamera )
 
 	------------------------------
-	
-	transition.to( self.camera, { time=1000, alpha=1 })
+
+	if(self.level > 1) then
+		self.camera.alpha = 1
+   	self:spawn()
+   else
+		self.camera.alpha = 0
+   	self:intro()
+   end
+end
+
+------------------------------------------
+
+function Game:spawn()
+	hud.start()
    effectsManager.spawnEffect()
 	touchController.start()
-	Runtime:addEventListener( "enterFrame", self.refreshCamera )
 	self.startTime = system.getTimer()
-	
---	timer.performWithDelay(3000, function()
---      effectsManager.spawnEffect()
---      self.state = game.RUNNING
---   	touchController.start()
---   	Runtime:addEventListener( "enterFrame", self.refreshCamera )
---	end)
 end
+
+------------------------------------------
 
 function Game:stop()
 
@@ -296,10 +301,10 @@ function Game:refreshCamera(event)
       		game.camera.x = display.contentWidth*0.43 - character.screenX()
       	end
       
-      	if(bottomDistance < display.contentHeight*0.18) then
-      		game.camera.y = display.contentHeight*0.82 - character.screenY()
-      	elseif(topDistance < display.contentHeight*0.18) then
-      		game.camera.y = display.contentHeight*0.18 - character.screenY() 
+      	if(bottomDistance < display.contentHeight*0.28) then
+      		game.camera.y = display.contentHeight*0.72 - character.screenY()
+      	elseif(topDistance < display.contentHeight*0.28) then
+      		game.camera.y = display.contentHeight*0.28 - character.screenY() 
       	end
       
       elseif(game.focus == ROCK) then
@@ -309,6 +314,35 @@ function Game:refreshCamera(event)
       	end
       end
 	end
+end
+
+------------------------------------------
+
+function Game:intro()
+	
+	local board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth, display.contentHeight, 0)
+   board.x = display.contentWidth/2
+   board.y = display.contentHeight/2
+   board.alpha = 0.6
+   board:setFillColor(0)
+   
+	transition.to( board, { time=10000, alpha=0, onComplete= function() self:spawn() end})  
+
+	timer.performWithDelay(500, function()
+   	viewManager.displayIntroText("Uralys presents", display.contentWidth*0.7, display.contentHeight*0.2, true)
+	end)
+
+	timer.performWithDelay(5500, function()
+   	viewManager.displayIntroText("Music by Velvet Coffee", display.contentWidth*0.2, display.contentHeight*0.2, true)
+	end)
+
+	timer.performWithDelay(10000, function()
+   	transition.to( self.camera, { time=1000, alpha=1 })
+	end)
+
+	timer.performWithDelay(11000, function()
+   	viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.3, true)
+	end)
 end
 
 ------------------------------------------

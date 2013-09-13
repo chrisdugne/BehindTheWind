@@ -122,25 +122,39 @@ end
 -- INTRO TOOLS
 ------------------------------------------------------------------------------------------
 
-function displayIntroText(text, x, y, fade)
+function displayIntroText(text, x, y)
 
 	if(not text) then
 		return
 	end
 
-	local introText = display.newText( screen, text, 0, 0, FONT, 45 )
+	local introText = display.newText( game.hud, text, 0, 0, FONT, 35 )
 	introText:setTextColor( 255 )	
 	introText.x = x
 	introText.y = y
 	introText.alpha = 0
 	introText:setReferencePoint( display.CenterReferencePoint )
 	
-	transition.to( introText, { time=1200, alpha=1, onComplete=function()
-		if(fade) then
-      	timer.performWithDelay(500, function()
-      			transition.to( introText, { time=1000, alpha=0 })
-			end)
-		end
+	transition.to( introText, { time=2600, alpha=1, x = x +40, onComplete=function()
+		transition.to( introText, { time=2600, alpha=0,  x = x + 80 })
+	end})
+end
+
+function displayIntroTitle(text, x, y)
+
+	if(not text) then
+		return
+	end
+
+	local introText = display.newText( game.hud, text, 0, 0, FONT, 75 )
+	introText:setTextColor( 255 )	
+	introText.x = x
+	introText.y = y
+	introText.alpha = 0
+	introText:setReferencePoint( display.CenterReferencePoint )
+	
+	transition.to( introText, { time=1600, alpha=1, onComplete=function()
+		transition.to( introText, { time=4600, alpha=0 })
 	end})
 end
 
