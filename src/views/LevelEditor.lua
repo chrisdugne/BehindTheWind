@@ -185,7 +185,9 @@ function scene:refreshScene()
 	utils.onTouch(unzoom, function() 
 		editor:scale(1/game.zoom,1/game.zoom) 
 		game.zoom = game.zoom-0.2 
-		editor:scale(game.zoom,game.zoom) 
+		editor:scale(game.zoom,game.zoom)
+		editor.x = editor.x / game.zoom 
+		editor.y = editor.y / game.zoom 
 	end)
 
 

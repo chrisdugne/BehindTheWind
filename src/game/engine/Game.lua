@@ -110,6 +110,8 @@ function Game:stop()
 
 	GLOBALS.savedData.levels[game.level].complete = true
 
+	utils.saveTable(GLOBALS.savedData, "savedData.json")
+	
 	------------------------------------------
 	
 	timer.performWithDelay(700, function()
@@ -168,7 +170,7 @@ function Game:fillBoard()
 	-- 10 ms 		= 1pts
 	-- timeMax 		= sec
 	-- elapsedTime = millis
-	local timePoints = GLOBALS.levels[game.level].properties.timeMax*10 - math.floor(game.elapsedTime/100)
+	local timePoints = GLOBALS.levels[game.level].properties.timeMax*100 - math.floor(game.elapsedTime/10)
 	local min,sec,ms = utils.getMinSecMillis(math.floor(game.elapsedTime))
 	local time = min .. "'" .. sec .. "''" .. ms  
 	

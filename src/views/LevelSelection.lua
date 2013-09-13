@@ -29,7 +29,7 @@ function scene:refreshScene()
 	game.scene = self.view
 	hud.setBackToHome()
 	
-	local margin = display.contentWidth/2 -5*38 
+	local margin = display.contentWidth*0.1 
 
    for level = 1, 40 do
    	local i = (level-1)%10 
@@ -45,10 +45,10 @@ function scene:refreshScene()
    	viewManager.buildButton(
    		level,
    		"white",
-   		21, 
-   		0.13,
-			margin + 42 * i, 
-			65 * j, 
+   		51, 
+   		0.28*aspectRatio,
+			margin + display.contentWidth*0.085 * i, 
+			display.contentHeight*0.2 * j, 
 			function() 
 				openLevel(level) 
 			end, 
