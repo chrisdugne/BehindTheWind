@@ -16,7 +16,7 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, 20 )
---	physics.setDrawMode( "hybrid" )
+	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
@@ -287,6 +287,7 @@ function buildRopeTo(x,y,ground)
 	attach.offsetX = ground.x - x
 	attach.offsetY = ground.y - y
 	attach.isAttach = true
+	attach.alpha = 0
 
 	rope.attach = attach
 	
@@ -354,4 +355,40 @@ function detachRope(event)
 	character.sprite:removeEventListener ( "touch", detachRope) 
 	
 	return true -- not to get a touchScreen !
+end
+
+---------------------------------------------------------------------------
+
+function drawCheckpoint(checkPoint)
+	
+	local body = display.newImage("assets/images/game/planet.white.png")
+	body.x = checkPoint.x
+	body.y = checkPoint.y
+	body.checkPoint = checkPoint
+	body.alpha = 0
+	body.isSensor = true
+	
+   physics.addBody( body, "kinematic", { 
+   	density = 0, 
+   	friction = 0, 
+   	bounce = 0,
+   	radius = 35,
+   })
+   
+   game.camera:insert(body)
+	body:addEventListener( "preCollision", touchCheckpoint )
+
+end
+
+function touchCheckpoint( event )
+	local checkPoint = event.target.checkPoint
+	
+	if(event.contact) then
+		event.contact.isEnabled = false
+   	
+   	if(event.other == character.sprite) then
+			levelDrawer.level.spawnX = checkPoint.x
+			levelDrawer.level.spawnY = checkPoint.y
+      end
+   end
 end

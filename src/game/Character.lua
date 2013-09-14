@@ -94,7 +94,20 @@ function init()
    ---------------------------
    -- reset
       
-   floor 			= nil
+   resetState()
+
+   ---------------------------
+   
+	Runtime:addEventListener( "enterFrame", checkCharacter )
+end	
+
+function destroy()
+	utils.destroyFromDisplay(sprite)
+	Runtime:removeEventListener( "enterFrame", checkCharacter )
+end
+
+function resetState()
+	floor 			= nil
    collideOnLeft 	= nil
    collideOnRight = nil
    
@@ -108,20 +121,12 @@ function init()
    
    previousVy = 0
    nbFramesToKeep = 0
-
-   ---------------------------
-   
-	Runtime:addEventListener( "enterFrame", checkCharacter )
-end	
-
-function destroy()
-	utils.destroyFromDisplay(sprite)
-	Runtime:removeEventListener( "enterFrame", checkCharacter )
 end
 
 -------------------------------------
 
 function spawn()
+	resetState()
 	stop()
 	
 	-- replace the character on the spawn point

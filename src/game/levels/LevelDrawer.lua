@@ -79,7 +79,6 @@ function designLevel(displayScore)
 	---------------------
 
 	level 					= {}
-	level.checkPoints 	= {}
 	level.triggers 		= {}
 	level.num 				= game.level
 	level.bottomY 			= -100000
@@ -177,6 +176,13 @@ function designLevel(displayScore)
    			level.spawnX = tile.x
    			level.spawnY = tile.y
    			display.remove(tile)
+
+			elseif(tile.num == CHECKPOINT) then
+				local checkPoint = {}
+				checkPoint.x = tile.x
+				checkPoint.y = tile.y
+   			display.remove(tile)
+				physicsManager.drawCheckpoint(checkPoint)
 
 			elseif(tile.num == EXIT) then
 				effectsManager.drawExit(tile.x, tile.y, displayScore)
