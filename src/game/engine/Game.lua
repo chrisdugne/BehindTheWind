@@ -37,7 +37,7 @@ function Game:start()
    self.energiesRemaining 	= 0
    self.energiesCaught 		= 0
    self.piecesCaught 		= 0
-   self.ringsCaught 		= 0
+   self.ringsCaught 			= 0
 
 	---------------------
 
@@ -331,11 +331,11 @@ function Game:intro()
 	transition.to( board, { time=10000, alpha=0, onComplete= function() self:spawn() end})  
 
 	timer.performWithDelay(500, function()
-   	viewManager.displayIntroText("Uralys presents", display.contentWidth*0.7, display.contentHeight*0.2, true)
+   	viewManager.displayIntroText("Uralys presents", display.contentWidth*0.2, display.contentHeight*0.2, true)
 	end)
 
 	timer.performWithDelay(5500, function()
-   	viewManager.displayIntroText("Music by Velvet Coffee", display.contentWidth*0.2, display.contentHeight*0.2, true)
+   	viewManager.displayIntroText("Music by Velvet Coffee", display.contentWidth*0.7, display.contentHeight*0.43, true)
 	end)
 
 	timer.performWithDelay(10000, function()

@@ -46,6 +46,12 @@ function start()
 	game.hud.throwIcon:scale(0.5,0.5)
    
    Runtime:addEventListener( "enterFrame", refreshHUD )
+   
+   if(game.level == 1) then
+   	timer.performWithDelay(4000, function()
+         Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel1 )
+   	end)
+   end
 end
     
 -----------------------------------------------------------------------------------------
@@ -53,6 +59,7 @@ end
 function destroy()
 	utils.emptyGroup(game.hud)
    Runtime:removeEventListener( "enterFrame", refreshHUD )
+   Runtime:removeEventListener( "enterFrame", refreshHUDTutoLevel1 )
 end
 
 -----------------------------------------------------------------------------------------
@@ -64,7 +71,6 @@ function refreshHUD()
 		game.hud.energiesRemaining.x 	= ENERGY_TEXT_LEFT
 	end
 end
-
 -----------------------------------------------------------------------------------------
 
 function setExit(toApply)
@@ -133,3 +139,48 @@ function hideFollowRockButton()
    -- else : destroyed earlier
 	end
 end
+
+-----------------------------------------------------------------------------------------
+
+local helpVisible = false
+local tween1
+local tween2
+
+function refreshHUDTutoLevel1()
+	if(character.sprite.x < 150 and not helpVisible) then
+		showHelpLevel1()
+	end 	
+
+	if(character.sprite.x > 150 and helpVisible) then
+		hideHelpLevel1()
+	end 	
+end
+
+function showHelpLevel1()
+	helpVisible = true
+	game.hud.help1 = display.newImage(game.hud, "assets/images/hud/touch.png", display.contentWidth*0.8, display.contentHeight*0.36)
+	game.hud.help2 = display.newImage(game.hud, "assets/images/hud/touch.png", display.contentWidth*0.15, display.contentHeight*0.36)
+	game.hud.help1.alpha = 0
+	game.hud.help1.alpha = 0
+	tweenLevel1On()
+end
+
+function hideHelpLevel1()
+	helpVisible = false
+	transition.cancel(tween1)
+	transition.cancel(tween2)
+	display.remove(game.hud.help1)
+	display.remove(game.hud.help2)
+end
+
+function tweenLevel1On()
+	tween1 = transition.to( game.hud.help1, { time=600, alpha=0.7})
+	tween2 = transition.to( game.hud.help2, { time=600, alpha=0.7, onComplete=tweenLevel1Off})
+end
+
+function tweenLevel1Off()
+	tween1 = transition.to( game.hud.help1, { time=600, alpha=0.4})
+	tween2 = transition.to( game.hud.help2, { time=600, alpha=0.4, onComplete=tweenLevel1On})
+end
+
+

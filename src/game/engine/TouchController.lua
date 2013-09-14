@@ -74,11 +74,11 @@ function touchScreen( event )
 		leftTouch 	= false
 		centerTouch = false
 
-		if(xStart-(character.screenX() + game.camera.x) > 150) then
+		if(xStart > display.contentWidth*0.6) then
 			rightTouch = true
 		end
 
-		if(xStart-(character.screenX() + game.camera.x) < - 150) then
+		if(xStart < display.contentWidth*0.4) then
 			leftTouch = true
 		end
 		

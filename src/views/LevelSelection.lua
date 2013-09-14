@@ -31,7 +31,7 @@ function scene:refreshScene()
 	
 	local margin = display.contentWidth*0.1 
 
-   for level = 1, 40 do
+   for level = 1, 10 do
    	local i = (level-1)%10 
    	local j = math.floor((level-1)/10) + 1
    	local levelLocked
@@ -39,7 +39,7 @@ function scene:refreshScene()
    	if(level > 1) then
 			levelLocked = not GLOBALS.savedData.levels[level - 1] or not GLOBALS.savedData.levels[level - 1].complete
 		end
-	
+	levelLocked = false
 	
    	viewManager.buildButton(
    		level,

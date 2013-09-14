@@ -10,8 +10,14 @@ TILES_GREY 		= 3
 TILES_DARK 		= 4
 LEVEL_MISC 		= 5
 
-PIECE 			= 6
-SIMPLE_PIECE 	= 7
+PIECE 			= 6 -- SAME NUM FOR MISC
+SIMPLE_PIECE 	= 7 -- SAME NUM FOR MISC
+
+TILES_CLASSIC 	= 8
+TILES_GREEN 	= 9
+
+---------------
+--MISC
 
 BAD 				= 1 
 CHECKPOINT 		= 2 
@@ -29,6 +35,8 @@ pieceSheetConfig 			= require("src.game.graphics.Piece")
 tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
 tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
 tilesDarkImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.dark.png", tilesSheetConfig.sheet )
+tilesClassicImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.classic.png", tilesSheetConfig.sheet )
+tilesGreenImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.greenish.png", tilesSheetConfig.sheet )
 treesImageSheet 			= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
 levelMiscImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelMisc.png", levelMiscSheetConfig.sheet )
 pieceImageSheet 			= graphics.newImageSheet( "assets/images/game/Piece.png", pieceSheetConfig.sheet )
@@ -44,6 +52,8 @@ sheetConfigs[TILES_DARK] 	= tilesSheetConfig
 sheetConfigs[LEVEL_MISC] 	= levelMiscSheetConfig
 sheetConfigs[PIECE] 			= pieceSheetConfig
 sheetConfigs[SIMPLE_PIECE] = pieceSheetConfig
+sheetConfigs[TILES_CLASSIC] = tilesSheetConfig
+sheetConfigs[TILES_GREEN] 	= tilesSheetConfig
 
 imageSheets = {}
 imageSheets[TILES] 			= tilesImageSheet
@@ -53,6 +63,8 @@ imageSheets[TILES_DARK] 	= tilesDarkImageSheet
 imageSheets[LEVEL_MISC] 	= levelMiscImageSheet
 imageSheets[PIECE] 			= pieceImageSheet
 imageSheets[SIMPLE_PIECE]  = simplePieceImageSheet
+imageSheets[TILES_CLASSIC] = tilesClassicImageSheet
+imageSheets[TILES_GREEN] 	= tilesGreenImageSheet
 
 level = {}
 

@@ -151,17 +151,25 @@ function scene:refreshScene()
    end )
    
 	local selectionDown = display.newImage( "assets/images/tutorial/arrow.down.png" )
-	selectionDown.x = 67.5
+	selectionDown.x = 60
 	selectionDown.y = 80
 	selectionDown:scale(0.12,0.12)
-   selectionDown:addEventListener( "touch", function(event) 
-   	if(event.phase == "began") then
-   		currentSheet = currentSheet + 1
-   		if(currentSheet > 5) then currentSheet = 1 end
-   		self:refreshTileSelection()
-   	end
-		return true
-	end )
+	utils.onTouch(selectionDown, function() 
+		currentSheet = currentSheet + 1
+		if(currentSheet > #levelDrawer.imageSheets) then currentSheet = 1 end
+		self:refreshTileSelection()
+	end)
+	
+
+	local selectionUp = display.newImage( "assets/images/tutorial/arrow.top.png" )
+	selectionUp.x = 75
+	selectionUp.y = 80
+	selectionUp:scale(0.1,0.1)
+	utils.onTouch(selectionUp, function() 
+		currentSheet = currentSheet - 1
+		if(currentSheet < 1) then currentSheet = #levelDrawer.imageSheets end
+		self:refreshTileSelection()
+	end)
 	
 	
 	------------------------------------------------------------------------------------------------------------
@@ -170,18 +178,20 @@ function scene:refreshScene()
 
 	local zoom = display.newImage( "assets/images/tutorial/arrow.top.png" )
 	zoom.x = 30
-	zoom.y = display.contentHeight - 62
-	zoom:scale(0.1,0.1)
+	zoom.y = display.contentHeight - 22
+	zoom:scale(0.2,0.2)
 	utils.onTouch(zoom, function()
 		editor:scale(1/game.zoom,1/game.zoom) 
 		game.zoom = game.zoom+0.2 
 		editor:scale(game.zoom,game.zoom) 
+		editor.x = editor.x / game.zoom 
+		editor.y = editor.y / game.zoom 
 	end)
 
 	local unzoom = display.newImage( "assets/images/tutorial/arrow.down.png" )
 	unzoom.x = 60
-	unzoom.y = display.contentHeight - 62
-	unzoom:scale(0.1,0.1)
+	unzoom.y = display.contentHeight - 22
+	unzoom:scale(0.2,0.2)
 	utils.onTouch(unzoom, function() 
 		editor:scale(1/game.zoom,1/game.zoom) 
 		game.zoom = game.zoom-0.2 
@@ -195,7 +205,7 @@ function scene:refreshScene()
 	-- States
 	------------------------------------------------------------------------------------------------------------
 	
-	erase = levelDrawer.drawTile( self.view, levelDrawer.TILES, ERASING, 100, 62 )
+	erase = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, ERASING, 100, 62 )
 	erase:scale(0.5,0.5)
    erase:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -206,7 +216,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	grouping = levelDrawer.drawTile( self.view, levelDrawer.TILES, GROUPING, 125, 62 )
+	grouping = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, GROUPING, 125, 62 )
 	grouping:scale(0.5,0.5)
    grouping:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -217,7 +227,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	enableMove = levelDrawer.drawTile( self.view, levelDrawer.TILES, ENABLING_MOVE, 150, 62 )
+	enableMove = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, ENABLING_MOVE, 150, 62 )
 	enableMove:scale(0.5,0.5)
    enableMove:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -228,7 +238,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	enableDrag = levelDrawer.drawTile( self.view, levelDrawer.TILES, ENABLING_DRAG, 175, 62 )
+	enableDrag = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, ENABLING_DRAG, 175, 62 )
 	enableDrag:scale(0.5,0.5)
    enableDrag:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -239,7 +249,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	setDestructible = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_DESTRUCTIBLE, 200, 62 )
+	setDestructible = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, SET_DESTRUCTIBLE, 200, 62 )
 	setDestructible:scale(0.5,0.5)
    setDestructible:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -250,7 +260,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	setBackground = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_BACKGROUND, 225, 62 )
+	setBackground = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, SET_BACKGROUND, 225, 62 )
 	setBackground:scale(0.5,0.5)
    setBackground:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -261,7 +271,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 	
-	setForeground = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_FOREGROUND, 250, 62 )
+	setForeground = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, SET_FOREGROUND, 250, 62 )
 	setForeground:scale(0.5,0.5)
    setForeground:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -274,7 +284,7 @@ function scene:refreshScene()
 	-- Spawn point / Checkpoint / Energies
 	------------------------------------------------------------------------------------------------------------
 	
-	setTriggerButton = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_TRIGGER, 300, 62 )
+	setTriggerButton = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, SET_TRIGGER, 300, 62 )
 	setTriggerButton:scale(0.5,0.5)
    setTriggerButton:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -297,7 +307,7 @@ function scene:refreshScene()
    	end 
   	end )
   	
-	setPack = levelDrawer.drawTile( self.view, levelDrawer.TILES, SET_PACK, 380, 62 )
+	setPack = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, SET_PACK, 380, 62 )
 	setPack:scale(0.5,0.5)
    setPack:addEventListener( "touch", function(event) 
    	if(event.phase == "began") then
@@ -310,7 +320,7 @@ function scene:refreshScene()
 	-- Import / Export
 	------------------------------------------------------------------------------------------------------------
 
-	local import = levelDrawer.drawTile( self.view, levelDrawer.TILES, 9, display.contentWidth - 35, 62 )
+	local import = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, 9, display.contentWidth - 35, 62 )
 	import:scale(0.5,0.5)
 	import:addEventListener( "touch", function(event) 
 		if(event.phase == "began") then
@@ -321,7 +331,7 @@ function scene:refreshScene()
 
 	-------------------------------------
 
-	local export = levelDrawer.drawTile( self.view, levelDrawer.TILES, 4, display.contentWidth - 15, 62 )
+	local export = levelDrawer.drawTile( self.view, levelDrawer.TILES_CLASSIC, 4, display.contentWidth - 15, 62 )
 	export:scale(0.5,0.5)
 	export:addEventListener( "touch", function(event) 
 		if(event.phase == "began") then
@@ -783,15 +793,15 @@ function scene:deleteTile(tile)
 	end
 
 	if(tile.background) then
-		self:unsetProperty("background")
+		self:unsetProperty(tile,"background")
 	end
 
 	if(tile.foreground) then
-		self:unsetProperty("foreground")
+		self:unsetProperty(tile,"foreground")
 	end
 
 	if(tile.destructible) then
-		self:unsetProperty("destructible")
+		self:unsetProperty(tile,"destructible")
 	end
 
 	if(tile.group) then
@@ -1206,7 +1216,7 @@ function scene:drawIcon(tile, property, value)
    	tile.icons[property] = display.newText( editor, value, tile.x - 20*num, tile.y- tile.height/2 -20, FONT, 17 )
    	tile.icons[property]:setTextColor(215, 0, 0)
 	else
-		tile.icons[property]= levelDrawer.drawTile( editor, levelDrawer.TILES, image, tile.x - 15*num , tile.y - 20 )
+		tile.icons[property]= levelDrawer.drawTile( editor, levelDrawer.TILES_CLASSIC, image, tile.x - 15*num , tile.y - 20 )
 		tile.icons[property]:scale(0.4,0.4)
    end
 end
