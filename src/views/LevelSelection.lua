@@ -37,7 +37,6 @@ function scene:refreshScene()
    	local levelLocked
    	
    	if(level > 1) then
-   		print("--> " .. level)
 			levelLocked = not GLOBALS.savedData.levels[level - 1] or not GLOBALS.savedData.levels[level - 1].complete
 		end
 	

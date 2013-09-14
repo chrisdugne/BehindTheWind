@@ -621,7 +621,9 @@ function setCharacterThrowing()
 			emissionNum=0,
 			emitDelay=10,
 			lifeSpan=20,
-			scale=0.16,
+			fadeInTime=160,
+			scale=0.12,
+			startAlpha=1,
 			linearDamping=0,
 			physics={
 				divisionDamping = true,
@@ -651,9 +653,10 @@ function setCharacterGrabbing()
 			color={{105,135,182}},
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=30,
+			emitDelay=10,
 			lifeSpan=25,
-			scale=0.2,
+			scale=0.15,
+			startAlpha=1,
 			physics={
 				divisionDamping = true,
 				xDamping = 1.17,

@@ -35,6 +35,9 @@ timeLastThrow	= 0
 jumping 	= false 
 hanging 	= false 
 
+throwFire = true 
+throwGrab = false
+
 -------------------------------------
 
 local previousVy = 0
@@ -44,7 +47,6 @@ local nbFramesToKeep = 0
 
 local playerWalk = require("src.game.graphics.CharacterJump")
 local playerSheet = graphics.newImageSheet( "assets/images/game/CharacterJump.png", playerWalk.sheet )
-
 
 -------------------------------------
 -- sprite.x, sprite.y : coordonnees dans le monde, dans la camera
@@ -80,6 +82,7 @@ function init()
    })
    
    sprite.isFixedRotation = true
+--	sprite:addEventListener( "touch", touchController.characterTouch )
 	sprite:addEventListener( "collision", collide )
 	sprite:addEventListener( "preCollision", preCollide )
 
@@ -220,10 +223,7 @@ function collide( event )
 		end
 	end
 
-	print("sbum", event.target.iszizi)
-
 	-------------------------------------------
-	
 	
 	local tileTop 					= event.other.y 	- event.other.height/2 
 	local characterBottom 		= event.target.y 	+ RADIUS
@@ -266,6 +266,7 @@ function collide( event )
 		floor = event.other
 		collideOnLeft, collideOnRight = nil, nil
 		jumping = false
+		move()
 	elseif(tileBottom < characterTop and event.other.isFloor) then
 --		print("touch top")
 	else
@@ -308,10 +309,12 @@ end
 -------------------------------------
 
 function setGrabbing()
+	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterGrabbing()
 end
 
 function setThrowing()
+	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterThrowing()
 end
 
@@ -336,18 +339,50 @@ end
 
 -------------------------------------
 
-function stop(tapping)
+function move()
+
+	if(not hanging) then
+		if(touchController.rightTouch) then
+			goRight()
+		elseif(touchController.leftTouch) then
+			goLeft()
+		end
+	end
+
+	if(touchController.rightTouch or touchController.leftTouch) then
+   	if(floor) then
+   		jump()
+   	end
+	end
+	
+end
+
+-------------------------------------
+
+function changeThrowStuff()
+	effectsManager.stopCharacterLight()
+	throwFire = not throwFire
+	throwGrab = not throwGrab
+	
+	if(throwFire) then
+		game.hud.throwIcon:setFrame(1)
+	else	
+		game.hud.throwIcon:setFrame(2)
+	end
+end
+
+-------------------------------------
+
+function stop()
 	
 	if(not jumping and not hanging) then 
    	state = NOT_MOVING
  	end
  
- 	if(tapping == 0) then
-		local vx, vy = sprite:getLinearVelocity()
-		sprite:setLinearVelocity( 0 , vy )
-	end
+	local vx, vy = sprite:getLinearVelocity()
+	if(vy < 0) then vy = vy*0.5 end
+	sprite:setLinearVelocity( vx*0.67 , vy)
 	
-	effectsManager.stopCharacterLight()
 end
 
 
@@ -385,12 +420,15 @@ function jump()
 	
 	local vx, vy = sprite:getLinearVelocity()
 	sprite:setLinearVelocity( vx, JUMP_SPEED )
+	
+	effectsManager.stopCharacterLight()
 end
 
 -------------------------------------
 
 function throw( x1,y1, x2,y2 )
 	timeLastThrow = system.getTimer()
+	effectsManager.stopCharacterLight()
 	physicsManager.throw(x1,y1, x2,y2)
 end
 
@@ -398,5 +436,6 @@ end
 
 function grab( x1,y1, x2,y2 )
 	timeLastThrow = system.getTimer()
+	effectsManager.stopCharacterLight()
 	physicsManager.grab(x1,y1, x2,y2)
 end

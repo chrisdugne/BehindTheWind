@@ -1,8 +1,8 @@
--------------------------------------
+---------------------------------------------------------------------
 
 module(..., package.seeall)
 
--------------------------------------
+---------------------------------------------------------------------
 
 NONE 					= 0
 
@@ -13,13 +13,17 @@ GRABBING 			= 14
 
 DRAGGING_TILE 		= 101
 
--------------------------------------
+---------------------------------------------------------------------
 
 SWIPE_MAX 			= 140 
 
--------------------------------------
+---------------------------------------------------------------------
 
 currentState 				= NONE
+swipping						= false
+rightTouch					= false
+leftTouch					= false
+centerTouch					= false
 
 local previousState 		= NONE
 local xStart				= 0
@@ -29,14 +33,17 @@ local lastY					= 0
 local startTouchTime		= 0
 local previousTapTime	= 0
 
-local tapping				= 0
-local swipping				= false
+local lastTouchCharacterTime = 0
 
--------------------------------------
+
+local centerTapping		= 0
+local sideTapping			= 0
+
+---------------------------------------------------------------------
 
 local TAP_TIME_LIMIT		= 250
 
--------------------------------------
+---------------------------------------------------------------------
 
 function start()
 	display.getCurrentStage():addEventListener( "touch", touchScreen )
@@ -48,54 +55,94 @@ function stop()
 	display.getCurrentStage():setFocus( nil )
 end
 
--------------------------------------
+---------------------------------------------------------------------
 
 function touchScreen( event )
 	
 	lastX, lastY = event.x, event.y
-
-	if(currentState ~= THROWING and currentState ~= GRABBING) then
-		xStart, yStart = lastX, lastY
-	end
 	
 	if(currentState == DRAGGING_TILE) then return end
    	
-   	
+	---------------------------------------------
+
 	if event.phase == "began" then
 
    	startTouchTime 	= system.getTimer()
 		xStart, yStart 	= event.xStart, event.yStart
-		swipping = false
+		swipping 	= false
+		rightTouch 	= false
+		leftTouch 	= false
+		centerTouch = false
+
+		if(xStart-(character.screenX() + game.camera.x) > 150) then
+			rightTouch = true
+		end
+
+		if(xStart-(character.screenX() + game.camera.x) < - 150) then
+			leftTouch = true
+		end
+		
+		centerTouch = not leftTouch and not rightTouch
    	
 		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
-			tapping = 0
+			centerTapping = 0
+			sideTapping = 0
+			currentState = NONE
 		end
+
+   	if(centerTouch) then
+	   	if(centerTapping == 0) then 
+      		setState(READY_TO_THROW)
+      	elseif(centerTapping == 1) then 
+      		setState(READY_TO_GRAB)
+      	end
+      else
+      	character.move()
+   	end
 
    	display.getCurrentStage():setFocus( game.camera )
    	Runtime:addEventListener( "enterFrame", onTouch )
    	
+	---------------------------------------------
 		
 	elseif event.phase == "moved" then
 		
+   	if(currentState ~= THROWING and currentState ~= GRABBING) then
+   		xStart, yStart = lastX, lastY
+   	end
+   	
 		if(currentState == READY_TO_THROW) then
-			setState(THROWING, function() character.setThrowing() end)
+			if(character.throwFire) then
+   			setState(THROWING, function() character.setThrowing() end)
+			elseif(character.throwGrab) then
+   			setState(GRABBING, function() character.setGrabbing() end)
+			end
 		end 
 
-		if(currentState == READY_TO_GRAB) then
-			setState(GRABBING, function() character.setGrabbing() end)
-		end 
-
+	---------------------------------------------
 
 	elseif event.phase == "ended" then
 
    	display.getCurrentStage():setFocus( nil )
    	Runtime:removeEventListener( "enterFrame", onTouch )
-		
-		---------------------------------------------
+
+		-----------------------------
 		--	OUT  : dont listen action
 		if(character.state == character.OUT) then return end
 
-		---------------------------------------------
+		-----------------------------
+		
+		if(currentState == READY_TO_THROW) then
+			character.changeThrowStuff()
+			
+			if(character.throwFire) then
+   			character.setThrowing()
+			elseif(character.throwGrab) then
+   			character.setGrabbing()
+			end
+		end
+		
+		-----------------------------
    	
    	if(currentState == THROWING) then
    		local launch = getLaunchVector()
@@ -105,19 +152,30 @@ function touchScreen( event )
 			character.grab( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
 		
-		---------------------------------------------
+		-----------------------------
 		
 		local now = system.getTimer()
 		local touchDuration = now - startTouchTime
 
 		if(touchDuration < TAP_TIME_LIMIT) then 
 			previousTapTime = now
-			tapping = tapping + 1
+			if(centerTouch) then
+   			centerTapping = centerTapping + 1
+			else
+   			sideTapping = sideTapping + 1
+			end
 		end
    	
-		---------------------------------------------
+		-----------------------------
+   	
+		swipping 	= false
+		rightTouch 	= false
+		leftTouch 	= false
+		centerTouch = false
 		
-		character.stop(tapping)
+		-----------------------------
+		
+		character.stop()
 		setState(NONE)
 		
 		---------------------------------------------
@@ -127,69 +185,27 @@ function touchScreen( event )
 end
 
 
--------------------------------------
-
-function getLaunchVector()
-
-	local direction = vector2D:new(xStart - lastX, yStart - lastY )
-	if(direction:magnitude() > SWIPE_MAX) then
-		direction:normalize()
-		direction:mult(SWIPE_MAX)
-	end
-
-	return vector2D:new(xStart - direction.x, yStart - direction.y)
-end
-
--------------------------------------
+---------------------------------------------------------------------
 
 function onTouch( event )
 	
 	local now = system.getTimer()
 	local touchDuration = now - startTouchTime
 
-	if(currentState ~= THROWING and currentState ~= GRABBING) then
-   	if(tapping == 1) then 
-   		setState(READY_TO_THROW)
-   	elseif(tapping == 2) then 
-   		setState(READY_TO_GRAB)
-   	end
-	end
-
-	if(touchDuration > TAP_TIME_LIMIT) then
-
-		if(tapping == 0) then
-
-			if(not character.hanging 
-			or character.floor 
-			or character.collideOnLeft
-			or character.collideOnRight)
-			then
-
-				if(not character.collideOnRight and xStart-(character.screenX() + game.camera.x) > 30) then
-					character.goRight()
-				elseif(not character.collideOnLeft and xStart-(character.screenX() + game.camera.x) < - 30) then
-					character.goLeft()
-				end
-
-				if (character.floor) then
-					character.jump()
-				end
-			else
-				if (character.hanging) then
-				end
-			end
-		else
-			if(currentState == THROWING or currentState == GRABBING) then
-				local launch = getLaunchVector()
-				physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
-				if(lastX > xStart) then character.lookLeft() else character.lookRight() end
-			end
-		end
+	if(currentState == THROWING or currentState == GRABBING) then
+		local launch = getLaunchVector()
+		physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
+		if(lastX > xStart) then character.lookLeft() else character.lookRight() end
 	end
 end
 	
+---------------------------------------------------------------------
+
+function characterTouch( event )
+	lastTouchCharacterTime = system.getTimer()
+end
 	
--------------------------------------
+---------------------------------------------------------------------
 
 function setState(state, toApply)
 	
@@ -205,7 +221,7 @@ function setState(state, toApply)
 	
 end
 
--------------------------------------
+---------------------------------------------------------------------
 
 function dragGroup( group, motionLimit, event )
 	
@@ -241,7 +257,7 @@ function dragGroup( group, motionLimit, event )
 	
 end
 	
--------------------------------------
+---------------------------------------------------------------------
 --- ici on prend en compte le game.zoom
 -- car les x,y des events sont ceux du screen
 -- or on bouge les x,y dans le monde, la camera => il faut compter le zoom
@@ -291,3 +307,14 @@ function drag( tile, event, motionLimit )
 end
 
 ---------------------------------------------------------------------
+
+function getLaunchVector()
+
+	local direction = vector2D:new(xStart - lastX, yStart - lastY )
+	if(direction:magnitude() > SWIPE_MAX) then
+		direction:normalize()
+		direction:mult(SWIPE_MAX)
+	end
+
+	return vector2D:new(xStart - direction.x, yStart - direction.y)
+end

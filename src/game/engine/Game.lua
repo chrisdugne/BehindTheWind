@@ -67,7 +67,9 @@ function Game:start()
 
 	levelDrawer.bringForegroundToFront()
 	levelDrawer.putBackgroundToBack()
-
+	
+	-- viewManager.putForegroundToFront(1)
+	
 	------------------------------
 
 	Runtime:addEventListener( "enterFrame", self.refreshCamera )

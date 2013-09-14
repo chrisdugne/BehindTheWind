@@ -67,12 +67,12 @@ function initBackMenu()
 	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist1.x = display.viewableContentWidth/2  
 	mist1.y = display.viewableContentHeight/2
-	mist1.alpha = 0.37
+	mist1.alpha = 0.27
 
 	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist2.x = display.viewableContentWidth/2  - display.contentWidth
 	mist2.y = display.viewableContentHeight/2
-	mist2.alpha = 0.37 
+	mist2.alpha = 0.27 
 	
 	moveMists()
 	
@@ -92,10 +92,18 @@ end
 function putBackgroundToBack(level)
 
 	if(level == 0 or level == 1) then
-   	mist1:toBack();
-   	mist2:toBack();
-   	moon:toBack();
-   	back:toBack();
+   	mist1:toBack()
+   	mist2:toBack()
+   	moon:toBack()
+   	back:toBack()
+   end
+end
+
+function putForegroundToFront(level)
+
+	if(level == 1) then
+   	mist1:toFront()
+   	mist2:toFront()
    end
 end
 	

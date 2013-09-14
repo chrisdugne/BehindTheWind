@@ -4,20 +4,28 @@ module(..., package.seeall)
 
 -----------------------------------------------------------------------------------------
 
-ENERGY_ICON_LEFT 			= display.contentWidth*0.04
-ENERGY_ICON_TOP 			= display.contentHeight*0.06
-ENERGY_TEXT_LEFT 			= display.contentWidth*0.08
-ENERGY_TEXT_TOP 			= display.contentHeight*0.06
+ENERGY_ICON_LEFT 			= display.contentWidth*0.09
+ENERGY_ICON_TOP 			= display.contentHeight*0.94
+ENERGY_TEXT_LEFT 			= display.contentWidth*0.11
+ENERGY_TEXT_TOP 			= display.contentHeight*0.94
 
 PIECE_ICON_LEFT 			= display.contentWidth*0.15
-PIECE_ICON_TOP 			= display.contentHeight*0.06
+PIECE_ICON_TOP 			= display.contentHeight*0.94
 PIECE_TEXT_LEFT 			= display.contentWidth*0.18
-PIECE_TEXT_TOP 			= display.contentHeight*0.06
+PIECE_TEXT_TOP 			= display.contentHeight*0.94
 
 SIMPLE_PIECE_ICON_LEFT 	= display.contentWidth*0.20
-SIMPLE_PIECE_ICON_TOP 	= display.contentHeight*0.06
+SIMPLE_PIECE_ICON_TOP 	= display.contentHeight*0.94
 SIMPLE_PIECE_TEXT_LEFT 	= display.contentWidth*0.23
-SIMPLE_PIECE_TEXT_TOP 	= display.contentHeight*0.06
+SIMPLE_PIECE_TEXT_TOP 	= display.contentHeight*0.94
+
+THROW_ICON_LEFT 	= display.contentWidth*0.04
+THROW_ICON_TOP 	= display.contentHeight*0.94
+
+-----------------------------------------------------------------------------------------
+
+local characterIconsConfig = require("src.game.graphics.CharacterThrowIcons")
+local characterIconsSheet = graphics.newImageSheet( "assets/images/hud/CharacterThrowIcons.png", characterIconsConfig.sheet )
 
 -----------------------------------------------------------------------------------------
 
@@ -31,6 +39,11 @@ function start()
    game.hud.energiesRemaining:setTextColor( 255 )	
 	game.hud.energiesRemaining.x = ENERGY_TEXT_LEFT
 	game.hud.energiesRemaining.y = ENERGY_TEXT_TOP
+   
+   game.hud.throwIcon = display.newSprite( game.hud, characterIconsSheet, characterIconsConfig.sequence )
+	game.hud.throwIcon.x = THROW_ICON_LEFT
+	game.hud.throwIcon.y = THROW_ICON_TOP
+	game.hud.throwIcon:scale(0.5,0.5)
    
    Runtime:addEventListener( "enterFrame", refreshHUD )
 end
@@ -93,7 +106,7 @@ end
 -----------------------------------------------------------------------------------------
 
 function initFollowRockButton()
-   game.hud.followButton = display.newCircle( game.hud, 20, display.contentHeight - 20, 10 )
+   game.hud.followButton = display.newCircle( game.hud, display.contentWidth - 40, display.contentHeight - 40, 25 )
    hideFollowRockButton()
 end
 

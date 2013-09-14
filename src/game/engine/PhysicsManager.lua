@@ -255,6 +255,15 @@ end
 --- ROPES
 -----------------------------------------------------------------------------------------------------------------
 
+function refreshRopeCoordinates()
+	for k,rope in pairs(character.ropes) do
+		if(rope.attach.ground and rope.attach.ground.x) then
+      	rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
+      	rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
+      end
+	end
+end
+
 function buildRopeTo(x,y,ground)
 	
 	--------------------------
@@ -304,6 +313,7 @@ function buildRopeTo(x,y,ground)
 	--------------------------
 
 	table.insert(character.ropes, rope)
+	Runtime:addEventListener( "enterFrame", refreshRopeCoordinates )
 	
 	--------------------------
 	--  remove rope
@@ -338,8 +348,10 @@ function detachRope(event)
 	
 	if(#character.ropes == 0) then	
 		character.setHanging(false)
+		Runtime:removeEventListener( "enterFrame", refreshRopeCoordinates )
 	end
 	
 	character.sprite:removeEventListener ( "touch", detachRope) 
 	
+	return true -- not to get a touchScreen !
 end
