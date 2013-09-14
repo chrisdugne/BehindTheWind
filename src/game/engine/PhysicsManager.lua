@@ -16,7 +16,7 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, 20 )
-	physics.setDrawMode( "hybrid" )
+--	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
