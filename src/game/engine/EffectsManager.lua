@@ -123,21 +123,23 @@ function refreshEffects()
 			if(not effect.beingDestroyed and effect.num) then -- else passed throug destroyMaster
    			local isOnscreen = not effect.body -- si il n y a pas de body cest un simple effet visuel : onScreen (exemple drawFollow)
    			
-   			if(not effect.static) then
-   				refreshEffectsCoordinates(effect)
-   			end
-
-   			if(effect.isRope) then
-   				refreshRopeCoordinates(effect)
-   			end
+   			if(game.state == game.RUNNING) then
+      			if(not effect.static) then
+      				refreshEffectsCoordinates(effect)
+      			end
+   
+      			if(effect.isRope) then
+      				refreshRopeCoordinates(effect)
+      			end
    			
-   			if( effect.body
-   			and effect.body.x
-   			and effect.body.x > (-game.camera.x - 50)/game.zoom
-   			and effect.body.x < (display.contentWidth - game.camera.x + 50)/game.zoom 
-   			and effect.body.y > (-game.camera.y - 50)/game.zoom
-   			and effect.body.y < (display.contentHeight - game.camera.y + 50)/game.zoom) then
-   				isOnscreen = true
+      			if( effect.body
+      			and effect.body.x
+      			and effect.body.x > (-game.camera.x - 50)/game.zoom
+      			and effect.body.x < (display.contentWidth - game.camera.x + 50)/game.zoom 
+      			and effect.body.y > (-game.camera.y - 50)/game.zoom
+      			and effect.body.y < (display.contentHeight - game.camera.y + 50)/game.zoom) then
+      				isOnscreen = true
+      			end
    			end
    			
    			if(isOnscreen) then
@@ -159,9 +161,10 @@ function refreshEffectsCoordinates(effect)
    end
 end
 
-function refreshRopeCoordinates(effect)
-	effect:get("light").point2={character.sprite.x,character.sprite.y}
-	effect:get("light").resetPoints()
+function refreshRopeCoordinates(beam)
+	beam:get("light").point1={beam.attach.x,beam.attach.y}
+	beam:get("light").point2={character.sprite.x,character.sprite.y}
+	beam:get("light").resetPoints()
 end
 
 -----------------------------------------------------------------------------
@@ -374,12 +377,11 @@ function drawEnergy(x, y, type)
 			color={{65,65,62},{55,55,20}},
 			x = x,
 			y = y,
-			perEmit=2,
+			perEmit=1,
 			emissionNum=0,
-			emitDelay=250,
-			lifeSpan=400,
-			fadeInTime=700,
-			scale=0.14,
+			emitDelay=150,
+			fadeInTime=350,
+			scale=0.15,
 			physics={
 				gravityY=0.03,
 			}
@@ -437,7 +439,7 @@ function drawFollow( )
 			perEmit=1,
 			emissionNum=1,
 			emitDelay=210,
-			lifeSpan=720,
+			fadeInTime=920,
 			scale=0.3,
 			physics={
 				gravityX=0.53,
@@ -617,12 +619,11 @@ function setCharacterThrowing()
 			preset="wisps",
 			title="characterLight", -- The pop that appears when a mortar shot explodes
 			color={{205,15,12}},
-			perEmit=3,
+			perEmit=1,
 			emissionNum=0,
 			emitDelay=10,
-			lifeSpan=20,
-			fadeInTime=160,
-			scale=0.12,
+			fadeInTime=15,
+			scale=0.07,
 			startAlpha=1,
 			physics={
 				divisionDamping = true,
@@ -650,12 +651,11 @@ function setCharacterGrabbing()
 			preset="wisps",
 			title="characterLight", -- The pop that appears when a mortar shot explodes
 			color={{105,135,182}},
-			perEmit=3,
+			perEmit=1,
 			emissionNum=0,
 			emitDelay=10,
-			lifeSpan=20,
-			fadeInTime=160,
-			scale=0.12,
+			fadeInTime=15,
+			scale=0.07,
 			startAlpha=1,
 			physics={
 				divisionDamping = true,
@@ -685,8 +685,8 @@ function refreshCharacterLightCoordinates()
    end
    
 	if(effect.num) then -- else detruit depuis le dernier enterFrame ?
-		effect:get("characterLight").x = character.sprite.x + 16*character.sprite.xScale 
-		effect:get("characterLight").y = character.sprite.y + 15
+		effect:get("characterLight").x = character.sprite.x + 6*character.sprite.xScale 
+		effect:get("characterLight").y = character.sprite.y + 5
    end
 end
 
@@ -722,9 +722,10 @@ function setItemFire(body)
 			color={{255,5,5}},
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=1,
+			emitDelay=10,
+			fadeInTime=1020,
 			startAlpha=0.5,
-			scale=0.46,
+			scale=0.32,
 			physics={
 				xDamping = 4,
 				yDamping = 1,
@@ -747,7 +748,10 @@ end
 --- test
 -----------------------------------------------------------------------------
 
-function drawBeam(x1,y1, x2,y2)
+function drawBeam(attach)
+
+	local x1,y1 = attach.x, attach.y
+	local x2,y2 = character.sprite.x, character.sprite.y
 	
 	-- bug tell Caleb : scale doesnt work with alongline
 	local beam=CBE.VentGroup{
@@ -766,9 +770,9 @@ function drawBeam(x1,y1, x2,y2)
 			perEmit=1,
 			emissionNum=0,
 			emitDelay=10,
-   		fadeInTime=60,
-   		startAlpha=0.9,
-   		endAlpha=0,
+   		fadeInTime=20,
+   		startAlpha=0.6,
+   		endAlpha=0.3,
 			physics={
 				xDamping = 32,
 				yDamping = 15,
@@ -780,6 +784,7 @@ function drawBeam(x1,y1, x2,y2)
 	
 	beam.isRope = true
 	beam.static = true
+	beam.attach = attach
 	registerNewEffect(beam)	
 	game.camera:insert(beam:get("light").content)
 	
@@ -798,8 +803,8 @@ function simpleBeam(body)
 			perEmit=1,
 			emissionNum=0,
 			emitDelay=30,
-			fadeInTime=800,
-			startAlpha=0.5,
+			fadeInTime=50,
+			startAlpha=0.9,
 			scale=0.26,
 			physics={
 				xDamping = 7,
@@ -824,11 +829,11 @@ function lightAttach(body)
 			preset="wisps",
 			title="light", -- The pop that appears when a mortar shot explodes
 			color={{255,155,115}},
-			perEmit=2,
+			perEmit=1,
 			emissionNum=0,
-			emitDelay=30,
-			fadeInTime=50,
-			startAlpha=0.5,
+			emitDelay=50,
+			fadeInTime=80,
+			startAlpha=0.2,
 			scale=0.12,
 			physics={
 				xDamping = 7,

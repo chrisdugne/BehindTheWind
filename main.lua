@@ -15,7 +15,7 @@ SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
 
 -----------------------------------------------------------------------------------------
 
---DEV				= 1
+DEV				= 1
 --EDITOR 			= 1
 
 -----------------------------------------------------------------------------------------
@@ -57,6 +57,7 @@ gameCenter			= require "src.libs.GameCenter"
 ---- Game libs
 character			= require "src.game.Character"
 hud					= require "src.game.HUD"
+tutorials			= require "src.game.tutorials.Tutorials"
 
 Game					= require "src.game.engine.Game"
 touchController 	= require "src.game.engine.TouchController"
@@ -70,6 +71,10 @@ levelDrawer 		= require "src.game.levels.LevelDrawer"
 
 aspectRatio = display.pixelHeight / display.pixelWidth
 print(system.getInfo("model"), display.pixelWidth, display.pixelHeight, aspectRatio)
+
+-----------------------------------------------------------------------------------------
+
+abs = math.abs
 
 -----------------------------------------------------------------------------------------
 

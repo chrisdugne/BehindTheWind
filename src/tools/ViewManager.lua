@@ -162,7 +162,7 @@ function displayIntroTitle(text, x, y)
 	introText:setReferencePoint( display.CenterReferencePoint )
 	
 	transition.to( introText, { time=1600, alpha=1, onComplete=function()
-		transition.to( introText, { time=4600, alpha=0 })
+		transition.to( introText, { time=3200, alpha=0 })
 	end})
 end
 

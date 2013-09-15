@@ -312,34 +312,23 @@ function addGroupMotion(group, motion)
 	local motionVector 	= vector2D:Normalize(direction)
 	motionVector:mult(MOTION_SPEED)
 	
-	
 	for i = 1, #group do
 		group[i].bodyType = "kinematic"
-   	group[i].xStart = group[i].x
-   	group[i].yStart = group[i].y
-		moveTile(group[i], direction, velocityVector, 1, duration)
+		moveTile(group[i], motionVector, 1, duration)
 	end
 end
 
 ---------------------------------------------------------------------
 
-function moveTile(tile, direction, velocityVector, way, duration)
+function moveTile(tile, motionVector, way, duration)
 	
 	if(game.state == game.STOPPED) then return end
+		
+	tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
 
-	local xTo, yTo
-	if(way == 1) then
-		xTo,yTo = tile.xStart + motionVector.x, tile.yStart + motionVector.y
-	else
-		xTo,yTo = tile.xStart, tile.yStart
-	end
-	
-	tile.vx = tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
-	 
-	
-	transition.to(tile, {time = duration, x = xTo, y = yTo, onComplete= function()
+	timer.performWithDelay(duration, function()
 		moveTile(tile, motionVector, -way, duration)
-	end})
+	end)
 end
 
 ---------------------------------------------------------------------

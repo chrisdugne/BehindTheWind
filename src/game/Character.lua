@@ -13,7 +13,6 @@ GOING_LEFT 	= 1
 GOING_RIGHT = 2
 OUT		 	= 100
 
-
 -------------------------------------
 
 state = NOT_MOVING
@@ -82,7 +81,7 @@ function init()
    })
    
    sprite.isFixedRotation = true
---	sprite:addEventListener( "touch", touchController.characterTouch )
+	sprite:addEventListener( "touch", touchController.characterTouch )
 	sprite:addEventListener( "collision", collide )
 	sprite:addEventListener( "preCollision", preCollide )
 
@@ -95,6 +94,7 @@ function init()
    -- reset
       
    resetState()
+   setThrowing()
 
    ---------------------------
    
@@ -102,6 +102,7 @@ function init()
 end	
 
 function destroy()
+	effectsManager.stopCharacterLight()
 	utils.destroyFromDisplay(sprite)
 	Runtime:removeEventListener( "enterFrame", checkCharacter )
 end
@@ -313,14 +314,22 @@ end
 
 -------------------------------------
 
-function setGrabbing()
-	effectsManager.stopCharacterLight()
-	effectsManager.setCharacterGrabbing()
-end
-
 function setThrowing()
 	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterThrowing()
+	
+	if(game.hud.throwIcon and game.hud.throwIcon.setFrame) then
+		game.hud.throwIcon:setFrame(1)
+	end
+end
+
+function setGrabbing()
+	effectsManager.stopCharacterLight()
+	effectsManager.setCharacterGrabbing()
+
+	if(game.hud.throwIcon and game.hud.throwIcon.setFrame) then
+		game.hud.throwIcon:setFrame(2)
+	end
 end
 
 function setHanging(value)
@@ -365,14 +374,13 @@ end
 -------------------------------------
 
 function changeThrowStuff()
-	effectsManager.stopCharacterLight()
 	throwFire = not throwFire
 	throwGrab = not throwGrab
 	
 	if(throwFire) then
-		game.hud.throwIcon:setFrame(1)
+		setThrowing()
 	else	
-		game.hud.throwIcon:setFrame(2)
+		setGrabbing()
 	end
 end
 
@@ -425,15 +433,12 @@ function jump()
 	
 	local vx, vy = sprite:getLinearVelocity()
 	sprite:setLinearVelocity( vx, JUMP_SPEED )
-	
-	effectsManager.stopCharacterLight()
 end
 
 -------------------------------------
 
 function throw( x1,y1, x2,y2 )
 	timeLastThrow = system.getTimer()
-	effectsManager.stopCharacterLight()
 	physicsManager.throw(x1,y1, x2,y2)
 end
 
@@ -441,6 +446,5 @@ end
 
 function grab( x1,y1, x2,y2 )
 	timeLastThrow = system.getTimer()
-	effectsManager.stopCharacterLight()
 	physicsManager.grab(x1,y1, x2,y2)
 end

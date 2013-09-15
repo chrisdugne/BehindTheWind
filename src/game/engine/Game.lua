@@ -76,7 +76,7 @@ function Game:start()
 
 	------------------------------
 
-	if(self.level > 1) then
+	if(self.level > 1 or DEV) then
 		self.camera.alpha = 1
    	self:spawn()
    else
@@ -90,8 +90,12 @@ end
 function Game:spawn()
 	hud.start()
    effectsManager.spawnEffect()
-	touchController.start()
-	self.startTime = system.getTimer()
+   
+   -- laisse le temps du spawn
+   timer.performWithDelay(600, function()
+   	touchController.start()
+   	self.startTime = system.getTimer()
+   end)
 end
 
 ------------------------------------------
@@ -289,25 +293,33 @@ end
 function Game:refreshCamera(event)
 
 	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
+		
 		if(not character.rock or game.focus == CHARACTER) then	
-      	
-      	local leftDistance 	= character.screenX() + game.camera.x
-      	local rightDistance 	= display.contentWidth - leftDistance
-      
-      	local topDistance 	= character.screenY() + game.camera.y
-      	local bottomDistance = display.contentHeight - topDistance
+      	game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5
+			
+			local vx,vy = character.sprite:getLinearVelocity()      	
+      	if(character.hanging or abs(vy) > 300 ) then
+      		game.camera.y = -character.sprite.y*game.zoom + display.contentHeight*0.5
+      	else
+         	local topDistance 	= character.screenY() + game.camera.y
+         	local bottomDistance = display.contentHeight - topDistance
+   
+         	if(bottomDistance < display.contentHeight*0.28) then
+         		game.camera.y = display.contentHeight*0.72 - character.screenY()
+         	elseif(topDistance < display.contentHeight*0.28) then
+         		game.camera.y = display.contentHeight*0.28 - character.screenY() 
+         	end
+      	end
 
-      	if(rightDistance < display.contentWidth*0.43) then
-      		game.camera.x = display.contentWidth*0.57 - character.screenX() 
-      	elseif(leftDistance < display.contentWidth*0.43) then
-      		game.camera.x = display.contentWidth*0.43 - character.screenX()
-      	end
-      
-      	if(bottomDistance < display.contentHeight*0.28) then
-      		game.camera.y = display.contentHeight*0.72 - character.screenY()
-      	elseif(topDistance < display.contentHeight*0.28) then
-      		game.camera.y = display.contentHeight*0.28 - character.screenY() 
-      	end
+--      	local leftDistance 	= character.screenX() + game.camera.x
+--      	local rightDistance 	= display.contentWidth - leftDistance
+--
+--      	if(rightDistance < display.contentWidth*0.43) then
+--      		game.camera.x = display.contentWidth*0.57 - character.screenX() 
+--      	elseif(leftDistance < display.contentWidth*0.43) then
+--      		game.camera.x = display.contentWidth*0.43 - character.screenX()
+--      	end
+--      
       
       elseif(game.focus == ROCK) then
       	if(character.rock.x) then 
@@ -343,7 +355,7 @@ function Game:intro()
 	end)
 
 	timer.performWithDelay(11000, function()
-   	viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.3, true)
+   	viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
 	end)
 end
 

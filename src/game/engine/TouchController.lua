@@ -74,39 +74,103 @@ function touchScreen( event )
 		leftTouch 	= false
 		centerTouch = false
 
-		if(xStart > display.contentWidth*0.6) then
+		if(xStart > display.contentWidth*0.5) then
 			rightTouch = true
 		end
 
-		if(xStart < display.contentWidth*0.4) then
+		if(xStart < display.contentWidth*0.5) then
 			leftTouch = true
 		end
 		
-		centerTouch = not leftTouch and not rightTouch
-   	
 		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
 			centerTapping = 0
 			sideTapping = 0
 			currentState = NONE
 		end
-
-   	if(centerTouch) then
-	   	if(centerTapping == 0) then 
-      		setState(READY_TO_THROW)
-      	elseif(centerTapping == 1) then 
-      		setState(READY_TO_GRAB)
-      	end
-      else
-      	character.move()
-   	end
+   	
+   	character.move()
 
    	display.getCurrentStage():setFocus( game.camera )
    	Runtime:addEventListener( "enterFrame", onTouch )
    	
 	---------------------------------------------
 		
-	elseif event.phase == "moved" then
+	elseif event.phase == "ended" then
+
+   	display.getCurrentStage():setFocus( nil )
+   	Runtime:removeEventListener( "enterFrame", onTouch )
+
+		-----------------------------
+		--	OUT  : dont listen action
+		if(character.state == character.OUT) then return end
 		
+		-----------------------------
+		
+		local now = system.getTimer()
+		local touchDuration = now - startTouchTime
+
+		if(touchDuration < TAP_TIME_LIMIT) then 
+			previousTapTime = now
+			sideTapping = sideTapping + 1
+		end
+   	
+		-----------------------------
+   	
+		swipping 	= false
+		rightTouch 	= false
+		leftTouch 	= false
+		
+		-----------------------------
+		
+		character.stop()
+		setState(NONE)
+		
+		---------------------------------------------
+	end
+
+	return true
+end
+
+
+---------------------------------------------------------------------
+
+function onTouch( event )
+	local now = system.getTimer()
+	local touchDuration = now - startTouchTime
+
+	if(currentState == THROWING or currentState == GRABBING) then
+		local launch = getLaunchVector()
+		physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
+		if(lastX > xStart) then character.lookLeft() else character.lookRight() end
+	end
+end
+	
+---------------------------------------------------------------------
+
+function characterTouch( event )
+	
+	lastX, lastY = event.x, event.y
+	
+	if event.phase == "began" then
+	
+		xStart, yStart = event.xStart, event.yStart
+		
+   	lastTouchCharacterTime = system.getTimer()
+		centerTouch = true
+		
+   	if(centerTouch) then
+      	if(centerTapping == 0) then 
+      		setState(READY_TO_THROW)
+      	elseif(centerTapping == 1) then 
+      		setState(READY_TO_GRAB)
+      	end
+   	end
+
+   	Runtime:addEventListener( "enterFrame", onTouch )
+   	display.getCurrentStage():setFocus( character.sprite )
+
+	elseif event.phase == "moved" then
+	
    	if(currentState ~= THROWING and currentState ~= GRABBING) then
    		xStart, yStart = lastX, lastY
    	end
@@ -118,18 +182,9 @@ function touchScreen( event )
    			setState(GRABBING, function() character.setGrabbing() end)
 			end
 		end 
-
-	---------------------------------------------
-
+		
 	elseif event.phase == "ended" then
-
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", onTouch )
-
-		-----------------------------
-		--	OUT  : dont listen action
-		if(character.state == character.OUT) then return end
-
+	
 		-----------------------------
 		
 		if(currentState == READY_TO_THROW) then
@@ -151,58 +206,16 @@ function touchScreen( event )
    		local launch = getLaunchVector()
 			character.grab( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
    	end
-		
-		-----------------------------
-		
-		local now = system.getTimer()
-		local touchDuration = now - startTouchTime
 
-		if(touchDuration < TAP_TIME_LIMIT) then 
-			previousTapTime = now
-			if(centerTouch) then
-   			centerTapping = centerTapping + 1
-			else
-   			sideTapping = sideTapping + 1
-			end
-		end
+		-----------------------------
+
+   	display.getCurrentStage():setFocus( nil )
+   	Runtime:removeEventListener( "enterFrame", onTouch )
    	
-		-----------------------------
    	
-		swipping 	= false
-		rightTouch 	= false
-		leftTouch 	= false
-		centerTouch = false
-		
-		-----------------------------
-		
-		character.stop()
-		setState(NONE)
-		
-		---------------------------------------------
 	end
-
-	return true
-end
-
-
----------------------------------------------------------------------
-
-function onTouch( event )
 	
-	local now = system.getTimer()
-	local touchDuration = now - startTouchTime
-
-	if(currentState == THROWING or currentState == GRABBING) then
-		local launch = getLaunchVector()
-		physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
-		if(lastX > xStart) then character.lookLeft() else character.lookRight() end
-	end
-end
-	
----------------------------------------------------------------------
-
-function characterTouch( event )
-	lastTouchCharacterTime = system.getTimer()
+	return true -- cancel the touchScreen
 end
 	
 ---------------------------------------------------------------------

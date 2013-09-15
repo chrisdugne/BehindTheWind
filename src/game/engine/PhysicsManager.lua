@@ -9,13 +9,18 @@ physics.start()
 
 -------------------------------------
 
+local THROW_FORCE 	= 3.9
+local GRAVITY 			= 20
+
+-------------------------------------
+
 local trajectory = nil
 
 -------------------------------------
 
 function start( )
 	
-	physics.setGravity( 0, 20 )
+	physics.setGravity( 0, GRAVITY )
 --	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
@@ -91,12 +96,12 @@ end
 function throw( x1,y1, x2,y2 )
 
 	utils.emptyGroup(trajectory)
-	local force = getVelocity(x1,y1,x2,y2)
+	local force = getThrowVelocity(x1,y1,x2,y2)
 
 	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
 	rock.y = character.sprite.y
-	rock:scale(0.2,0.2)
+	rock:scale(0.1,0.1)
 	physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=7 } )
 	rock:setLinearVelocity(force.vx, force.vy)
 	
@@ -119,7 +124,7 @@ end
 function grab( x1,y1, x2,y2 )
 	
 	utils.emptyGroup(trajectory)
-	local force = getVelocity(x1,y1,x2,y2)
+	local force = getThrowVelocity(x1,y1,x2,y2)
 	
 	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
@@ -175,7 +180,7 @@ function grabCollision( event )
 				buildRopeTo(x,y,ground)
 				timer.performWithDelay(250, function()
 					if(#character.ropes == 2) then
-						detachRope(1)	
+						detachPreviousRope()	
 					end
    			end)
 			end)
@@ -207,10 +212,10 @@ end
 
 ---------------------------------------------------------------------------
 
-function getVelocity(x1,y1, x2,y2)
+function getThrowVelocity(x1,y1, x2,y2)
 	
-	local xForce = 5.2*(x2-x1)
-	local yForce = 5.2*(y2-y1)
+	local xForce = THROW_FORCE*(x2-x1)
+	local yForce = THROW_FORCE*(y2-y1)
 
 	return {
 		vx = xForce,	
@@ -226,7 +231,7 @@ function refreshTrajectory(fingerX, fingerY, xStart, yStart)
 		y = character.sprite.y
 	}
 	
-	local velocity = getVelocity(fingerX, fingerY, xStart, yStart)
+	local velocity = getThrowVelocity(fingerX, fingerY, xStart, yStart)
 	local startingVelocity = {
 		x = velocity.vx,
 		y = velocity.vy
@@ -287,6 +292,7 @@ function buildRopeTo(x,y,ground)
 	attach.offsetX = ground.x - x
 	attach.offsetY = ground.y - y
 	attach.isAttach = true
+	attach.isSensor = true
 	attach.alpha = 0
 
 	rope.attach = attach
@@ -296,20 +302,21 @@ function buildRopeTo(x,y,ground)
 
 	local joint = physics.newJoint( "distance", character.sprite, attach, character.sprite.x,character.sprite.y, attach.x,attach.y )
 	
+	joint.isSensor = true
 	joint.length = 75
 	joint.frequency = 1.7
 	joint.dampingRatio = 0.29
 
 	rope.joint = joint
 	
-	-- anchor point at x,y... dont really understand why but joint doesnt "start" without this physics.addBody at x,y !		
+	--- anchor point at x,y... dont really understand why but joint doesnt "start" without this physics.addBody at x,y !		
 	rope.startAnchor = display.newCircle( game.camera, character.sprite.x, character.sprite.y, 2 )
 	rope.startAnchor.alpha = 0
 	physics.addBody( rope.startAnchor, "static", {radius=2, isSensor = true } )
 
 	--------------------------
 	
-   rope.beam = effectsManager.drawBeam(rope.attach.x, rope.attach.y, character.sprite.x, character.sprite.y)
+   rope.beam = effectsManager.drawBeam(rope.attach)
 
 	--------------------------
 
@@ -317,16 +324,36 @@ function buildRopeTo(x,y,ground)
 	Runtime:addEventListener( "enterFrame", refreshRopeCoordinates )
 	
 	--------------------------
-	--  remove rope
 
-	attach:addEventListener ( "touch", detachRope)
-	character.sprite:addEventListener ( "touch", detachRope) 
 	character.setHanging(true)
+	
+	hud.showDropButton()
 end
 
 ---------------------------------------------------------------------------
 
-function detachRope(event)
+function detachAllRopes()
+	
+	for i = 1,#character.ropes do
+		local rope = character.ropes[i]	
+   	rope.attach.ground.bodyType = rope.attach.ground.lastBodyType
+   
+   	effectsManager.destroyObjectWithEffect(rope.attach)
+   	effectsManager.destroyEffect(rope.beam)
+   	
+   	utils.destroyFromDisplay(rope.startAnchor)
+   	utils.destroyFromDisplay(rope.joint)
+	end
+		
+	character.setHanging(false)
+	Runtime:removeEventListener( "enterFrame", refreshRopeCoordinates )
+	
+	character.ropes = {}
+end
+
+---------------------------------------------------------------------------
+
+function detachPreviousRope()
 
 	local rope = character.ropes[1]	
 	rope.attach.ground.bodyType = rope.attach.ground.lastBodyType
@@ -351,8 +378,6 @@ function detachRope(event)
 		character.setHanging(false)
 		Runtime:removeEventListener( "enterFrame", refreshRopeCoordinates )
 	end
-	
-	character.sprite:removeEventListener ( "touch", detachRope) 
 	
 	return true -- not to get a touchScreen !
 end
