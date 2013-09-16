@@ -37,6 +37,8 @@ hanging 	= false
 throwFire = true 
 throwGrab = false
 
+grabs 	 = 0 -- nb de grappins lancés
+
 -------------------------------------
 
 local previousVy = 0
@@ -116,6 +118,7 @@ function resetState()
    leavingFloor 	= nil
    
    timeLastThrow	= 0
+   grabs				= 0
    
    jumping 	= false 
    hanging 	= false 
@@ -445,6 +448,7 @@ end
 -------------------------------------
 
 function grab( x1,y1, x2,y2 )
+	character.grabs = character.grabs + 1
 	timeLastThrow = system.getTimer()
 	physicsManager.grab(x1,y1, x2,y2)
 end

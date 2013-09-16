@@ -314,20 +314,29 @@ function addGroupMotion(group, motion)
 	
 	for i = 1, #group do
 		group[i].bodyType = "kinematic"
-		moveTile(group[i], motionVector, 1, duration)
+		group[i].xStart = group[i].x
+		group[i].yStart = group[i].y
+		startMoveTile(group[i], motionVector, duration)
 	end
 end
 
 ---------------------------------------------------------------------
 
-function moveTile(tile, motionVector, way, duration)
+function startMoveTile(tile, motionVector, duration)
 	
 	if(game.state == game.STOPPED) then return end
+
+	-- replace force au cas ou lag pendant le timer
+	tile.x = tile.xStart
+	tile.y = tile.yStart
 		
-	tile:setLinearVelocity( motionVector.x * way, motionVector.y * way)
+	tile:setLinearVelocity( motionVector.x , motionVector.y )
 
 	timer.performWithDelay(duration, function()
-		moveTile(tile, motionVector, -way, duration)
+   	tile:setLinearVelocity( - motionVector.x , - motionVector.y )
+   	timer.performWithDelay(duration, function()
+			startMoveTile(tile, motionVector, duration)
+   	end)
 	end)
 end
 

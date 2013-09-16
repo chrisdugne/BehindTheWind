@@ -21,8 +21,8 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, GRAVITY )
---	physics.setDrawMode( "hybrid" )
---	physics.setDrawMode( "debug" )
+	physics.setDrawMode( "hybrid" )
+	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
 	game.camera:insert (trajectory)
@@ -112,7 +112,7 @@ function throw( x1,y1, x2,y2 )
 	effectsManager.setItemFire(rock)
 	character.rock = rock
 
-	timer.performWithDelay(7000, function()
+	timer.performWithDelay(4500, function()
 		deleteRock(rock)
 	end)
 
@@ -141,7 +141,7 @@ function grab( x1,y1, x2,y2 )
 
 	character.rock = rock
 	
-	timer.performWithDelay(7000, function()
+	timer.performWithDelay(4500, function()
 		deleteRock(rock)
 	end)
 
@@ -153,8 +153,8 @@ end
 function thrownFromCharacterPreCollision( event )
 
 	if(event.other == character.sprite
-	and not event.other.isSensor
-	and not event.other.isAttach) then
+	or event.other.isSensor
+	or event.other.isAttach) then
 		event.contact.isEnabled = false
 	end
 end
@@ -169,6 +169,8 @@ end
 function grabCollision( event )
 	if(event.other ~= character.sprite 
 	and not event.other.isSensor
+	and not event.other.isGrab
+	and not event.other.isRock
 	and not event.other.trigger
 	and not event.other.isAttach) then
 
@@ -177,7 +179,9 @@ function grabCollision( event )
 			local x,y = event.target.x, event.target.y
 			
 			timer.performWithDelay(30, function()
+				
 				buildRopeTo(x,y,ground)
+			
 				timer.performWithDelay(250, function()
 					if(#character.ropes == 2) then
 						detachPreviousRope()	
@@ -195,8 +199,14 @@ end
 
 function deleteRock(rock)
 	
+	if(rock.effect.beingDestroyed) then return end
+	
 	if(character.rock == rock) then
    	hud.hideFollowRockButton()
+   end
+
+	if(rock.isGrab) then
+		character.grabs = character.grabs - 1
    end
 	
 	effectsManager.destroyObjectWithEffect(rock)
@@ -312,6 +322,7 @@ function buildRopeTo(x,y,ground)
 	--- anchor point at x,y... dont really understand why but joint doesnt "start" without this physics.addBody at x,y !		
 	rope.startAnchor = display.newCircle( game.camera, character.sprite.x, character.sprite.y, 2 )
 	rope.startAnchor.alpha = 0
+	rope.startAnchor.isGrab = true -- considere comme un grab, pour ne pas entrer en collision !
 	physics.addBody( rope.startAnchor, "static", {radius=2, isSensor = true } )
 
 	--------------------------

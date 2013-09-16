@@ -183,7 +183,7 @@ end
 
 function refreshMemText(text)
 	if(memText.contentWidth) then
-		memText.text = text
+		memText.text = character.grabs ..  "    " .. text
 		memText.size = 25
 		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
 	end

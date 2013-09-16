@@ -152,7 +152,9 @@ function characterTouch( event )
 	lastX, lastY = event.x, event.y
 	
 	if event.phase == "began" then
-	
+
+		if(character.grabs > 1) then return true end -- on attend qu'il n'y ait qu'une seule rope pour permettre d'en lancer une 2e
+				
 		xStart, yStart = event.xStart, event.yStart
 		
    	lastTouchCharacterTime = system.getTimer()

@@ -102,6 +102,14 @@ function destroyEffect( effect, now )
 end
 
 -----------------------------------------------------------------------------
+
+function destroyObjectWithEffect(body)
+	if(body.effect) then
+		destroyEffect(body.effect)
+   end
+end
+
+-----------------------------------------------------------------------------
 --- CHECK level effects in screen
 -----------------------------------------------------------------------------
 --
@@ -849,10 +857,4 @@ function lightAttach(body)
 	game.camera:insert(beam:get("light").content)
 	
 	registerNewEffect(beam)
-end
-
-function destroyObjectWithEffect(body)
-	if(body.effect) then
-		destroyEffect(body.effect)
-   end
 end
