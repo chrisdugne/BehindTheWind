@@ -322,6 +322,7 @@ end
 
 ---------------------------------------------------------------------
 
+-- amelioration : enterframe qui verif les x,y bien dans les bounds x1y1,x2y2 + stop tween + startMoveTile
 function startMoveTile(tile, motionVector, duration)
 	
 	if(game.state == game.STOPPED) then return end

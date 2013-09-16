@@ -62,9 +62,11 @@ end
 -----------------------------------------------------------------------------
 
 function destroyEffect( effect, now )
-	
+	print("destroy")
 	if(not effect.beingDestroyed and effect.num) then -- else deja detruit (pb de lien pour le GC dans un performWithDelay ? exmple deleteRock + timeout 4sec force)
       effect.beingDestroyed = true
+
+    	print("bam")
    	
    	if(not now and effect.body) then
    		utils.destroyFromDisplay(effect.body)
@@ -96,7 +98,9 @@ function destroyEffect( effect, now )
 		--- debug
       nbDestroyed = nbDestroyed + 1
       
-
+		return true
+	else
+		return false
 	end
 
 end
@@ -105,7 +109,9 @@ end
 
 function destroyObjectWithEffect(body)
 	if(body.effect) then
-		destroyEffect(body.effect)
+		return destroyEffect(body.effect)
+	else
+		return false
    end
 end
 
@@ -304,7 +310,6 @@ function reachExitEffect(x,y)
 	registerNewEffect(light)	
 	game.camera:insert(light:get("light").content)
 	
-	print("reach Exit")
 	character.exit()
 	game:stop()
 end
@@ -346,6 +351,7 @@ function drawExit(x, y, displayScore)
    	density = 0, 
    	friction = 0, 
    	bounce = 0,
+   	radius = 20
    })
    
    game.camera:insert(exit)

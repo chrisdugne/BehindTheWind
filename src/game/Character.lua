@@ -71,8 +71,14 @@ end
 -------------------------------------
 
 function init()
+
+   ---------------------------
+
 	ropes = {}
-	
+   grabs	= 0  --> pas dans le resetState, puisquil peut y avoir un grab raté en cours de chute lors d'un respawn qui va resetState
+
+   ---------------------------
+   
    sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
    
    physics.addBody( sprite, { 
@@ -81,6 +87,8 @@ function init()
    	bounce = 0.2,
    	radius = RADIUS
    })
+
+   ---------------------------
    
    sprite.isFixedRotation = true
 	sprite:addEventListener( "touch", touchController.characterTouch )
@@ -118,7 +126,6 @@ function resetState()
    leavingFloor 	= nil
    
    timeLastThrow	= 0
-   grabs				= 0
    
    jumping 	= false 
    hanging 	= false 

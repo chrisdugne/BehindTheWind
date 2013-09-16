@@ -21,8 +21,8 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, GRAVITY )
-	physics.setDrawMode( "hybrid" )
-	physics.setDrawMode( "debug" )
+--	physics.setDrawMode( "hybrid" )
+--	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
 	game.camera:insert (trajectory)
@@ -199,18 +199,15 @@ end
 
 function deleteRock(rock)
 	
-	if(rock.effect.beingDestroyed) then return end
-	
 	if(character.rock == rock) then
    	hud.hideFollowRockButton()
    end
 
-	if(rock.isGrab) then
+	local destroyedRightNow = effectsManager.destroyObjectWithEffect(rock)
+
+	if(rock.isGrab and destroyedRightNow) then
 		character.grabs = character.grabs - 1
    end
-	
-	effectsManager.destroyObjectWithEffect(rock)
-	rock = nil
 	
 end
 
