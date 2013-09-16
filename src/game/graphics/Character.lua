@@ -3,14 +3,14 @@
 --
 -- $TexturePacker:SmartUpdate:6156402098066d4c708d43d5540765c4:1/1$
 --
--- local CharacterJump = require("mysheet")
--- local myImageSheet = graphics.newImageSheet( "mysheet.png", CharacterJump:getSheet() )
--- local sprite = display.newSprite( myImageSheet , {frames={CharacterJump:getFrameIndex("sprite")}} )
+-- local Character = require("mysheet")
+-- local myImageSheet = graphics.newImageSheet( "mysheet.png", Character:getSheet() )
+-- local sprite = display.newSprite( myImageSheet , {frames={Character:getFrameIndex("sprite")}} )
 --
 
-local CharacterJump = {}
+local Character = {}
 
-CharacterJump.sequence = {
+Character.sequence = {
 	{ 
 		name = "normalRun",  --name of animation sequence
 		start = 1,  --starting frame index
@@ -21,7 +21,7 @@ CharacterJump.sequence = {
 	}  --if defining more sequences, place a comma here and proceed to the next sequence sub-table
 }
 
-CharacterJump.sheet =
+Character.sheet =
 {
     frames = {
     
@@ -82,7 +82,7 @@ CharacterJump.sheet =
     sheetContentHeight = 128
 }
 
-CharacterJump.frameIndex =
+Character.frameIndex =
 {
 
     ["character.jump.1"] = 1,
@@ -93,12 +93,12 @@ CharacterJump.frameIndex =
     ["character.jump.6"] = 6,
 }
 
-function CharacterJump:getSheet()
+function Character:getSheet()
     return self.sheet;
 end
 
-function CharacterJump:getFrameIndex(name)
+function Character:getFrameIndex(name)
     return self.frameIndex[name];
 end
 
-return CharacterJump
+return Character

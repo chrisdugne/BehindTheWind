@@ -21,7 +21,7 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, GRAVITY )
---	physics.setDrawMode( "hybrid" )
+	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
@@ -121,6 +121,61 @@ end
 
 -----------------------------------------------------------------------------------------------
 
+function eyeThrow( enemy )
+
+	local viewDirection = vector2D:new(enemy.direction.x,enemy.direction.y)
+	local strength = math.min(viewDirection:magnitude(), 300)
+	
+	local direction = vector2D:new(enemy.direction.x*(0.48 + 0.0004*strength),enemy.direction.y*(0.11 - 0.0003*strength))
+	direction:rotate(-math.pi*0.4 * abs(enemy.sprite.x - character.sprite.x)/(enemy.sprite.x - character.sprite.x))
+	local force = getThrowVelocity(enemy.sprite.x,enemy.sprite.y, enemy.sprite.x + direction.x, enemy.sprite.y + direction.y)
+
+	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
+	rock.x = enemy.sprite.x
+	rock.y = enemy.sprite.y
+	rock.alpha = 0.6
+	rock:scale(0.2,0.2)
+	physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=14 } )
+	rock:setLinearVelocity(force.vx, force.vy)
+	
+	rock:addEventListener( "preCollision", thrownFromEnemyPreCollision )
+	rock:addEventListener( "collision", enemyRockCollision )
+	rock.isBadRock = true
+	
+	effectsManager.greenFire(rock)
+
+	timer.performWithDelay(4500, function()
+		deleteRock(rock)
+	end)
+	
+end
+
+-----------------------------------------------------------------------------------------------
+
+function enemyThrow( enemy )
+	local force = getThrowVelocity(enemy.sprite.x,enemy.sprite.y, enemy.sprite.x - enemy.direction.x/2, enemy.sprite.y - enemy.direction.y/2)
+
+	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
+	rock.x = sprite.x
+	rock.y = sprite.y
+	rock:scale(0.1,0.1)
+	physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=7 } )
+	rock:setLinearVelocity(force.vx, force.vy)
+	
+	rock:addEventListener( "preCollision", thrownFromEnemyPreCollision )
+	rock:addEventListener( "collision", enemyRockCollision )
+	rock.isBadRock = true
+	
+	effectsManager.setItemFire(rock)
+
+	timer.performWithDelay(4500, function()
+		deleteRock(rock)
+	end)
+	
+end
+
+-----------------------------------------------------------------------------------------------
+
 function grab( x1,y1, x2,y2 )
 	
 	utils.emptyGroup(trajectory)
@@ -146,6 +201,23 @@ function grab( x1,y1, x2,y2 )
 	end)
 
 	hud.showFollowRockButton()
+end
+
+-------------------------------------
+
+function thrownFromEnemyPreCollision( event )
+
+	if(event.other.isEnemy
+	or event.other.isSensor
+	or event.other.isAttach) then
+		event.contact.isEnabled = false
+	end
+end
+
+function enemyRockCollision( event )
+	if(not event.other.isEnemy and not event.other.isSensor) then
+		deleteRock(event.target)
+   end
 end
 
 -------------------------------------

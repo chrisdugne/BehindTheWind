@@ -80,6 +80,7 @@ function designLevel(displayScore)
 
 	level 					= {}
 	level.triggers 		= {}
+	level.enemies 			= {}
 	level.num 				= game.level
 	level.bottomY 			= -100000
 	
@@ -171,6 +172,12 @@ function designLevel(displayScore)
 			if(tile.num == PANEL) then
 				tile.panelNum = tiles[i].panelNum
    			tile:addEventListener( "touch", openPanel)
+
+			elseif(tile.num == BAD) then
+   			display.remove(tile)
+   			local eye = eye:new()
+   			eye:init(tile.x,tile.y)
+				level.enemies[#level.enemies + 1] = eye
 
 			elseif(tile.num == SPAWNPOINT) then
    			level.spawnX = tile.x

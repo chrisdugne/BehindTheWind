@@ -12,6 +12,7 @@ THROWING 			= 13
 GRABBING 			= 14
 
 DRAGGING_TILE 		= 101
+PINCHING 			= 102
 
 ---------------------------------------------------------------------
 
@@ -38,6 +39,8 @@ local lastTouchCharacterTime = 0
 local centerTapping		= 0
 local sideTapping			= 0
 
+local touches = {}
+
 ---------------------------------------------------------------------
 
 local TAP_TIME_LIMIT		= 250
@@ -52,12 +55,24 @@ function start()
    rightTouch					= false
    leftTouch					= false
    centerTouch					= false
+   
+	touches = {}
 end
 
 function stop()
 	display.getCurrentStage():removeEventListener( "touch", touchScreen )
 	Runtime:removeEventListener( "enterFrame", onTouch )
 	display.getCurrentStage():setFocus( nil )
+end
+
+---------------------------------------------------------------------
+
+function getNbTouches()
+	local nb = 0
+	for k,v in pairs(touches) do
+		if(v) then nb = nb + 1 end
+	end
+	return nb
 end
 
 ---------------------------------------------------------------------
@@ -71,63 +86,142 @@ function touchScreen( event )
 	---------------------------------------------
 
 	if event.phase == "began" then
+   	
+   	local nbTouches = getNbTouches() + 1
+		if(nbTouches == 3) then return true end --cancel 3rd finger 
+		
+		----------------------------------------------------------------
 
-   	startTouchTime 	= system.getTimer()
-		xStart, yStart 	= event.xStart, event.yStart
+      display.getCurrentStage():setFocus( game.camera )
+		touches[event.id] = event
+      	
 		swipping 	= false
 		rightTouch 	= false
 		leftTouch 	= false
 		centerTouch = false
-
-		if(xStart > display.contentWidth*0.5) then
-			rightTouch = true
-		end
-
-		if(xStart < display.contentWidth*0.5) then
-			leftTouch = true
-		end
 		
-		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
-			centerTapping = 0
-			sideTapping = 0
-			currentState = NONE
-		end
-   	
-   	character.move()
+		----------------------------------------------------------------
+		-- multitouch
+		
+		if ( nbTouches > 1 ) then
+			
+			currentState = PINCHING
+			timer.cancel(oneTouchAction)
+   		
+   		if ( not game.camera.distance ) then
+   			local dx,dy = calculateDelta( touches, event )
+   
+   			-- initialize to distance between two touches
+   			if ( dx and dy ) then
+   				local d = math.sqrt( dx*dx + dy*dy )
+   				if ( d > 0 ) then
+   					game.camera.distance = d
+   					game.camera.originalGameZoom = game.zoom
+   				end
+   			end
+   		end
 
-   	display.getCurrentStage():setFocus( game.camera )
-   	Runtime:addEventListener( "enterFrame", onTouch )
+		----------------------------------------------------------------
+		
+		else --- single touch 
+
+      	oneTouchAction = timer.performWithDelay(25, function()
+      		startTouchTime 	= system.getTimer()
+      		xStart, yStart 	= event.xStart, event.yStart
+      
+      		if(xStart > display.contentWidth*0.5) then
+      			rightTouch = true
+      		end
+      
+      		if(xStart < display.contentWidth*0.5) then
+      			leftTouch = true
+      		end
+      		
+      		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
+      			centerTapping = 0
+      			sideTapping = 0
+      			currentState = NONE
+      		end
+         	
+         	character.move()
+      
+      		Runtime:addEventListener( "enterFrame", onTouch )
+      	end)
+   		
+   	end
    	
 	---------------------------------------------
+	--	 multitouch on camera
+	
+	elseif "moved" == event.phase then
 		
-	elseif event.phase == "ended" then
-
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", onTouch )
-
-		-----------------------------
-		--	OUT  : dont listen action
-		if(character.state == character.OUT) then return end
+		if(not touches[event.id]) then return end
 		
-		-----------------------------
-		
-		local now = system.getTimer()
-		local touchDuration = now - startTouchTime
-
-		if(touchDuration < TAP_TIME_LIMIT) then 
-			previousTapTime = now
-			sideTapping = sideTapping + 1
+		local nbTouches = getNbTouches()
+   	
+		if nbTouches > 1 then
+			if ( game.camera.distance ) then
+   			local dx,dy = calculateDelta( touches, event )
+	
+				if ( dx and dy ) then
+					local newDistance = math.sqrt( dx*dx + dy*dy )
+					local scale = newDistance / game.camera.distance
+					if ( scale > 0 ) then
+						game.zoom = game.camera.originalGameZoom * scale
+					end
+				end
+			end
 		end
-   	
-		-----------------------------
-   	
-		swipping 	= false
-		rightTouch 	= false
-		leftTouch 	= false
+
+	----------------------------------------------------------------------
+	
+	elseif event.phase == "ended" or event.phase == "cancelled" then
+
+		if(not touches[event.id]) then return end
 		
 		-----------------------------
+
+		local nbTouchesRemaining = getNbTouches() - 1
+		touches[event.id] = nil
 		
-		character.stop()
+		-----------------------------
+
+		if(nbTouchesRemaining == 1) then
+			game.camera.distance = nil
+			game.camera.originalGameZoom = nil
+		else
+			timer.cancel(oneTouchAction)
+			touches = {}
+		
+   		display.getCurrentStage():setFocus( nil )
+   		Runtime:removeEventListener( "enterFrame", onTouch )
+   	
+   		-----------------------------
+   		--	OUT  : dont listen action
+   		if(character.state == character.OUT) then return end
+   		
+   		-----------------------------
+   		
+   		local now = system.getTimer()
+   		local touchDuration = now - startTouchTime
+   
+   		if(touchDuration < TAP_TIME_LIMIT) then 
+   			previousTapTime = now
+   			sideTapping = sideTapping + 1
+   		end
+      	
+   		-----------------------------
+      	
+   		swipping 	= false
+   		rightTouch 	= false
+   		leftTouch 	= false
+   		
+   		-----------------------------
+   		
+   		character.stop()
+   		
+   	end
+
 		setState(NONE)
 		
 		---------------------------------------------
@@ -324,6 +418,20 @@ function drag( tile, event, motionLimit )
 	end
 
 	return true
+end
+
+---------------------------------------------------------------------
+
+function calculateDelta( previousTouches, event )
+	local id,touch = next( previousTouches )
+	if event.id == id then
+		id,touch = next( previousTouches, id )
+		assert( id ~= event.id )
+	end
+
+	local dx = touch.x - event.x
+	local dy = touch.y - event.y
+	return dx, dy
 end
 
 ---------------------------------------------------------------------

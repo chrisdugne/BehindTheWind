@@ -46,8 +46,8 @@ local nbFramesToKeep = 0
 
 -------------------------------------
 
-local playerWalk = require("src.game.graphics.CharacterJump")
-local playerSheet = graphics.newImageSheet( "assets/images/game/CharacterJump.png", playerWalk.sheet )
+local playerWalk = require("src.game.graphics.Character")
+local playerSheet = graphics.newImageSheet( "assets/images/game/character.png", playerWalk.sheet )
 
 -------------------------------------
 -- sprite.x, sprite.y : coordonnees dans le monde, dans la camera

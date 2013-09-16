@@ -65,6 +65,7 @@ function Game:start()
 	------------------------------
 	-- level foregrounds
 
+				
 	levelDrawer.bringForegroundToFront()
 	levelDrawer.putBackgroundToBack()
 	
@@ -73,6 +74,7 @@ function Game:start()
 	------------------------------
 
 	Runtime:addEventListener( "enterFrame", self.refreshCamera )
+	Runtime:addEventListener( "enterFrame", self.refreshEnemies )
 
 	------------------------------
 
@@ -107,6 +109,7 @@ function Game:stop()
 	------------------------------------------
 
 	Runtime:removeEventListener( "enterFrame", self.refreshCamera )
+	Runtime:removeEventListener( "enterFrame", self.refreshEnemies )
 
    self.state = game.STOPPED
    self.elapsedTime = system.getTimer() - game.startTime
@@ -292,13 +295,16 @@ end
 
 function Game:refreshCamera(event)
 
+	game.camera.xScale = game.zoom
+	game.camera.yScale = game.zoom
+	
 	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
 		
 		if(not character.rock or game.focus == CHARACTER) then	
       	game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5
 			
 			local vx,vy = character.sprite:getLinearVelocity()      	
-      	if(character.hanging or abs(vy) > 300 ) then
+      	if(character.hanging or abs(vy) > 300 or touchController.currentState == touchController.PINCHING) then
       		game.camera.y = -character.sprite.y*game.zoom + display.contentHeight*0.5
       	else
          	local topDistance 	= character.screenY() + game.camera.y
@@ -327,6 +333,19 @@ function Game:refreshCamera(event)
       		game.camera.y = -character.rock.y*game.zoom + display.contentHeight*0.5
       	end
       end
+	end
+end
+
+--------------------------------------------------------------------------------------------------------------------------
+--- EnemiES
+--------------------------------------------------------------------------------------------------------------------------
+	
+--- ici on prend en compte le game.zoom
+-- car les x,y de position du character sont ceux du screen
+
+function Game:refreshEnemies(event)
+	for i=1,#levelDrawer.level.enemies do
+		levelDrawer.level.enemies[i]:refresh()
 	end
 end
 

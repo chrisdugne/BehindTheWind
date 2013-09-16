@@ -36,6 +36,7 @@ end
 
 function initBackLevel1()
 	
+   
 	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	mist1.x = display.viewableContentWidth/2  
 	mist1.y = display.viewableContentHeight/2
@@ -58,6 +59,11 @@ function initBackLevel1()
 	back.x = display.viewableContentWidth/2  
 	back.y = display.viewableContentHeight/2
 	
+--   local eye = eye:new()
+--   eye:initBackgroundEye(300,300)
+--   eye.sprite.rotation = -20
+--   eye.sprite:toBack()
+   
 	putBackgroundToBack(1)  
 end
 

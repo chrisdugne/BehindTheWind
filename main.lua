@@ -20,7 +20,7 @@ DEV				= 1
 
 -----------------------------------------------------------------------------------------
 
-NB_LEVELS 		= 2
+NB_LEVELS 		= 3
 
 -----------------------------------------------------------------------------------------
 
@@ -43,6 +43,10 @@ else
 end
 
 -----------------------------------------------------------------------------------------
+
+system.activate( "multitouch" )
+
+-----------------------------------------------------------------------------------------
 --- Corona's libraries
 json 					= require "json"
 storyboard 			= require "storyboard"
@@ -56,6 +60,8 @@ gameCenter			= require "src.libs.GameCenter"
 
 ---- Game libs
 character			= require "src.game.Character"
+enemy					= require "src.game.Enemy"
+eye					= require "src.game.Eye"
 hud					= require "src.game.HUD"
 tutorials			= require "src.game.tutorials.Tutorials"
 
@@ -74,7 +80,8 @@ print(system.getInfo("model"), display.pixelWidth, display.pixelHeight, aspectRa
 
 -----------------------------------------------------------------------------------------
 
-abs = math.abs
+abs 		= math.abs
+random 	= math.random
 
 -----------------------------------------------------------------------------------------
 

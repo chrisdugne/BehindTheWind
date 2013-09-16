@@ -62,11 +62,8 @@ end
 -----------------------------------------------------------------------------
 
 function destroyEffect( effect, now )
-	print("destroy")
 	if(not effect.beingDestroyed and effect.num) then -- else deja detruit (pb de lien pour le GC dans un performWithDelay ? exmple deleteRock + timeout 4sec force)
       effect.beingDestroyed = true
-
-    	print("bam")
    	
    	if(not now and effect.body) then
    		utils.destroyFromDisplay(effect.body)
@@ -227,8 +224,8 @@ function buttonEffect(x,y, scale)
 			y = y+110*scale,
 			perEmit=math.random(3,7),
 			emissionNum=0,
-			emitDelay=720,
-			fadeInTime=2800,
+			emitDelay=520,
+			fadeInTime=2200,
 			scale=3*scale,
 			physics={
 				gravityY=.021,
@@ -739,6 +736,36 @@ function setItemFire(body)
 			emitDelay=10,
 			fadeInTime=1020,
 			startAlpha=0.5,
+			scale=0.32,
+			physics={
+				xDamping = 4,
+				yDamping = 1,
+				gravityY=0.06,
+			}
+		}
+	}
+	
+	fire.body = body
+	body.effect = fire
+	
+	game.camera:insert(fire:get("light").content)
+	
+	registerNewEffect(fire)
+end
+
+
+function greenFire(body)
+
+	local fire = CBE.VentGroup{
+		{
+			preset="burn",
+			title="light", -- The pop that appears when a mortar shot explodes
+			color={{5,155,5},{45,255,45},{15,245,5}},
+			perEmit=1,
+			emissionNum=0,
+			emitDelay=10,
+			fadeInTime=200,
+			startAlpha=0.3,
 			scale=0.32,
 			physics={
 				xDamping = 4,
