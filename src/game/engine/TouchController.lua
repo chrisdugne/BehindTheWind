@@ -35,7 +35,6 @@ local previousTapTime	= 0
 
 local lastTouchCharacterTime = 0
 
-
 local centerTapping		= 0
 local sideTapping			= 0
 
@@ -47,6 +46,12 @@ local TAP_TIME_LIMIT		= 250
 
 function start()
 	display.getCurrentStage():addEventListener( "touch", touchScreen )
+	
+   currentState 				= NONE
+   swipping						= false
+   rightTouch					= false
+   leftTouch					= false
+   centerTouch					= false
 end
 
 function stop()
@@ -153,7 +158,7 @@ function characterTouch( event )
 	
 	if event.phase == "began" then
 
-		if(character.grabs > 1) then return true end -- on attend qu'il n'y ait qu'une seule rope pour permettre d'en lancer une 2e
+		if(character.grabs + #character.ropes > 1) then return true end -- on attend qu'il n'y ait qu'une seule rope pour permettre d'en lancer une 2e ou alors pas plus de 2 grabs d'un coup
 				
 		xStart, yStart = event.xStart, event.yStart
 		

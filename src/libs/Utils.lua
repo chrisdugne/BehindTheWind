@@ -48,9 +48,7 @@ function getMinSecMillis(millis)
 
 	if(ms < 10) then
 		ms = "00" .. ms
-	end
-
-	if(ms < 100) then
+	elseif(ms < 100) then
 		ms = "0" .. ms
 	end
 
