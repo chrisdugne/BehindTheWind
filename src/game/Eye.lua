@@ -15,7 +15,7 @@ function Eye:new()
 		RADIUS = 35,
 		
 		sprite 			= nil,
-		timeLastThrow 	= 0,
+		timeLastThrow 	= system.getTimer(),
 	}
 
 	setmetatable(object, { __index = Eye })
@@ -85,12 +85,8 @@ end
 -------------------------------------
 
 function Eye:refresh()
-
---   if(self.sprite.x < character.sprite.x) then
---   	self:lookRight()
---   else
---   	self:lookLeft()
---   end
+	
+	if(self.isDestroyed) then return end
 
 	local a, b, direction
 		
@@ -105,18 +101,10 @@ function Eye:refresh()
 	
 	local alpha = math.deg(math.atan2(s,c))
 
---	if 70 <= alpha and alpha < 110 then
---      self.sprite:setFrame(1)
---	elseif 70 <= alpha and alpha < 90 then
---      self.sprite:setFrame(2)
---	elseif -20 <= alpha and alpha < 20 then
---      self.sprite:setFrame(3)
---	end
-
 	self.sprite.rotation = alpha - 90
 
 	local now = system.getTimer()
-   if(now - self.timeLastThrow > 2000) then
+   if(now - self.timeLastThrow > random(3000,6000)) then
 		self.timeLastThrow = now
    	self:throw()
    end
@@ -136,10 +124,10 @@ end
  
 function Eye:collide( event )
 	
-	if(event.other.isRock) then return end
-	if(event.other.isGrab) then return end
-	if(event.other.isSensor) then return end
-	if(event.other.isAttach) then print("collide with attach") return end
+	if(event.other.isRock) then
+		self.isDestroyed = true
+		utils.destroyFromDisplay(self.sprite) 
+	end
 	
 end
 

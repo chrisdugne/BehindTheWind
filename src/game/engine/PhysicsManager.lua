@@ -21,7 +21,7 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, GRAVITY )
-	physics.setDrawMode( "hybrid" )
+--	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
@@ -112,7 +112,7 @@ function throw( x1,y1, x2,y2 )
 	effectsManager.setItemFire(rock)
 	character.rock = rock
 
-	timer.performWithDelay(4500, function()
+	timer.performWithDelay(3500, function()
 		deleteRock(rock)
 	end)
 
@@ -196,7 +196,7 @@ function grab( x1,y1, x2,y2 )
 
 	character.rock = rock
 	
-	timer.performWithDelay(4500, function()
+	timer.performWithDelay(3000, function()
 		deleteRock(rock)
 	end)
 

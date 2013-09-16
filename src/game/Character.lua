@@ -65,7 +65,7 @@ end
 
 function exit()
 	sprite:setLinearVelocity(0,0)
-	transition.to( sprite, { time=500, alpha=0})
+	transition.to( sprite, { time=200, alpha=0})
 end
 
 -------------------------------------
@@ -346,7 +346,7 @@ function setHanging(value)
 	hanging = value
 	if(hanging) then
 		timeLeavingFloor  = system.getTimer()
-		nbFramesToKeep = 0 -- could be locked while checking OUT and waiting for grab : reset ok here
+		nbFramesToKeep = 20 -- could be locked while checking OUT and waiting for grab : reset ok here : 20 frames : time to climb up while still OUT
 		
 		timer.performWithDelay(100, function()
          if(hanging) then
