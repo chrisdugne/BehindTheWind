@@ -32,6 +32,8 @@ end
 
 function Game:start()
 
+--	musicManager.playMusic()
+	
 	---------------------
 
    self.state 					= game.RUNNING
@@ -344,16 +346,6 @@ function Game:refreshCamera(event)
          	end
       	
       	end
-
---      	local leftDistance 	= character.screenX() + game.camera.x
---      	local rightDistance 	= display.contentWidth - leftDistance
---
---      	if(rightDistance < display.contentWidth*0.43) then
---      		game.camera.x = display.contentWidth*0.57 - character.screenX() 
---      	elseif(leftDistance < display.contentWidth*0.43) then
---      		game.camera.x = display.contentWidth*0.43 - character.screenX()
---      	end
---      
       
       elseif(game.focus == ROCK) then
       	if(character.rock.x) then 
@@ -377,8 +369,10 @@ function Game:refreshEnemies(event)
 	end
 end
 
-------------------------------------------
-
+--------------------------------------------------------------------------------------------------------------------------
+--- Intro
+-------------------------------------------------------------------------------------------------------------------------
+	
 function Game:intro()
 	
 	local board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth, display.contentHeight, 0)

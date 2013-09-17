@@ -492,7 +492,7 @@ end
 
 function throw( x1,y1, x2,y2 )
 	
-	if(game.energiesRemaining == 0) then
+	if(game.energiesRemaining < 1) then
 		effectsManager.notEnoughEnergy()
 		physicsManager.abortThrow()
 	else
@@ -507,7 +507,7 @@ end
 
 function grab( x1,y1, x2,y2 )
 	
-	if(game.energiesRemaining == 0) then
+	if(game.energiesRemaining < 2) then
 		effectsManager.notEnoughEnergy()
 		physicsManager.abortThrow()
 	else

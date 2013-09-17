@@ -24,7 +24,6 @@ end
 
 local helpVisible1 = false
 local tween11
-local tween12
 
 function refreshHUDTutoLevel1()
 	if(character.sprite.x < 150 and not helpVisible1) then
@@ -39,8 +38,6 @@ end
 function showHelpLevel1()
 	helpVisible1 = true
 	game.hud.help1 = display.newImage(game.hud, "assets/images/hud/touch.png", display.contentWidth*0.8, display.contentHeight*0.36)
-	game.hud.help2 = display.newImage(game.hud, "assets/images/hud/touch.png", display.contentWidth*0.15, display.contentHeight*0.36)
-	game.hud.help1.alpha = 0
 	game.hud.help1.alpha = 0
 	tweenLevel1On()
 end
@@ -48,19 +45,15 @@ end
 function hideHelpLevel1()
 	helpVisible1 = false
 	transition.cancel(tween11)
-	transition.cancel(tween12)
 	display.remove(game.hud.help1)
-	display.remove(game.hud.help2)
 end
 
 function tweenLevel1On()
-	tween11 = transition.to( game.hud.help1, { time=600, alpha=0.7})
-	tween12 = transition.to( game.hud.help2, { time=600, alpha=0.7, onComplete=tweenLevel1Off})
+	tween11 = transition.to( game.hud.help1, { time=600, alpha=0.7, onComplete=tweenLevel1Off})
 end
 
 function tweenLevel1Off()
-	tween11 = transition.to( game.hud.help1, { time=600, alpha=0.4})
-	tween12 = transition.to( game.hud.help2, { time=600, alpha=0.4, onComplete=tweenLevel1On})
+	tween11 = transition.to( game.hud.help1, { time=600, alpha=0.4, onComplete=tweenLevel1On})
 end
 
 
@@ -84,7 +77,7 @@ function refreshHUDTutoLevel2()
 	end
 
 	if(character.sprite.x > 500 
-	and character.sprite.x < 630 
+	and character.sprite.x < 660 
 	and character.sprite.y < -135 
 	and character.sprite.y > -210
 	and levelDrawer.level.triggers[2].remaining > 0) then

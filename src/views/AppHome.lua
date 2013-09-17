@@ -26,17 +26,20 @@ function scene:refreshScene()
 	
 	---------------------------------------------------------------
 	
---	title = display.newText( game.hud, APP_NAME, 0, 0, FONT, 50 )
---	title:setTextColor( 255 )	
---	title.x = display.contentWidth*0.5
---	title.y = display.contentHeight*0.1
---	title:setReferencePoint( display.CenterReferencePoint )
+	game.hud.title = display.newImage( game.hud, "assets/images/hud/title.png" )
+	game.hud.title.x = display.contentWidth*0.7
+	game.hud.title.y = display.contentHeight*0.1
+	game.hud.title:scale(0.3,0.3)
 	
-	effectsManager.atmosphere(display.contentWidth*0.1, 280, 2)
-	effectsManager.atmosphere(display.contentWidth*0.7, 180, 1.86)
-	effectsManager.atmosphere(display.contentWidth - 200, display.contentHeight - 240, 1.58)
-	effectsManager.atmosphere(display.contentWidth*0.24, display.contentHeight*.7, 1.36)
+	effectsManager.atmosphere(display.contentWidth*0.8, 120, 1.3)
+	effectsManager.atmosphere(display.contentWidth*0.61, 140, 1.36)
 
+	game.hud.subtitle = display.newText( game.hud, "...there is Magic" , 0, 0, FONT, 25 )
+	game.hud.subtitle:setTextColor( 255 )	
+	game.hud.subtitle.x = display.contentWidth*0.81
+	game.hud.subtitle.y = display.contentHeight*0.14
+	game.hud.subtitle:setReferencePoint( display.CenterReferencePoint )
+	
 	---------------------------------------------------------------
 
 	viewManager.buildButton(
@@ -51,7 +54,7 @@ function scene:refreshScene()
 				game.level = 1
 				router.openPlayground()
 			else
-				router.openLevelSelection()
+				router.openChapterSelection()
    		end
 		end
 	)

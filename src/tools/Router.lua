@@ -44,6 +44,13 @@ end
 
 ---------------------------------------------
 
+function openChapterSelection()
+	resetScreen()
+	storyboard.gotoScene( "src.views.ChapterSelection" )
+end
+
+---------------------------------------------
+
 function openOptions()
 	resetScreen()
 	storyboard.gotoScene( "src.views.Options" )

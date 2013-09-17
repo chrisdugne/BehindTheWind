@@ -15,11 +15,12 @@ SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
 
 -----------------------------------------------------------------------------------------
 
-DEV				= 1
+--DEV				= 1
 --EDITOR 			= 1
 
 -----------------------------------------------------------------------------------------
 
+NB_CHAPTERS 	= 3
 NB_LEVELS 		= 3
 
 -----------------------------------------------------------------------------------------
@@ -125,11 +126,11 @@ function initGameData()
 		user = "New player",
 		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
 		requireTutorial = true,
-		levels = {} 
+		chapters = {} 
 	}
 
-   for i=1,NB_LEVELS do
-   	GLOBALS.savedData.levels[i] = {complete = false}
+   for i=1,NB_CHAPTERS do
+   	GLOBALS.savedData.chapters[i] = {complete = false}
    end
 
 	utils.saveTable(GLOBALS.savedData, "savedData.json")

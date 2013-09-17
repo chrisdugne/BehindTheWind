@@ -268,7 +268,9 @@ end
 
 
 function grabCollision( event )
+	
 	if(event.other ~= character.sprite 
+	and character.state ~= character.OUT
 	and not event.other.isSensor
 	and not event.other.isGrab
 	and not event.other.isRock
