@@ -1,7 +1,7 @@
 --
 -- created with TexturePacker (http://www.codeandweb.com/texturepacker)
 --
--- $TexturePacker:SmartUpdate:7f556e784b82d58554e49b2e10ed9204:1/1$
+-- $TexturePacker:SmartUpdate:4e27cdd048064688658a6274c7120c2b:1/1$
 --
 -- local LevelMisc = require("mysheet")
 -- local myImageSheet = graphics.newImageSheet( "mysheet.png", LevelMisc:getSheet() )
@@ -15,7 +15,7 @@ LevelMisc.sheet =
     frames = {
     
         {
-            -- character.simple.bad
+            -- 1.character.simple.bad
             x=2,
             y=68,
             width=64,
@@ -23,7 +23,7 @@ LevelMisc.sheet =
 
         },
         {
-            -- character.simple.green
+            -- 2.character.simple.green
             x=2,
             y=2,
             width=64,
@@ -31,7 +31,7 @@ LevelMisc.sheet =
 
         },
         {
-            -- character.simple
+            -- 3.character.simple
             x=54,
             y=134,
             width=63,
@@ -39,7 +39,7 @@ LevelMisc.sheet =
 
         },
         {
-            -- panel.exit
+            -- 4.panel.exit
             x=2,
             y=134,
             width=50,
@@ -47,7 +47,7 @@ LevelMisc.sheet =
 
         },
         {
-            -- panel.finger
+            -- 5.panel.finger
             x=68,
             y=2,
             width=52,
@@ -55,7 +55,7 @@ LevelMisc.sheet =
 
         },
         {
-            -- piece
+            -- 6.piece
             x=54,
             y=199,
             width=30,
@@ -67,16 +67,24 @@ LevelMisc.sheet =
             sourceHeight = 32
         },
         {
-            -- simple.piece
+            -- 7.ring
             x=68,
             y=98,
             width=30,
-            height=31,
+            height=30,
 
-            sourceX = 2,
-            sourceY = 0,
-            sourceWidth = 34,
-            sourceHeight = 33
+            sourceX = 1,
+            sourceY = 1,
+            sourceWidth = 32,
+            sourceHeight = 32
+        },
+        {
+            -- 8.mini.eye
+            x=100,
+            y=98,
+            width=20,
+            height=20,
+
         },
     },
     
@@ -87,13 +95,14 @@ LevelMisc.sheet =
 LevelMisc.frameIndex =
 {
 
-    ["character.simple.bad"] = 1,
-    ["character.simple.green"] = 2,
-    ["character.simple"] = 3,
-    ["panel.exit"] = 4,
-    ["panel.finger"] = 5,
-    ["piece"] = 6,
-    ["simple.piece"] = 7,
+    ["1.character.simple.bad"] = 1,
+    ["2.character.simple.green"] = 2,
+    ["3.character.simple"] = 3,
+    ["4.panel.exit"] = 4,
+    ["5.panel.finger"] = 5,
+    ["6.piece"] = 6,
+    ["7.ring"] = 7,
+    ["8.mini.eye"] = 8,
 }
 
 function LevelMisc:getSheet()

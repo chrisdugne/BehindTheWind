@@ -556,6 +556,38 @@ function touchPiece( event )
    end
 end
 
+-----------------------------------------------------------------------------
+--- Eyes
+-----------------------------------------------------------------------------
+
+function lightEye(sprite)
+	
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color = {{5,255,5},{35,215,35},{175,155,35}},
+			x = sprite.x,
+			y = sprite.y,
+			perEmit=1,
+			emissionNum=0,
+			emitDelay=50,
+			lifeSpan=1260,
+			fadeInTime=1700,
+			scale=0.58,
+			physics={
+				gravityY=0.034,
+			}
+		}
+	}
+	
+	sprite.light = light
+	light.body = sprite
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+end
+
 ------------------------------------------------------------------------------------------
 -- TRIGGERS
 ------------------------------------------------------------------------------------------
@@ -629,12 +661,12 @@ function setCharacterThrowing()
 		{
 			preset="wisps",
 			title="characterLight", -- The pop that appears when a mortar shot explodes
-			color={{205,15,12}},
+			color={{105,15,12}},
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=10,
-			fadeInTime=15,
-			scale=0.07,
+			emitDelay=150,
+			fadeInTime=225,
+			scale=0.05,
 			startAlpha=1,
 			physics={
 				divisionDamping = true,
@@ -664,8 +696,8 @@ function setCharacterGrabbing()
 			color={{105,135,182}},
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=10,
-			fadeInTime=15,
+			emitDelay=150,
+			fadeInTime=225,
 			scale=0.07,
 			startAlpha=1,
 			physics={
@@ -724,28 +756,31 @@ end
 -- Items
 ------------------------------------------------------------------------------------------
 
-function setItemFire(body)
+function setFire(body, color)
 
 	local fire = CBE.VentGroup{
 		{
 			preset="burn",
 			title="light", -- The pop that appears when a mortar shot explodes
-			color={{255,5,5}},
+			color=color,
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=10,
-			fadeInTime=1020,
-			startAlpha=0.5,
-			scale=0.32,
+			emitDelay=20,
+			fadeInTime=120,
+			startAlpha=0.8,
+			startAlpha=0.1,
+			scale=0.42,
 			physics={
+				divisionDamping=true,
 				xDamping = 4,
-				yDamping = 1,
+				yDamping = 3,
 				gravityY=0.06,
 			}
 		}
 	}
 	
 	fire.body = body
+	fire.color = color
 	body.effect = fire
 	
 	game.camera:insert(fire:get("light").content)
@@ -760,7 +795,7 @@ function greenFire(body)
 		{
 			preset="burn",
 			title="light", -- The pop that appears when a mortar shot explodes
-			color={{5,155,5},{45,255,45},{15,245,5}},
+			color={{5,105,5},{65,205,45},{45,195,45}},
 			perEmit=1,
 			emissionNum=0,
 			emitDelay=10,
@@ -768,8 +803,9 @@ function greenFire(body)
 			startAlpha=0.3,
 			scale=0.32,
 			physics={
-				xDamping = 4,
-				yDamping = 1,
+				divisionDamping=true,
+				xDamping = 10,
+				yDamping = 10,
 				gravityY=0.06,
 			}
 		}
@@ -786,7 +822,38 @@ end
 
 
 -----------------------------------------------------------------------------
---- test
+-- Explosions
+-----------------------------------------------------------------------------
+
+function explode(explosion)
+
+	local light=CBE.VentGroup{
+		{
+			title="light",
+			preset="wisps",
+			color=explosion.color,
+			x = explosion.x,
+			y = explosion.y,
+			perEmit=4,
+			emissionNum=3,
+			emitDelay=20,
+			lifeSpan=500,
+			fadeInTime=550,
+			scale=0.84,
+			physics={
+				gravityY=.03,
+			}
+		}
+	}
+	
+	light.static = true
+	registerNewEffect(light)	
+	game.camera:insert(light:get("light").content)
+
+end
+
+-----------------------------------------------------------------------------
+--- Ropes
 -----------------------------------------------------------------------------
 
 function drawBeam(attach)

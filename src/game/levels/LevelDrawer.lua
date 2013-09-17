@@ -3,6 +3,7 @@
 module(..., package.seeall)
 
 -------------------------------------
+-- SHEETS
 
 TILES 			= 1
 TREES 			= 2
@@ -17,13 +18,16 @@ TILES_CLASSIC 	= 8
 TILES_GREEN 	= 9
 
 ---------------
---MISC
+-- LEVEL MISC
 
 BAD 				= 1 
 CHECKPOINT 		= 2 
 SPAWNPOINT 		= 3 
 EXIT 				= 4
 PANEL				= 5 
+--PIECE 			= 6
+--SIMPLE_PIECE = 7
+MINI_EYE			= 8
 
 -------------------------------------
 
@@ -177,6 +181,12 @@ function designLevel(displayScore)
    			display.remove(tile)
    			local eye = eye:new()
    			eye:init(tile.x,tile.y)
+				level.enemies[#level.enemies + 1] = eye
+
+			elseif(tile.num == MINI_EYE) then
+   			display.remove(tile)
+   			local eye = eye:new()
+   			eye:miniEye(tile.x,tile.y)
 				level.enemies[#level.enemies + 1] = eye
 
 			elseif(tile.num == SPAWNPOINT) then

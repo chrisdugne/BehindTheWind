@@ -304,7 +304,11 @@ function Game:refreshCamera(event)
       	game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5
 			
 			local vx,vy = character.sprite:getLinearVelocity()      	
-      	if(character.hanging or abs(vy) > 300 or touchController.currentState == touchController.PINCHING) then
+      	if(character.hanging 
+      	or abs(vy) > 300 
+      	or touchController.currentState == touchController.PINCHING
+      	or touchController.currentState == touchController.THROWING
+      	or touchController.currentState == touchController.GRABBING	) then
       		game.camera.y = -character.sprite.y*game.zoom + display.contentHeight*0.5
       	else
          	local topDistance 	= character.screenY() + game.camera.y

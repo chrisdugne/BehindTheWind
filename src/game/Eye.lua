@@ -4,11 +4,6 @@ Eye = {}
 
 -----------------------------------------------------------------------------------------
 
-local eyeSheetconfig 	= require("src.game.graphics.EyeBad")
-local eyeImageSheet 		= graphics.newImageSheet( "assets/images/game/eyeBad.png", eyeSheetconfig.sheet )
-
------------------------------------------------------------------------------------------
-
 function Eye:new()  
 
 	local object = {
@@ -44,7 +39,6 @@ function Eye:init(x,y)
 
    ---------------------------
 
---   self.sprite = display.newSprite( game.camera, eyeImageSheet, eyeSheetconfig.sequence )
 	self.sprite = display.newImage( game.camera, "assets/images/game/enemy.eye.png")
 	
    self.sprite:scale(0.3,0.3)
@@ -52,6 +46,7 @@ function Eye:init(x,y)
    self.sprite.y = y
 
    self.sprite.isEnemy = true
+   self.throws = true
    
    physics.addBody( self.sprite, "static", { 
    	density = 5, 
@@ -67,19 +62,34 @@ function Eye:init(x,y)
 	self.sprite:addEventListener( "preCollision", function(event) self:preCollide(event) end )
 
    ---------------------------
-   
+ 
+	effectsManager.lightEye(self.sprite)  
 end	
+
+-------------------------------------
+
+function Eye:miniEye(x,y)
+	self.sprite = display.newImage( game.camera, "assets/images/game/mini.eye.png" )
+   self.sprite:scale(0.5,0.5)
+   self.sprite.alpha = 0.4
+   self.sprite.x = x
+   self.sprite.y = y
+   self.throws = false
+end	
+
+-------------------------------------
 
 function Eye:initBackgroundEye(x,y)
 	self.sprite = display.newImage(  "assets/images/game/eye.blur.png" )
    self.sprite.x = x
    self.sprite.y = y
-   self.isBackground = true
+   self.throws = false
 end	
 
+-------------------------------------
 
 function Eye:destroy()
-	utils.destroyFromDisplay(self.sprite)
+	physicsManager.destroyObjectWithEffect(self.sprite)
 end
 
 -------------------------------------
@@ -103,11 +113,14 @@ function Eye:refresh()
 
 	self.sprite.rotation = alpha - 90
 
-	local now = system.getTimer()
-   if(now - self.timeLastThrow > random(3000,6000)) then
-		self.timeLastThrow = now
-   	self:throw()
+	if(self.throws) then
+   	local now = system.getTimer()
+      if(now - self.timeLastThrow > random(3000,6000)) then
+   		self.timeLastThrow = now
+      	self:throw()
+      end
    end
+   
 end
 
 -------------------------------------

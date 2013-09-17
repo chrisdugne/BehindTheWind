@@ -109,7 +109,9 @@ function throw( x1,y1, x2,y2 )
 	rock:addEventListener( "collision", rockCollision )
 	rock.isRock = true
 	
-	effectsManager.setItemFire(rock)
+	local color = {{255,5,5},{215,35,35},{155,175,35}}
+	effectsManager.setFire(rock, color)
+	
 	character.rock = rock
 
 	timer.performWithDelay(3500, function()
@@ -142,7 +144,8 @@ function eyeThrow( enemy )
 	rock:addEventListener( "collision", enemyRockCollision )
 	rock.isBadRock = true
 	
-	effectsManager.greenFire(rock)
+	local color = {{5,255,5},{35,215,35},{175,155,35}}
+	effectsManager.setFire(rock, color)
 
 	timer.performWithDelay(4500, function()
 		deleteRock(rock)
@@ -166,7 +169,8 @@ function enemyThrow( enemy )
 	rock:addEventListener( "collision", enemyRockCollision )
 	rock.isBadRock = true
 	
-	effectsManager.setItemFire(rock)
+	local color = {{5,255,5},{35,215,35},{175,155,35}}
+	effectsManager.setFire(rock, color)
 
 	timer.performWithDelay(4500, function()
 		deleteRock(rock)
@@ -215,7 +219,9 @@ function thrownFromEnemyPreCollision( event )
 end
 
 function enemyRockCollision( event )
-	if(not event.other.isEnemy and not event.other.isSensor) then
+	if(not event.other.isEnemy 
+	and not event.other.isSensor
+	and not event.other.isGrab) then
 		deleteRock(event.target)
    end
 end
@@ -226,6 +232,8 @@ function thrownFromCharacterPreCollision( event )
 
 	if(event.other == character.sprite
 	or event.other.isSensor
+	or event.other.isBadRock
+	or event.other.isEnemy
 	or event.other.isAttach) then
 		event.contact.isEnabled = false
 	end
@@ -243,6 +251,8 @@ function grabCollision( event )
 	and not event.other.isSensor
 	and not event.other.isGrab
 	and not event.other.isRock
+	and not event.other.isBadRock
+	and not event.other.isEnemy
 	and not event.other.trigger
 	and not event.other.isAttach) then
 
@@ -275,11 +285,22 @@ function deleteRock(rock)
    	hud.hideFollowRockButton()
    end
 
+	local explosion = {
+		x = rock.x,
+		y = rock.y,
+		color = rock.effect.color
+	}
+	
 	local destroyedRightNow = effectsManager.destroyObjectWithEffect(rock)
+	
+	if(destroyedRightNow) then
+   	effectsManager.explode(explosion)
 
-	if(rock.isGrab and destroyedRightNow) then
-		character.grabs = character.grabs - 1
+   	if(rock.isGrab) then
+   		character.grabs = character.grabs - 1
+      end
    end
+
 	
 end
 
@@ -321,6 +342,7 @@ function refreshTrajectory(fingerX, fingerY, xStart, yStart)
 	for i = 1,180 do
 		local trajectoryPosition = getTrajectoryPoint( startingPosition, startingVelocity, i )
 		local circ = display.newCircle( trajectory, trajectoryPosition.x, trajectoryPosition.y, 1 )
+		circ.alpha = 0.5
 	end
 end
 
