@@ -93,10 +93,20 @@ end
 
 -----------------------------------------------------------------------------------------------
 
+function abortThrow()
+	utils.emptyGroup(trajectory)
+end
+
+-----------------------------------------------------------------------------------------------
+
 function throw( x1,y1, x2,y2 )
+
+	----------------------------------------
 
 	utils.emptyGroup(trajectory)
 	local force = getThrowVelocity(x1,y1,x2,y2)
+
+	----------------------------------------
 
 	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
 	rock.x = character.sprite.x
@@ -109,8 +119,12 @@ function throw( x1,y1, x2,y2 )
 	rock:addEventListener( "collision", rockCollision )
 	rock.isRock = true
 	
+	----------------------------------------
+	
 	local color = {{255,5,5},{215,35,35},{155,175,35}}
 	effectsManager.setFire(rock, color)
+
+	----------------------------------------
 	
 	character.rock = rock
 
@@ -119,6 +133,13 @@ function throw( x1,y1, x2,y2 )
 	end)
 
 	hud.showFollowRockButton()
+
+	----------------------------------------
+	
+	effectsManager.consumeEnergy()
+
+	---------------------------------------------------------
+
 end
 
 -----------------------------------------------------------------------------------------------

@@ -491,14 +491,30 @@ end
 -------------------------------------
 
 function throw( x1,y1, x2,y2 )
-	timeLastThrow = system.getTimer()
-	physicsManager.throw(x1,y1, x2,y2)
+	
+	if(game.energiesRemaining == 0) then
+		effectsManager.notEnoughEnergy()
+		physicsManager.abortThrow()
+	else
+   	timeLastThrow = system.getTimer()
+   	game.energiesRemaining = game.energiesRemaining - 1
+   	physicsManager.throw(x1,y1, x2,y2)
+   end
+   
 end
 
 -------------------------------------
 
 function grab( x1,y1, x2,y2 )
-	character.grabs = character.grabs + 1
-	timeLastThrow = system.getTimer()
-	physicsManager.grab(x1,y1, x2,y2)
+	
+	if(game.energiesRemaining == 0) then
+		effectsManager.notEnoughEnergy()
+		physicsManager.abortThrow()
+	else
+   	character.grabs = character.grabs + 1
+   	game.energiesRemaining = game.energiesRemaining - 2
+   	timeLastThrow = system.getTimer()
+   	physicsManager.grab(x1,y1, x2,y2)
+   end
+   
 end

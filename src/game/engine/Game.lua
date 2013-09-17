@@ -8,6 +8,7 @@ function Game:new()
 
 	local startZoom = 1.5*aspectRatio
 	local camera = display.newGroup()
+	camera.topDistanceCoeff = 0.28
 	camera:scale(startZoom,startZoom)
 	  
 	local object = {
@@ -303,22 +304,45 @@ function Game:refreshCamera(event)
 		if(not character.rock or game.focus == CHARACTER) then	
       	game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5
 			
-			local vx,vy = character.sprite:getLinearVelocity()      	
+			local vx,vy = character.sprite:getLinearVelocity()
+			      	
       	if(character.hanging 
-      	or abs(vy) > 300 
       	or touchController.currentState == touchController.PINCHING
-      	or touchController.currentState == touchController.THROWING
-      	or touchController.currentState == touchController.GRABBING	) then
-      		game.camera.y = -character.sprite.y*game.zoom + display.contentHeight*0.5
+			or touchController.currentState == touchController.THROWING
+			or touchController.currentState == touchController.GRABBING	) then
+				
+   			if(game.camera.centerReached) then
+         		game.camera.y = display.contentHeight*0.5 - character.screenY()
+   			
+   			elseif(not game.camera.tween) then
+   				game.camera.tween = transition.to(game.camera, {
+   					time=250, 
+   					y = display.contentHeight*0.5 - character.screenY(),
+   					onComplete = function() 
+   						game.camera.tween = nil 
+         				game.camera.centerReached = true
+   						end
+   				})
+   			end
+      	
       	else
+      	
+      		if(game.camera.tween) then
+      			transition.cancel(game.camera.tween)
+      		end
+      		
+      		game.camera.tween = nil
+      		game.camera.centerReached = false
+      		
          	local topDistance 	= character.screenY() + game.camera.y
          	local bottomDistance = display.contentHeight - topDistance
    
-         	if(bottomDistance < display.contentHeight*0.28) then
-         		game.camera.y = display.contentHeight*0.72 - character.screenY()
-         	elseif(topDistance < display.contentHeight*0.28) then
-         		game.camera.y = display.contentHeight*0.28 - character.screenY() 
+         	if(bottomDistance < display.contentHeight*game.camera.topDistanceCoeff) then
+         		game.camera.y = display.contentHeight*(1 - game.camera.topDistanceCoeff) - character.screenY()
+         	elseif(topDistance < display.contentHeight*game.camera.topDistanceCoeff) then
+         		game.camera.y = display.contentHeight*game.camera.topDistanceCoeff - character.screenY() 
          	end
+      	
       	end
 
 --      	local leftDistance 	= character.screenX() + game.camera.x
@@ -341,8 +365,8 @@ function Game:refreshCamera(event)
 end
 
 --------------------------------------------------------------------------------------------------------------------------
---- EnemiES
---------------------------------------------------------------------------------------------------------------------------
+--- Enemies
+-------------------------------------------------------------------------------------------------------------------------
 	
 --- ici on prend en compte le game.zoom
 -- car les x,y de position du character sont ceux du screen

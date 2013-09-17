@@ -429,9 +429,40 @@ function touchEnergy( energy, event )
    	if(event.other == character.sprite) then
    		
    		if(not energy.light.beingDestroyed) then
+
+   			---------------------------------------------------------
+
    			game.energiesCaught 	= game.energiesCaught + 1
    			game.energiesRemaining = game.energiesRemaining + 1
+      		
+   			---------------------------------------------------------
+
+				local tmpEnergy = display.newImage( game.hud, "assets/images/hud/energy.png")
+   			tmpEnergy.x = energy.x*game.zoom + game.camera.x
+   			tmpEnergy.y = energy.y*game.zoom + game.camera.y
+   			tmpEnergy.alpha=0.7
+         	tmpEnergy:scale(0.5,0.5)
+   			
+   			---------------------------------------------------------
+   			
+				local xTo, yTo = hud.ENERGY_TEXT_LEFT, hud.ENERGY_TEXT_TOP
+
+   			---------------------------------------------------------
+
+   			transition.to(tmpEnergy, {
+   				time = 1000, 
+   				x = xTo, y = yTo, 
+   				xScale=0.2, yScale=0.2, 
+   				alpha=0.3, 
+   				easing.outExpo,
+   				onComplete=function() utils.destroyFromDisplay(tmpEnergy) end
+   			})
+
+   			---------------------------------------------------------
+   			
       		destroyEffect(energy.light)
+      		
+   			---------------------------------------------------------
          	
          	timer.performWithDelay(200, function() drawFollow() end)
          	timer.performWithDelay(600, function() drawFollow() end)
@@ -468,6 +499,51 @@ function drawFollow( )
 	registerNewEffect(follow)
 	timer.performWithDelay(3000, function() destroyEffect(follow) end)
 end
+
+-----------------------------------------------------------------------------
+
+function notEnoughEnergy()
+	
+	transition.to(game.hud.energy, {
+		time = 70, 
+		xScale=0.8, yScale=0.8, 
+		onComplete=function() 
+			transition.to(game.hud.energy, {
+				time = 70, 
+				xScale=0.5, yScale=0.5
+			}) 
+		end
+	})
+	
+end
+
+function consumeEnergy()
+
+	----------------------------------------
+
+	local tmpEnergy = display.newImage( game.hud, "assets/images/hud/energy.png")
+	tmpEnergy.x = hud.ENERGY_ICON_LEFT
+	tmpEnergy.y = hud.ENERGY_ICON_TOP
+	tmpEnergy.alpha=1
+	tmpEnergy:scale(0.6,0.6)
+
+	----------------------------------------
+
+	local xTo = hud.ENERGY_TEXT_LEFT
+
+	----------------------------------------
+
+	transition.to(tmpEnergy, {
+		time = 1000, 
+		x = xTo, 
+		xScale=0.2, yScale=0.2, 
+		alpha=0, 
+		easing.outExpo,
+		onComplete=function() utils.destroyFromDisplay(tmpEnergy) end
+	})
+	
+end
+
 
 -----------------------------------------------------------------------------
 --- Level pieces

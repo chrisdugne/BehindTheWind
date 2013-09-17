@@ -147,8 +147,9 @@ end
 
 function showDropButton()
 	display.remove(game.hud.dropButton)
-   game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/character.drop.png" ,display.contentWidth - 130, HUD_TOP + 10 )
-   game.hud.dropButton:scale(1.8,1.8)
+   game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/character.drop.png" ,display.contentWidth - 180, HUD_TOP + 60 )
+   game.hud.dropButton:scale(2,2)
+   game.hud.dropButton.alpha = 0.6
 	utils.onTouch(game.hud.dropButton, function()
 		physicsManager.detachAllRopes() 
    	hideDropButton()

@@ -356,6 +356,9 @@ function startMoveTile(tile, motionVector, duration)
 	tile:setLinearVelocity( motionVector.x , motionVector.y )
 
 	timer.performWithDelay(duration, function()
+	
+		if(game.state == game.STOPPED) then return end
+		
    	tile:setLinearVelocity( - motionVector.x , - motionVector.y )
    	timer.performWithDelay(duration, function()
 			startMoveTile(tile, motionVector, duration)
