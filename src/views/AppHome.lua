@@ -22,6 +22,8 @@ end
 
 function scene:refreshScene()
 
+	viewManager.initBack(0)
+	
 	---------------------------------------------------------------
 	
 --	title = display.newText( game.hud, APP_NAME, 0, 0, FONT, 50 )

@@ -16,6 +16,7 @@ SIMPLE_PIECE 	= 7 -- SAME NUM FOR MISC
 
 TILES_CLASSIC 	= 8
 TILES_GREEN 	= 9
+PLANTS 			= 10
 
 ---------------
 -- LEVEL MISC
@@ -35,16 +36,18 @@ tilesSheetConfig 			= require("src.game.graphics.Tiles")
 treesSheetConfig 			= require("src.game.graphics.Trees")
 levelMiscSheetConfig 	= require("src.game.graphics.LevelMisc")
 pieceSheetConfig 			= require("src.game.graphics.Piece")
+plantsSheetConfig 		= require("src.game.graphics.Plants")
 
 tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
 tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
 tilesDarkImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.dark.png", tilesSheetConfig.sheet )
-tilesClassicImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.classic.png", tilesSheetConfig.sheet )
-tilesGreenImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.greenish.png", tilesSheetConfig.sheet )
+tilesClassicImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.classic.png", tilesSheetConfig.sheet )
+tilesGreenImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.greenish.png", tilesSheetConfig.sheet )
 treesImageSheet 			= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
 levelMiscImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelMisc.png", levelMiscSheetConfig.sheet )
 pieceImageSheet 			= graphics.newImageSheet( "assets/images/game/Piece.png", pieceSheetConfig.sheet )
 simplePieceImageSheet	= graphics.newImageSheet( "assets/images/game/SimplePiece.png", pieceSheetConfig.sheet )
+plantsImageSheet 			= graphics.newImageSheet( "assets/images/game/Plants.png", plantsSheetConfig.sheet )
 
 -------------------------------------
 
@@ -58,6 +61,7 @@ sheetConfigs[PIECE] 			= pieceSheetConfig
 sheetConfigs[SIMPLE_PIECE] = pieceSheetConfig
 sheetConfigs[TILES_CLASSIC] = tilesSheetConfig
 sheetConfigs[TILES_GREEN] 	= tilesSheetConfig
+sheetConfigs[PLANTS] 		= plantsSheetConfig
 
 imageSheets = {}
 imageSheets[TILES] 			= tilesImageSheet
@@ -69,6 +73,7 @@ imageSheets[PIECE] 			= pieceImageSheet
 imageSheets[SIMPLE_PIECE]  = simplePieceImageSheet
 imageSheets[TILES_CLASSIC] = tilesClassicImageSheet
 imageSheets[TILES_GREEN] 	= tilesGreenImageSheet
+imageSheets[PLANTS] 			= plantsImageSheet
 
 level = {}
 

@@ -65,7 +65,7 @@ end
 
 function exit()
 	sprite:setLinearVelocity(0,0)
-	transition.to( sprite, { time=200, alpha=0})
+	transition.to( sprite, { time=100, alpha=0})
 end
 
 -------------------------------------
@@ -104,7 +104,6 @@ function init()
    -- reset
       
    resetState()
-   setThrowing()
 
    ---------------------------
    
@@ -136,9 +135,36 @@ end
 
 -------------------------------------
 
+function die()
+
+	exit()
+	stop()
+	state = OUT 
+	effectsManager.stopCharacterLight()
+		
+	local explosion = {
+		x = sprite.x,
+		y = sprite.y,
+		color = {{12,12,212},{111,111,251}},
+		scale = 1.5,
+		fadeInTime = 1900
+	}
+	
+	effectsManager.explode(explosion)
+	
+	timer.performWithDelay(2000, function()
+		effectsManager.spawnEffect()
+	end)	
+
+end
+
+-------------------------------------
+
 function spawn()
+
 	resetState()
 	stop()
+   setThrowing()
 	
 	-- replace the character on the spawn point
    sprite.x = levelDrawer.level.spawnX
@@ -227,10 +253,20 @@ function collide( event )
 	
 	-------------------------------------------
 
+	if(state == OUT) then return end
 	if(event.other.isRock) then return end
 	if(event.other.isGrab) then return end
 	if(event.other.isSensor) then return end
 	if(event.other.isAttach) then print("collide with attach") return end
+
+	-------------------------------------------
+
+	if(event.other.isBadRock) then
+		die()
+		return
+	end
+
+	-------------------------------------------
 
 	local now = system.getTimer()
 	if(leavingFloor and event.other.y == leavingFloor.y) then
@@ -302,7 +338,8 @@ function collide( event )
 
 	end
 	
-	if((jumping or hanging) and vy > -200) then 
+	if((jumping or hanging) and vy > -200) then
+		print("GOING_RIGHT")
 		state = NOT_MOVING
 		
 		if(floor) then
@@ -364,7 +401,10 @@ end
 -------------------------------------
 
 function move()
-
+	
+	print("move", state)
+	if(state == OUT) then return end
+	 
 	if(not hanging) then
 		if(touchController.rightTouch) then
 			goRight()
@@ -399,6 +439,7 @@ end
 function stop()
 	
 	if(not jumping and not hanging) then 
+		print("stop")
    	state = NOT_MOVING
  	end
  
@@ -415,6 +456,7 @@ function goLeft()
 	local floorVx, floorVy = 0,0
 	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 	
+		print("GOING_LEFT")
 	state = GOING_LEFT	
 	lookLeft()
 	sprite:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
@@ -426,6 +468,7 @@ function goRight()
 	local floorVx, floorVy = 0,0
 	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 
+		print("GOING_RIGHT")
 	state = GOING_RIGHT
 	lookRight()
 	sprite:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )

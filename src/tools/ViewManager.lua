@@ -5,7 +5,7 @@ module(..., package.seeall)
 -----------------------------------------------------------------------------------------
 
 -- level 1 background
-local mist1, mist2, moon, back
+local mist1, mist2, moon, grass, back
 
 -----------------------------------------------------------------------------------------
 
@@ -16,9 +16,11 @@ function initBack(level)
 	if(mist1 and mist1.tween) then transition.cancel(mist1.tween) end
 	if(mist2 and mist2.tween) then transition.cancel(mist2.tween) end
 	if(moon and moon.tween) then transition.cancel(moon.tween) end
+	if(grass and grass.tween) then transition.cancel(grass.tween) end
 	display.remove(mist1)
 	display.remove(mist2)
 	display.remove(moon)
+	display.remove(grass)
 
 	-- try to remove global background
 	display.remove(back)
@@ -55,6 +57,12 @@ function initBackLevel1()
 	
 	moveMoon()
 	
+	grass = display.newImageRect( "assets/images/grass.blur.png", 1024, 1024)  
+	grass.x = display.contentWidth/2  
+	grass.y = display.contentHeight*0.8
+	
+	moveGrass()
+	
 	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	back.x = display.viewableContentWidth/2  
 	back.y = display.viewableContentHeight/2
@@ -85,7 +93,7 @@ function initBackMenu()
 	moon = display.newImageRect( "assets/images/moon.png", 640, 640)  
 	moon.x = display.contentWidth-300  
 	moon.y = display.contentHeight/2-260 
-	
+
 	moveMoonBack()
 	
 	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
@@ -97,9 +105,17 @@ end
 
 function putBackgroundToBack(level)
 
-	if(level == 0 or level == 1) then
+	if(level == 0) then
    	mist1:toBack()
    	mist2:toBack()
+   	moon:toBack()
+   	back:toBack()
+   end
+
+	if(level == 1) then
+   	mist1:toBack()
+   	mist2:toBack()
+   	grass:toBack()
    	moon:toBack()
    	back:toBack()
    end
@@ -129,7 +145,15 @@ function moveMoonBack()
 end
 
 function moveMoon()
-	transition.to( moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoonBack() end })
+	moon.tween = transition.to( moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoonBack() end })
+end
+
+function moveGrass()
+	grass.tween = transition.to( grass, { time=40000, rotation=7, transition=easing.inOutExpo, onComplete = function() moveGrassBack() end })
+end
+
+function moveGrassBack()
+	grass.tween = transition.to( grass, { time=40000, rotation=-7, transition=easing.inOutExpo, onComplete = function() moveGrass() end })
 end
 
 ------------------------------------------------------------------------------------------

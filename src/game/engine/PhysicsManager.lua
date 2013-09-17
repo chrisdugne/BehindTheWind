@@ -294,10 +294,10 @@ function deleteRock(rock)
 	local destroyedRightNow = effectsManager.destroyObjectWithEffect(rock)
 	
 	if(destroyedRightNow) then
-   	effectsManager.explode(explosion)
-
    	if(rock.isGrab) then
    		character.grabs = character.grabs - 1
+   	else
+      	effectsManager.explode(explosion)
       end
    end
 

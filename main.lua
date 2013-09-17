@@ -173,10 +173,6 @@ end
 
 ------------------------------------------
 
-viewManager.initBack(0)
-
-------------------------------------------
-
 if(EDITOR) then
    router.openLevelEditor()
 else

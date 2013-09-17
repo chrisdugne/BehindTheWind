@@ -191,7 +191,7 @@ function atmosphere(x,y, scale)
 			color={{65,5,2},{55,55,20},{15,15,120}},
 			x = x,
 			y = y,
-			perEmit=math.random(1,5),
+			perEmit=math.random(2,5),
 			emissionNum=0,
 			emitDelay=320,
 			lifeSpan=1800,
@@ -274,7 +274,7 @@ function spawnEffect()
 	registerNewEffect(light)	
 	game.camera:insert(light:get("light").content)
 	
-	timer.performWithDelay(500, function() character.spawn() end)
+	timer.performWithDelay(100, function() character.spawn() end)
 	timer.performWithDelay(2000, function() destroyEffect(light) end)
 end
 
@@ -326,7 +326,7 @@ function drawExit(x, y, displayScore)
 			color={{65,5,2},{55,55,20},{15,15,120}},
 			x = x,
 			y = y,
-			perEmit=math.random(1,5),
+			perEmit=3,
 			emissionNum=0,
 			emitDelay=320,
 			lifeSpan=1800,
@@ -838,8 +838,8 @@ function explode(explosion)
 			emissionNum=3,
 			emitDelay=20,
 			lifeSpan=500,
-			fadeInTime=550,
-			scale=0.84,
+			fadeInTime=explosion.fadeInTime or 550,
+			scale=explosion.scale or 0.79,
 			physics={
 				gravityY=.03,
 			}

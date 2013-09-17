@@ -834,7 +834,7 @@ function scene:addToGroup(tile)
 	
 	tile.group = currentGroup
 	tile.iconGroup = display.newText( editor, tile.group, tile.x- tile.width/3, tile.y- tile.height/2, FONT, 22 )
-	tile.iconGroup:setTextColor(0, 0, 0)
+	tile.iconGroup:setTextColor(200, 200, 200)
 	
 	tile.isInGroup = true
 	

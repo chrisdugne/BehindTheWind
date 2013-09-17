@@ -78,8 +78,20 @@ end
 ---------------------------------------------------------------------
 
 function touchScreen( event )
+
+	-----------------------------
+	--	OUT  : dont listen action
+
+	if(character.state == character.OUT) then
+   	cancelAllTouches()
+		return 
+	end
+
+	-----------------------------
 	
 	lastX, lastY = event.x, event.y
+
+	-----------------------------
 	
 	if(currentState == DRAGGING_TILE) then return end
    	
@@ -168,6 +180,8 @@ function touchScreen( event )
 					local scale = newDistance / game.camera.distance
 					if ( scale > 0 ) then
 						game.zoom = game.camera.originalGameZoom * scale
+						if(game.zoom < 0.4) then game.zoom = 0.4 end
+						if(game.zoom > 3) then game.zoom = 3 end
 					end
 				end
 			end
@@ -190,17 +204,6 @@ function touchScreen( event )
 			game.camera.distance = nil
 			game.camera.originalGameZoom = nil
 		else
-			timer.cancel(oneTouchAction)
-			touches = {}
-		
-   		display.getCurrentStage():setFocus( nil )
-   		Runtime:removeEventListener( "enterFrame", onTouch )
-   	
-   		-----------------------------
-   		--	OUT  : dont listen action
-   		if(character.state == character.OUT) then return end
-   		
-   		-----------------------------
    		
    		local now = system.getTimer()
    		local touchDuration = now - startTouchTime
@@ -210,16 +213,8 @@ function touchScreen( event )
    			sideTapping = sideTapping + 1
    		end
       	
-   		-----------------------------
-      	
-   		swipping 	= false
-   		rightTouch 	= false
-   		leftTouch 	= false
-   		
-   		-----------------------------
-   		
-   		character.stop()
-   		
+      	cancelAllTouches()
+			character.stop()
    	end
 
 		setState(NONE)
@@ -230,6 +225,24 @@ function touchScreen( event )
 	return true
 end
 
+
+---------------------------------------------------------------------
+
+function cancelAllTouches()
+	timer.cancel(oneTouchAction)
+	touches = {}
+
+	display.getCurrentStage():setFocus( nil )
+	Runtime:removeEventListener( "enterFrame", onTouch )
+
+	-----------------------------
+
+	swipping 	= false
+	rightTouch 	= false
+	leftTouch 	= false
+
+	-----------------------------
+end
 
 ---------------------------------------------------------------------
 
