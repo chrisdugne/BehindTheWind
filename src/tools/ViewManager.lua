@@ -200,8 +200,18 @@ end
 -- MENU TOOLS
 -----------------------------------------------------------------------------------------
 
+function buildEffectButton(titleOrIcon, titleSize, scale, x, y, action, isLocked )
+   buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, true )
+end
 
-function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocked )
+function buildSimpleButton(titleOrIcon, titleSize, scale, x, y, action, isLocked )
+   buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, false )
+end
+
+-----------------------------------------------------------------------------------------
+
+
+function buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, effect )
 	
 	--------------------------------------
 
@@ -258,7 +268,9 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
    	lock:toFront()
    else
    	utils.onTouch(planet, action)
-		effectsManager.buttonEffect(x,y,scale)
+   	if(effect) then
+			effectsManager.buttonEffect(x,y,scale)
+		end
 	end
 	
 end

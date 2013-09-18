@@ -108,6 +108,15 @@ end
 
 ------------------------------------------
 
+function Game:destroyBeforeExit()
+	self:reset()
+   self.state = game.STOPPED
+	Runtime:removeEventListener( "enterFrame", self.refreshCamera )
+	Runtime:removeEventListener( "enterFrame", self.refreshEnemies )
+end
+
+------------------------------------------
+
 function Game:stop()
 
 	if(self.state == game.STOPPED) then return end
@@ -314,9 +323,8 @@ function Game:fillBoard()
 	------------------
 	-- play button
 	
-	viewManager.buildButton(
+	viewManager.buildEffectButton(
 		"assets/images/hud/play.png", 
-		"white", 
 		21, 
 		0.26*aspectRatio,
 		display.contentWidth*0.65, 	

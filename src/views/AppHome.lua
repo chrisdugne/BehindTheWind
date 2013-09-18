@@ -31,8 +31,8 @@ function scene:refreshScene()
 	game.hud.title.y = display.contentHeight*0.1
 	game.hud.title:scale(0.3,0.3)
 	
-	effectsManager.atmosphere(display.contentWidth*0.8, 120, 1.3)
-	effectsManager.atmosphere(display.contentWidth*0.61, 140, 1.36)
+	effectsManager.atmosphere(display.contentWidth*0.61, 120, 0.76)
+	effectsManager.atmosphere(display.contentWidth*0.8, 120, 0.9)
 
 	game.hud.subtitle = display.newText( game.hud, "...there is Magic" , 0, 0, FONT, 25 )
 	game.hud.subtitle:setTextColor( 255 )	
@@ -42,9 +42,8 @@ function scene:refreshScene()
 	
 	---------------------------------------------------------------
 
-	viewManager.buildButton(
+	viewManager.buildEffectButton(
 		"assets/images/hud/play.png", 
-		"white", 
 		21, 
 		0.66*aspectRatio,
 		display.contentWidth*0.5, 	
@@ -65,9 +64,8 @@ function scene:refreshScene()
 	local scale = 0.13*aspectRatio
 	print(scale)
 	
-	viewManager.buildButton(
+	viewManager.buildEffectButton(
 		"assets/images/hud/settings.png", 
-		"white",
 		0,
 		scale,
 		60, 

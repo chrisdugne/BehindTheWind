@@ -34,7 +34,7 @@ local characterIconsSheet = graphics.newImageSheet( "assets/images/hud/Character
 -----------------------------------------------------------------------------------------
 
 function start()
-
+	
 	game.hud.energy = display.newImage( game.hud, "assets/images/hud/energy.png")
 	game.hud.energy.x = ENERGY_ICON_LEFT
 	game.hud.energy.y = ENERGY_ICON_TOP
@@ -51,18 +51,44 @@ function start()
 	game.hud.throwIcon:scale(0.5,0.5)
    
    Runtime:addEventListener( "enterFrame", refreshHUD )
+	
+	-----------------------------------------------------------------
    
    timer.performWithDelay(2000, function()
-   	Runtime:addEventListener( "enterFrame", tutorials.listenHelp )
+
+    	if(game.chapter == 1 and (game.level == 1 or game.level == 2 )) then
+   		Runtime:addEventListener( "enterFrame", tutorials.listenHelp )
+   	end
+   	
+   	viewManager.buildSimpleButton(
+   		"assets/images/hud/back.png",
+   		51, 
+   		0.13*aspectRatio,
+   		display.contentWidth*0.03, 
+   		display.contentHeight*0.97, 
+   		function() 
+				if(game.state == game.STOPPED) then return end
+   			game.state=game.STOPPED
+   			
+   			transition.to(game.camera, {time = 1000, alpha = 0, onComplete = function()
+      			game:destroyBeforeExit()
+      			timer.performWithDelay(500, function()
+         			router.openLevelSelection()
+      			end)
+   			end})
+   			
+   		end
+   	)
    end)
+
 end
     
 -----------------------------------------------------------------------------------------
 
 function destroy()
-	utils.emptyGroup(game.hud)
    Runtime:removeEventListener( "enterFrame", refreshHUD )
    Runtime:removeEventListener( "enterFrame", tutorials.listenHelp )
+	utils.emptyGroup(game.hud)
 end
 
 -----------------------------------------------------------------------------------------
@@ -74,6 +100,7 @@ function refreshHUD()
 		game.hud.energiesRemaining.x 	= ENERGY_TEXT_LEFT
 	end
 end
+
 -----------------------------------------------------------------------------------------
 
 function setExit(toApply)

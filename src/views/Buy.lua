@@ -103,7 +103,7 @@ function scene:displayContent()
 	-- Texts
 
 	display.remove(mainText)
-	mainText = display.newText( buyMenu, T "The game is locked\n Remove the lock and ads wih a dollar !", 0, 0, 170, 100, FONT, 14 )
+	mainText = display.newText( buyMenu, T "The game is locked\n Unlock it with a dollar !", 0, 0, 170, 100, FONT, 14 )
 	mainText:setTextColor( 255 )	
 	mainText.x = buyMenu.board.x - 40
 	mainText.y = buyMenu.board.y/2 + 60
@@ -121,11 +121,11 @@ function scene:displayContent()
 	
 	display.remove(buyButton)
 	display.remove(textBuyButton)
-	buyButton, textBuyButton = viewManager.buildButton( T "Buy",	"white", 26, 0.36,  buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
+	buyButton, textBuyButton = viewManager.buildEffectButton( T "Buy", 26, 0.36,  buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
 
 	display.remove(restoreButton)
 	display.remove(textRestoreButton)
-	restoreButton, textRestoreButton = viewManager.buildButton( T "Restore", "white", 20, 0.36,  buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
+	restoreButton, textRestoreButton = viewManager.buildEffectButton( T "Restore", 20, 0.36,  buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
 
 end
 
@@ -141,7 +141,7 @@ function buy()
 	display.remove(coffeeImage)
 	display.remove(secondText)
 	
-	store.purchase( { "com.uralys.kodo.1.0" } )
+	store.purchase( { "com.uralys.behindthewind.1.0" } )
 	
 	refreshStatus("Waiting for store...")
 

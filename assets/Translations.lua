@@ -20,8 +20,8 @@ local translations =
         ["fr"] = "- Plus de publicité",
     },
 
-    ["The game is locked\n Remove the lock and ads wih a dollar !"] = {
-        ["fr"] = "Le jeu est en démo\n Enlever la limite de temps et la pub pour moins d'un euro !",
+    ["The game is locked\n Unlock it with a dollar !"] = {
+        ["fr"] = "Le jeu est en démo\n Débloquez tous les niveaux pour moins d'un euro !",
     },
 
     ["Cancel"] = {

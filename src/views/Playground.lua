@@ -28,7 +28,7 @@ function scene:refreshScene()
 	-- init playground
 
 	viewManager.initBack(game.level)
-	
+
 	------------------------------
 	
 	game:start()

@@ -17,46 +17,239 @@ local chapters
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	chapters = display.newGroup()
 end
 
 -----------------------------------------------------------------------------------------
 
 function scene:refreshScene()
-	utils.emptyGroup(chapters)
 
 	game.level = 0
 	game.scene = self.view
-	hud.setBackToHome()
-	
-	local margin = display.contentWidth*0.1 
 
-   for chapter = 1, #CHAPTERS do
-   	local i = (chapter-1)%10 
-   	local j = math.floor((chapter-1)/10) + 1
-   	local chapterLocked
-   	
-   	if(chapter > 1) then
-			chapterLocked = not GLOBALS.savedData.chapters[chapter-1].complete or not GLOBALS.savedData.fullGame
+	---------------------------------------------------------------
+	
+	viewManager.buildEffectButton(
+		"assets/images/hud/back.png",
+		51, 
+		0.18*aspectRatio,
+		display.contentWidth*0.1, 
+		display.contentHeight*0.1, 
+		function() 
+			router.openAppHome()
 		end
+	)
 	
-   	viewManager.buildButton(
-   		chapter,
-   		"white",
-   		51, 
-   		0.28*aspectRatio,
-			margin + display.contentWidth*0.085 * i, 
-			display.contentHeight*0.2 * j, 
-			function() 
-				openChapter(chapter) 
-			end, 
-			chapterLocked
-   	)
+	---------------------------------------------------------------
+	
+	game.hud.title = display.newImage( game.hud, "assets/images/hud/title.png" )
+	game.hud.title.x = display.contentWidth*0.7
+	game.hud.title.y = display.contentHeight*0.1
+	game.hud.title:scale(0.3,0.3)
+	
+	effectsManager.atmosphere(display.contentWidth*0.61, 120, 0.76)
+	effectsManager.atmosphere(display.contentWidth*0.8, 120, 0.9)
 
-   end
+	game.hud.subtitle = display.newText( game.hud, "...there is Magic" , 0, 0, FONT, 25 )
+	game.hud.subtitle:setTextColor( 255 )	
+	game.hud.subtitle.x = display.contentWidth*0.81
+	game.hud.subtitle.y = display.contentHeight*0.14
+	game.hud.subtitle:setReferencePoint( display.CenterReferencePoint )
+
+	-----------------------------------------------------
 	
-	self.view:insert(chapters)
+	self:createChapterContent(1, display.contentWidth*0.37, display.contentHeight*0.25, false)
+	self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame)
+	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame)
+	
 end
+
+-----------------------------------------------------------------------------------------
+
+function scene:createChapterContent(chapter, x, y, locked)
+
+	------------------
+	
+	local widget = display.newGroup()
+	game.hud:insert(widget)
+	widget.x = x
+	widget.y = y
+	widget.alpha = 0
+	
+	if(not locked) then
+   	utils.onTouch(widget, function() 
+   		openChapter(chapter) 
+   	end)
+   end
+   	
+	if(locked) then
+   	widget.alpha = 0.4
+	end
+	
+	------------------
+
+   local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.33, 200, 10)
+   box.alpha = 0.3
+   box:setFillColor(0)
+
+	------------------
+	
+	viewManager.buildEffectButton(
+		chapter,
+		51, 
+		0.67,
+		x+display.contentWidth*0.2, 
+		y+display.contentHeight*0.12, 
+		function() 
+			openChapter(chapter) 
+		end, 
+		locked
+	)
+	
+	------------------
+
+   local energiesText = display.newText( {
+		parent = widget,
+		text = CHAPTERS[chapter].title,     
+		x = display.contentWidth*0.16,
+		y = 20,
+		width = display.contentWidth*0.3,    
+		font = FONT,   
+		fontSize = 21,
+		align = "right"
+	} )
+	
+	------------------
+
+	local energies = display.newImage( widget, "assets/images/hud/energy.png")
+	energies.x = 25
+	energies.y = 40
+	energies:scale(0.5,0.5)
+	
+	local energiesCaught  = 0
+	local energiesToCatch = 0
+	
+	for i=1,CHAPTERS[chapter].nbLevels do
+		energiesCaught	 = energiesCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.energiesCaught 
+		energiesToCatch = energiesToCatch + #CHAPTERS[chapter].levels[i].energies 
+	end
+	
+   local energiesText = display.newText( {
+		parent = widget,
+		text = energiesCaught .. "/" .. energiesToCatch,     
+		x = 100,
+		y = 38,
+		width = 100,    
+		font = FONT,   
+		fontSize = 22,
+		align = "left"
+	} )
+
+	------------------
+	
+	local piecesCaught  = 0
+	local piecesToCatch = CHAPTERS[chapter].nbLevels
+	
+	for i=1,CHAPTERS[chapter].nbLevels do
+		piecesCaught	 = piecesCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.piecesCaught 
+	end
+	
+	local piece = display.newSprite( widget, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+	piece.x 			= 25
+	piece.y 			= 80
+	if(piecesCaught > 0) then
+		piece:play()
+	else
+   	piece.alpha = 0.2
+	end
+	
+   local piecesText = display.newText( {
+		parent = widget,
+		text = piecesCaught .. "/" .. piecesToCatch,     
+		x = 100,
+		y = 78,
+		width = 100, 
+		font = FONT,   
+		fontSize = 22,
+		align = "left"
+	} )
+	
+	------------------
+
+	local ringsCaught  = 0
+	local ringsToCatch = CHAPTERS[chapter].nbLevels
+	
+	for i=1,CHAPTERS[chapter].nbLevels do
+		ringsCaught	 = ringsCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.ringsCaught 
+	end
+	
+	local ring = display.newSprite( widget, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+	ring.x 		= 25
+	ring.y 		= 120
+	if(ringsCaught > 0) then
+		ring:play()
+	else
+   	ring.alpha = 0.2
+	end
+	
+   local ringsText = display.newText( {
+		parent = widget,
+		text = ringsCaught .. "/" .. ringsToCatch,     
+		x = 100,
+		y = 118,
+		width = 100, 
+		font = FONT,   
+		fontSize = 22,
+		align = "left"
+	} )
+	
+
+	------------------
+	
+	local points = 0
+	
+	for i=1,CHAPTERS[chapter].nbLevels do
+		points	 = points + GLOBALS.savedData.chapters[chapter].levels[i].score.points 
+	end
+	
+	
+	if(points > 0) then
+
+      local pointsText = display.newText( {
+			parent = widget,
+			text = points .. " pts",     
+			x = display.contentWidth*0.23,
+			y = 185,
+			width = 200,            --required for multiline and alignment
+			height = 40,           --required for multiline and alignment
+			font = FONT,   
+			fontSize = 17,
+			align = "right"
+		} )
+   
+   end
+
+	------------------
+	
+	local percent = math.floor(100* (0.5)*(energiesCaught/energiesToCatch) + (0.25)*(ringsCaught/ringsToCatch) + (0.25)*(piecesCaught/piecesToCatch))
+
+   local percentText = display.newText( {
+		parent = widget,
+		text = percent .. " %",     
+		x = display.contentWidth*0.09,
+		y = 165,
+		width = 200,            --required for multiline and alignment
+		height = 40,           --required for multiline and alignment
+		font = FONT,   
+		fontSize = 35,
+		align = "right"
+	} )
+	
+	------------------
+	
+	transition.to( widget, { time=500, alpha=1 })
+	widget:toFront()
+end
+
 
 ------------------------------------------
 

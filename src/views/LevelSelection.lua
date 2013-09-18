@@ -27,22 +27,34 @@ function scene:refreshScene()
 
 	game.level = 0
 	game.scene = self.view
-	hud.setBackToHome()
-	
+
+	-----------------------------------------------------
+
+	viewManager.buildEffectButton(
+		"assets/images/hud/back.png",
+		51, 
+		0.18*aspectRatio,
+		display.contentWidth*0.1, 
+		display.contentHeight*0.1, 
+		function() 
+			router.openChapterSelection()
+		end
+	)
+		
 	-----------------------------------------------------
 	
 	effectsManager.atmosphere(display.contentWidth*0.7, 110, 1.36)
 	effectsManager.atmosphere(display.contentWidth*0.9, 110, 1.12)
 
    game.hud.chaptertitle = display.newText( {
-		parent = game.hud,
-		text = CHAPTERS[game.chapter].title,     
-		x = display.contentWidth*0.69,
-		y = display.contentHeight*0.07,
-		width = display.contentWidth*0.5,            --required for multiline and alignment
-		font = FONT,   
+		parent 	= game.hud,
+		text 		= CHAPTERS[game.chapter].title,     
+		x 			= display.contentWidth*0.69,
+		y 			= display.contentHeight*0.07,
+		width 	= display.contentWidth*0.5,            --required for multiline and alignment
+		font 		= FONT,   
 		fontSize = 55,
-		align = "right"
+		align 	= "right"
 	} )
 	
 	-----------------------------------------------------
@@ -71,10 +83,10 @@ function scene:refreshScene()
    	local locked
    	
    	if(level > 1) then
-			locked = not GLOBALS.savedData.chapters[game.chapter].levels[level - 1] or not GLOBALS.savedData.chapters[game.chapter].levels[level - 1].complete
+			locked = not GLOBALS.savedData.chapters[game.chapter].levels[level - 1].complete
 		end
 	
-		self:createLevelContent(level, x, y, false)
+		self:createLevelContent(level, x, y, locked)
 	
    end
 	
@@ -90,6 +102,7 @@ function scene:createLevelContent(level, x, y, locked)
 	local widget = display.newGroup()
 	widget.x = x
 	widget.y = y
+	widget.alpha = 0
 	game.hud:insert(widget)
 	
 	utils.onTouch(widget, function() 
@@ -187,11 +200,26 @@ function scene:createLevelContent(level, x, y, locked)
 
 	------------------
 	
-	viewManager.buildButton(
+	local percent = math.floor(100* ((0.5)*(score.energiesCaught/energiesToCatch) + (0.25)*(score.ringsCaught) + (0.25)*(score.piecesCaught)))
+
+   local percentText = display.newText( {
+		parent = widget,
+		text = percent .. " %",     
+		x = 90,
+		y = 185,
+		width = 150,            --required for multiline and alignment
+		height = 40,           --required for multiline and alignment
+		font = FONT,   
+		fontSize = 20,
+		align = "left"
+	} )
+	
+	------------------
+	
+	viewManager.buildEffectButton(
 		level,
-		"white",
 		51, 
-		0.28*aspectRatio,
+		0.32*aspectRatio,
 		x+display.contentWidth*0.152, 
 		y+70, 
 		function() 
@@ -200,7 +228,9 @@ function scene:createLevelContent(level, x, y, locked)
 		locked
 	)
 	
+	--------------------------
 	
+	transition.to( widget, { time=500, alpha=1 })
 end
 
 ------------------------------------------

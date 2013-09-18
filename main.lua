@@ -179,20 +179,20 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 if(DEV) then
-
-   display.remove(memText)
-   memText = display.newText( "0", 0, 0, FONT, 25 )
-   memText:setTextColor( 255 )	
-   memText:setReferencePoint( display.CenterReferencePoint )
-   memText.x = display.contentWidth - memText.contentWidth/2 - 10
-   memText.y = display.contentHeight - 20
-   
-   Runtime:addEventListener( "enterFrame", function()
-   	local running 			= effectsManager.nbRunning
-   	local total 			= #effectsManager.effects
-   	
-   	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
-   end )
+--
+--   display.remove(memText)
+--   memText = display.newText( "0", 0, 0, FONT, 25 )
+--   memText:setTextColor( 255 )	
+--   memText:setReferencePoint( display.CenterReferencePoint )
+--   memText.x = display.contentWidth - memText.contentWidth/2 - 10
+--   memText.y = display.contentHeight - 20
+--   
+--   Runtime:addEventListener( "enterFrame", function()
+--   	local running 			= effectsManager.nbRunning
+--   	local total 			= #effectsManager.effects
+--   	
+--   	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
+--   end )
     
 else
 	musicManager.playMusic()
@@ -211,13 +211,13 @@ end
 -- MEMORY counters (DEV)
 --
 
-function refreshMemText(text)
-	if(memText.contentWidth) then
-		memText.text = character.grabs ..  "    " .. text
-		memText.size = 25
-		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
-	end
-end
+--function refreshMemText(text)
+--	if(memText.contentWidth) then
+--		memText.text = character.grabs ..  "    " .. text
+--		memText.size = 25
+--		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
+--	end
+--end
 
 -----------------------------------------------------------------------------------------
 --- iOS Status Bar
