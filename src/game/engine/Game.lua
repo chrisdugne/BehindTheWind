@@ -17,11 +17,13 @@ function Game:new()
 		STOPPED  = 2, 
 	
 		zoom  	= startZoom, 
+		chapter  = 0, 
 		level  	= 0, 
 		camera 	= camera,
 		hud 		= display.newGroup(),
 		focus 	= CHARACTER,
-		state		= STOPPED
+		state		= STOPPED,
+		score 	= {}
 	}
 
 	setmetatable(object, { __index = Game })
@@ -41,6 +43,7 @@ function Game:start()
    self.energiesCaught 		= 0
    self.piecesCaught 		= 0
    self.ringsCaught 			= 0
+	self.score 					= {}
 
 	---------------------
 
@@ -58,7 +61,7 @@ function Game:start()
 	------------------------------
 	-- level content
 	
-	levelDrawer.designLevel(function() self:displayScore() end)
+	levelDrawer.designLevel()
 	
 	-----------------------------
 	-- camera
@@ -125,10 +128,64 @@ function Game:stop()
 		GLOBALS.savedData.requireTutorial = false
 	end
 
-	GLOBALS.savedData.levels[game.level].complete = true
+	GLOBALS.savedData.chapters[game.chapter].levels[game.level].complete = true
 
-	utils.saveTable(GLOBALS.savedData, "savedData.json")
+	if(game.level == CHAPTERS[game.chapter].nbLevels) then
+   	GLOBALS.savedData.chapters[game.chapter].complete = true
+	end
+
+	------------------------------------------
+	-- score 
+
+	local score = {
+   	energiesCaught 		= self.energiesCaught,
+   	energiesRemaining 	= self.energiesRemaining,
+   	piecesCaught 			= self.piecesCaught,
+   	ringsCaught 			= self.ringsCaught,
+	}
 	
+	
+	local min,sec,ms = utils.getMinSecMillis(math.floor(game.elapsedTime))
+	score.time = min .. "'" .. sec .. "''" .. ms  
+
+	if(score.ringsCaught > 0) 		then score.ringsBonus 	= 2*score.ringsCaught 		else score.ringsBonus 	= 1 	end 
+	if(score.piecesCaught > 0) 	then score.piecesBonus 	= 3*score.piecesCaught		else score.piecesBonus 	= 1 	end 
+	
+	
+	-- 10 ms 		= 1pts
+	-- timeMax 		= sec
+	-- elapsedTime = millis
+	score.timePoints = CHAPTERS[game.chapter].levels[game.level].properties.timeMax*100 - math.floor(game.elapsedTime/10)
+	
+	score.points = (score.timePoints + score.energiesCaught * score.energiesRemaining * 10) * score.piecesBonus * score.ringsBonus
+	
+	self.score = score
+	
+	------------------------------------------
+	
+	local previousScore = GLOBALS.savedData.chapters[game.chapter].levels[game.level].score
+	
+	if(previousScore.energiesCaught < score.energiesCaught) then
+		GLOBALS.savedData.chapters[game.chapter].levels[game.level].score.energiesCaught = score.energiesCaught
+	end
+
+	if(previousScore.ringsCaught < score.ringsCaught) then
+		GLOBALS.savedData.chapters[game.chapter].levels[game.level].score.ringsCaught = score.ringsCaught
+	end
+
+	if(previousScore.piecesCaught < score.piecesCaught) then
+		GLOBALS.savedData.chapters[game.chapter].levels[game.level].score.piecesCaught = score.piecesCaught
+	end
+	
+	if(previousScore.points < score.points) then
+		GLOBALS.savedData.chapters[game.chapter].levels[game.level].score.points	= score.points
+		GLOBALS.savedData.chapters[game.chapter].levels[game.level].score.time 		= score.time
+	end
+		
+	------------------------------------------
+	
+	utils.saveTable(GLOBALS.savedData, "savedData.json")
+
 	------------------------------------------
 	
 	timer.performWithDelay(700, function()
@@ -177,6 +234,8 @@ end
 
 function Game:fillBoard()
 
+	local score = self.score
+	
 	------------------
 
 	local timeIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
@@ -184,15 +243,7 @@ function Game:fillBoard()
 	timeIcon.y = display.contentHeight*0.35
 	timeIcon:scale(0.5,0.5)
 	
-	-- 10 ms 		= 1pts
-	-- timeMax 		= sec
-	-- elapsedTime = millis
-	local timePoints = GLOBALS.levels[game.level].properties.timeMax*100 - math.floor(game.elapsedTime/10)
-	local min,sec,ms = utils.getMinSecMillis(math.floor(game.elapsedTime))
-	local time = min .. "'" .. sec .. "''" .. ms  
-	
-	local timeResult = time .. " -> " .. timePoints
-   local timeText = display.newText( game.hud, timeResult, 0, 0, FONT, 25 )
+   local timeText = display.newText( game.hud, score.time, 0, 0, FONT, 25 )
    timeText:setTextColor( 255 )	
    timeText:setReferencePoint( display.TopLeftReferencePoint )
 	timeText.x = display.contentWidth*0.34
@@ -205,8 +256,7 @@ function Game:fillBoard()
 	energiesCaughtIcon.y = display.contentHeight*0.4
 	energiesCaughtIcon:scale(0.5,0.5)
 	
-	local energiesCaught = game.energiesCaught
-   local energiesCaughtText = display.newText( game.hud, energiesCaught, 0, 0, FONT, 25 )
+   local energiesCaughtText = display.newText( game.hud, score.energiesCaught, 0, 0, FONT, 25 )
    energiesCaughtText:setReferencePoint( display.TopLeftReferencePoint )
    energiesCaughtText:setTextColor( 255 )	
 	energiesCaughtText.x = display.contentWidth*0.35
@@ -219,8 +269,7 @@ function Game:fillBoard()
 	energiesRemainingIcon.y = display.contentHeight*0.45
 	energiesRemainingIcon:scale(0.5,0.5)
 	
-	local energiesRemaining = game.energiesRemaining
-   local energiesRemainingText = display.newText( game.hud, energiesRemaining, 0, 0, FONT, 25 )
+   local energiesRemainingText = display.newText( game.hud, score.energiesRemaining, 0, 0, FONT, 25 )
    energiesRemainingText:setReferencePoint( display.TopLeftReferencePoint )
    energiesRemainingText:setTextColor( 255 )	
 	energiesRemainingText.x = display.contentWidth*0.35
@@ -232,9 +281,8 @@ function Game:fillBoard()
 	piece.x 			= display.contentWidth*0.3
 	piece.y 			= display.contentHeight*0.5
 	piece:play()
-
-	local piecesCaught = game.piecesCaught
-   local piecesCaughtText = display.newText( game.hud, piecesCaught, 0, 0, FONT, 25 )
+	
+   local piecesCaughtText = display.newText( game.hud, score.piecesCaught, 0, 0, FONT, 25 )
    piecesCaughtText:setReferencePoint( display.TopLeftReferencePoint )
    piecesCaughtText:setTextColor( 255 )	
 	piecesCaughtText.x = display.contentWidth*0.35
@@ -247,9 +295,8 @@ function Game:fillBoard()
 	ring.x 		= display.contentWidth*0.3
 	ring.y 		= display.contentHeight*0.55
 	ring:play()
-
-	local ringsCaught = game.ringsCaught
-   local ringsCaughtText = display.newText( game.hud, ringsCaught, 0, 0, FONT, 25 )
+	
+   local ringsCaughtText = display.newText( game.hud, score.ringsCaught, 0, 0, FONT, 25 )
    ringsCaughtText:setReferencePoint( display.TopLeftReferencePoint )
    ringsCaughtText:setTextColor( 255 )	
 	ringsCaughtText.x = display.contentWidth*0.35
@@ -257,16 +304,8 @@ function Game:fillBoard()
 
 	------------------
 	-- score final
-
-	local piecesBonus = 1
-	local ringsBonus  = 1
-	 
-	if(piecesCaught > 0) then piecesBonus = 3*piecesCaught end 
-	if(ringsCaught > 0) then ringsBonus = 2*piecesCaught end 
-
-	local score = timePoints + energiesCaught * energiesRemaining * 10 * piecesBonus * ringsBonus
 	
-   local scoreText = display.newText( game.hud, score .. " pts", 0, 0, FONT, 35 )
+   local scoreText = display.newText( game.hud, score.points .. " pts", 0, 0, FONT, 35 )
    scoreText:setReferencePoint( display.TopLeftReferencePoint )
    scoreText:setTextColor( 255 )	
 	scoreText.x = display.contentWidth*0.6

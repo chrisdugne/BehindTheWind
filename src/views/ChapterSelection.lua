@@ -31,26 +31,26 @@ function scene:refreshScene()
 	
 	local margin = display.contentWidth*0.1 
 
-   for level = 1, NB_CHAPTERS do
-   	local i = (level-1)%10 
-   	local j = math.floor((level-1)/10) + 1
-   	local levelLocked
+   for chapter = 1, #CHAPTERS do
+   	local i = (chapter-1)%10 
+   	local j = math.floor((chapter-1)/10) + 1
+   	local chapterLocked
    	
-   	if(level > 1) then
-			levelLocked = not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame
+   	if(chapter > 1) then
+			chapterLocked = not GLOBALS.savedData.chapters[chapter-1].complete or not GLOBALS.savedData.fullGame
 		end
 	
    	viewManager.buildButton(
-   		level,
+   		chapter,
    		"white",
    		51, 
    		0.28*aspectRatio,
 			margin + display.contentWidth*0.085 * i, 
 			display.contentHeight*0.2 * j, 
 			function() 
-				openLevel(level) 
+				openChapter(chapter) 
 			end, 
-			levelLocked
+			chapterLocked
    	)
 
    end
@@ -60,15 +60,9 @@ end
 
 ------------------------------------------
 
-function openLevel( level )
-	if(game.level == 0 and level <= NB_CHAPTERS) then
-   	if(not GLOBALS.savedData.fullGame and level > 10) then
-   		router.openBuy()
-   	else
-      	game.level = level
-      	router.openPlayground()
-      end
-   end
+function openChapter( chapter )
+	game.chapter = chapter
+	router.openLevelSelection()
 end
 
 ------------------------------------------

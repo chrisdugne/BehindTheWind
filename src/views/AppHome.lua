@@ -51,7 +51,8 @@ function scene:refreshScene()
 		display.contentHeight*0.5, 	
 		function()
 			if(GLOBALS.savedData.requireTutorial) then
-				game.level = 1
+				game.chapter 	= 1
+				game.level 		= 1
 				router.openPlayground()
 			else
 				router.openChapterSelection()

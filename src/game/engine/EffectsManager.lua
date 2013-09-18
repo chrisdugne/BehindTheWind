@@ -222,11 +222,11 @@ function buttonEffect(x,y, scale)
 			color={{45,35,23},{55,55,20},{15,15,30}},
 			x = x,
 			y = y+110*scale,
-			perEmit=math.random(3,7),
+			perEmit=2,
 			emissionNum=0,
 			emitDelay=520,
 			fadeInTime=2200,
-			scale=3*scale,
+			scale=2.3*scale,
 			physics={
 				gravityY=.021,
 			}
@@ -315,7 +315,7 @@ end
 --- Level Exit
 -----------------------------------------------------------------------------
 
-function drawExit(x, y, displayScore)
+function drawExit(x, y)
 	
 	if(not type) then type = 1 end
 	

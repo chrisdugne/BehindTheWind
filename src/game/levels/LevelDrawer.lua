@@ -83,7 +83,7 @@ local MOTION_SPEED = 60
 
 -------------------------------------
 
-function designLevel(displayScore)
+function designLevel()
 
 	---------------------
 
@@ -95,7 +95,7 @@ function designLevel(displayScore)
 	
 	---------------------
 
-	level.content 			= GLOBALS.levels[game.level]
+	level.content 			= CHAPTERS[game.chapter].levels[game.level]
 
 	---------------------
 
@@ -207,7 +207,7 @@ function designLevel(displayScore)
 				physicsManager.drawCheckpoint(checkPoint)
 
 			elseif(tile.num == EXIT) then
-				effectsManager.drawExit(tile.x, tile.y, displayScore)
+				effectsManager.drawExit(tile.x, tile.y)
    			display.remove(tile)
 
 			elseif(tile.num == PIECE) then

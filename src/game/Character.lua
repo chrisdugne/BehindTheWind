@@ -339,7 +339,6 @@ function collide( event )
 	end
 	
 	if((jumping or hanging) and vy > -200) then
-		print("GOING_RIGHT")
 		state = NOT_MOVING
 		
 		if(floor) then
@@ -402,7 +401,6 @@ end
 
 function move()
 	
-	print("move", state)
 	if(state == OUT) then return end
 	 
 	if(not hanging) then
@@ -439,7 +437,6 @@ end
 function stop()
 	
 	if(not jumping and not hanging) then 
-		print("stop")
    	state = NOT_MOVING
  	end
  
@@ -456,7 +453,6 @@ function goLeft()
 	local floorVx, floorVy = 0,0
 	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 	
-		print("GOING_LEFT")
 	state = GOING_LEFT	
 	lookLeft()
 	sprite:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
@@ -468,7 +464,6 @@ function goRight()
 	local floorVx, floorVy = 0,0
 	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 
-		print("GOING_RIGHT")
 	state = GOING_RIGHT
 	lookRight()
 	sprite:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )

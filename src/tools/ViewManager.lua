@@ -210,8 +210,8 @@ function buildButton(titleOrIcon, color, titleSize, scale, x, y, action, isLocke
 
 	--------------------------------------
 
-	local planet = display.newImage( "assets/images/game/planet.".. color ..".png")
-	planet:scale(scale,scale)
+	local planet = display.newImage( "assets/images/game/moon.png")
+	planet:scale(scale*0.28,scale*0.28)
 	planet.x = x
 	planet.y = y
 	planet.alpha = 0

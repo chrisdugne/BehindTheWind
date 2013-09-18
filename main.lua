@@ -15,13 +15,17 @@ SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
 
 -----------------------------------------------------------------------------------------
 
---DEV				= 1
+DEV				= 1
 --EDITOR 			= 1
 
 -----------------------------------------------------------------------------------------
 
-NB_CHAPTERS 	= 3
-NB_LEVELS 		= 3
+-- Mystery
+CHAPTERS = {
+	{title="Chapter1 : Mist", 			nbLevels = 5},
+	{title="Chapter2 : Moonshine", 	nbLevels = 12},
+	{title="Chapter3 : Magic", 		nbLevels = 1},
+}
 
 -----------------------------------------------------------------------------------------
 
@@ -111,11 +115,16 @@ viewManager		= require "src.tools.ViewManager"
 GLOBALS = {
 	savedData 		= utils.loadUserData("savedData.json"),
 	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
-	levels			= {}
 }
 
-for i=1,NB_LEVELS do
-	GLOBALS.levels[i] = utils.loadFile("levelEditor/level".. i ..".json")
+for i=1,#CHAPTERS do
+   
+   CHAPTERS[i].levels = {}
+   
+   for j=1,CHAPTERS[i].nbLevels do
+      CHAPTERS[i].levels[j] = utils.loadFile("src/game/levels/chapter".. i .. "/level".. i .. j ..".json")
+   end
+   
 end
 
 -----------------------------------------------------------------------------------------
@@ -129,8 +138,25 @@ function initGameData()
 		chapters = {} 
 	}
 
-   for i=1,NB_CHAPTERS do
-   	GLOBALS.savedData.chapters[i] = {complete = false}
+   for i=1,#CHAPTERS do
+
+      GLOBALS.savedData.chapters[i] = {
+         levels 	= {},
+         complete = false
+      }
+      
+      for j=1,CHAPTERS[i].nbLevels do
+         GLOBALS.savedData.chapters[i].levels[j] = {
+         	complete = false,
+         	score 	= {
+            	energiesCaught 		= 0,
+            	piecesCaught 			= 0,
+            	ringsCaught 			= 0,
+            	time						= "",
+            	points					= 0
+         	}
+         }
+      end
    end
 
 	utils.saveTable(GLOBALS.savedData, "savedData.json")
