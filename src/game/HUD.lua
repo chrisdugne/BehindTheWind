@@ -63,16 +63,16 @@ function start()
    	viewManager.buildSimpleButton(
    		"assets/images/hud/back.png",
    		51, 
-   		0.13*aspectRatio,
-   		display.contentWidth*0.03, 
-   		display.contentHeight*0.97, 
+   		0.18*aspectRatio,
+   		display.contentWidth*0.05, 
+   		display.contentHeight*0.95, 
    		function() 
 				if(game.state == game.STOPPED) then return end
    			game.state=game.STOPPED
-   			
-   			transition.to(game.camera, {time = 1000, alpha = 0, onComplete = function()
+   			hud.destroy()
+   			transition.to(game.camera, {time = 1500, alpha = 0, onComplete = function()
       			game:destroyBeforeExit()
-      			timer.performWithDelay(500, function()
+      			timer.performWithDelay(1000, function()
          			router.openLevelSelection()
       			end)
    			end})

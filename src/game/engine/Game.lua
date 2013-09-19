@@ -330,7 +330,7 @@ function Game:fillBoard()
 		display.contentWidth*0.65, 	
 		display.contentHeight*0.65, 	
 		function()
-			router.openAppHome() 
+			router.openLevelSelection() 
 		end
 	)
 	

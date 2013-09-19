@@ -109,10 +109,6 @@ function scene:createLevelContent(level, x, y, locked)
 		openLevel(level) 
 	end)
 	
-	if(locked) then
-   	widget.alpha = 0.4
-	end
-	
 	------------------
 	
 	local score = GLOBALS.savedData.chapters[game.chapter].levels[level].score
@@ -230,7 +226,12 @@ function scene:createLevelContent(level, x, y, locked)
 	
 	--------------------------
 	
-	transition.to( widget, { time=500, alpha=1 })
+	if(locked) then
+   	transition.to( widget, { time=500, alpha=0.4 })
+   else
+   	transition.to( widget, { time=500, alpha=1 })
+	end
+	
 end
 
 ------------------------------------------

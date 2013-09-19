@@ -44,17 +44,17 @@ function scene:refreshScene()
 	game.hud.title = display.newImage( game.hud, "assets/images/hud/title.png" )
 	game.hud.title.x = display.contentWidth*0.7
 	game.hud.title.y = display.contentHeight*0.1
-	game.hud.title:scale(0.3,0.3)
+	game.hud.title:scale(0.38,0.38)
 	
-	effectsManager.atmosphere(display.contentWidth*0.61, 120, 0.76)
+	effectsManager.atmosphere(display.contentWidth*0.7 - game.hud.title.contentWidth/2 + 20, 115, 0.76)
 	effectsManager.atmosphere(display.contentWidth*0.8, 120, 0.9)
 
 	game.hud.subtitle = display.newText( game.hud, "...there is Magic" , 0, 0, FONT, 25 )
 	game.hud.subtitle:setTextColor( 255 )	
-	game.hud.subtitle.x = display.contentWidth*0.81
-	game.hud.subtitle.y = display.contentHeight*0.14
+	game.hud.subtitle.x = display.contentWidth*0.86
+	game.hud.subtitle.y = display.contentHeight*0.16
 	game.hud.subtitle:setReferencePoint( display.CenterReferencePoint )
-
+	
 	-----------------------------------------------------
 	
 	self:createChapterContent(1, display.contentWidth*0.37, display.contentHeight*0.25, false)
@@ -81,10 +81,6 @@ function scene:createChapterContent(chapter, x, y, locked)
    	end)
    end
    	
-	if(locked) then
-   	widget.alpha = 0.4
-	end
-	
 	------------------
 
    local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.33, 200, 10)
@@ -246,7 +242,12 @@ function scene:createChapterContent(chapter, x, y, locked)
 	
 	------------------
 	
-	transition.to( widget, { time=500, alpha=1 })
+	if(locked) then
+   	transition.to( widget, { time=500, alpha=0.4 })
+   else
+   	transition.to( widget, { time=500, alpha=1 })
+	end
+	
 	widget:toFront()
 end
 
