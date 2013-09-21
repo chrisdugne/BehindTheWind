@@ -165,6 +165,8 @@ function spawn()
 	resetState()
 	stop()
    setThrowing()
+   throwFire = true
+	throwGrab = false
 	
 	-- replace the character on the spawn point
    sprite.x = levelDrawer.level.spawnX
@@ -361,6 +363,9 @@ end
 -------------------------------------
 
 function setThrowing()
+	
+	if(not GLOBALS.savedData.fireEnable) then return end
+	
 	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterThrowing()
 	
@@ -370,6 +375,9 @@ function setThrowing()
 end
 
 function setGrabbing()
+
+	if(not GLOBALS.savedData.grabEnable) then return end
+	
 	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterGrabbing()
 
@@ -486,30 +494,16 @@ end
 -------------------------------------
 
 function throw( x1,y1, x2,y2 )
-	
-	if(game.energiesRemaining < 1) then
-		effectsManager.notEnoughEnergy()
-		physicsManager.abortThrow()
-	else
-   	timeLastThrow = system.getTimer()
-   	game.energiesRemaining = game.energiesRemaining - 1
-   	physicsManager.throw(x1,y1, x2,y2)
-   end
-   
+	timeLastThrow = system.getTimer()
+	game.energiesSpent = game.energiesSpent + 1
+	physicsManager.throw(x1,y1, x2,y2)
 end
 
 -------------------------------------
 
 function grab( x1,y1, x2,y2 )
-	
-	if(game.energiesRemaining < 2) then
-		effectsManager.notEnoughEnergy()
-		physicsManager.abortThrow()
-	else
-   	character.grabs = character.grabs + 1
-   	game.energiesRemaining = game.energiesRemaining - 2
-   	timeLastThrow = system.getTimer()
-   	physicsManager.grab(x1,y1, x2,y2)
-   end
-   
+	character.grabs = character.grabs + 1
+	game.energiesSpent = game.energiesSpent + 1
+	timeLastThrow = system.getTimer()
+	physicsManager.grab(x1,y1, x2,y2)
 end

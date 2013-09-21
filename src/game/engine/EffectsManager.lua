@@ -433,7 +433,6 @@ function touchEnergy( energy, event )
    			---------------------------------------------------------
 
    			game.energiesCaught 	= game.energiesCaught + 1
-   			game.energiesRemaining = game.energiesRemaining + 1
       		
    			---------------------------------------------------------
 
@@ -742,7 +741,7 @@ function setCharacterThrowing()
 			emissionNum=0,
 			emitDelay=150,
 			fadeInTime=225,
-			scale=0.05,
+			scale=0.15,
 			startAlpha=1,
 			physics={
 				divisionDamping = true,
@@ -774,7 +773,7 @@ function setCharacterGrabbing()
 			emissionNum=0,
 			emitDelay=150,
 			fadeInTime=225,
-			scale=0.07,
+			scale=0.17,
 			startAlpha=1,
 			physics={
 				divisionDamping = true,

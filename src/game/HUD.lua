@@ -40,15 +40,17 @@ function start()
 	game.hud.energy.y = ENERGY_ICON_TOP
 	game.hud.energy:scale(0.5,0.5)
 	
-   game.hud.energiesRemaining = display.newText( game.hud, "0", 0, 0, FONT, 25 )
-   game.hud.energiesRemaining:setTextColor( 255 )	
-	game.hud.energiesRemaining.x = ENERGY_TEXT_LEFT
-	game.hud.energiesRemaining.y = ENERGY_TEXT_TOP
+   game.hud.energiesCaught = display.newText( game.hud, "0", 0, 0, FONT, 25 )
+   game.hud.energiesCaught:setTextColor( 255 )	
+	game.hud.energiesCaught.x = ENERGY_TEXT_LEFT
+	game.hud.energiesCaught.y = ENERGY_TEXT_TOP
    
    game.hud.throwIcon = display.newSprite( game.hud, characterIconsSheet, characterIconsConfig.sequence )
 	game.hud.throwIcon.x = THROW_ICON_LEFT
 	game.hud.throwIcon.y = THROW_ICON_TOP
 	game.hud.throwIcon:scale(0.5,0.5)
+	
+	if(not GLOBALS.savedData.fireEnable) then game.hud.throwIcon.alpha = 0 end
    
    Runtime:addEventListener( "enterFrame", refreshHUD )
 	
@@ -94,10 +96,10 @@ end
 -----------------------------------------------------------------------------------------
 
 function refreshHUD()
-	if(game.hud.energiesRemaining.contentWidth) then
-		game.hud.energiesRemaining.text = game.energiesRemaining
-		game.hud.energiesRemaining.size = 25
-		game.hud.energiesRemaining.x 	= ENERGY_TEXT_LEFT
+	if(game.hud.energiesCaught.contentWidth) then
+		game.hud.energiesCaught.text = game.energiesCaught
+		game.hud.energiesCaught.size = 25
+		game.hud.energiesCaught.x 	= ENERGY_TEXT_LEFT
 	end
 end
 

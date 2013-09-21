@@ -135,6 +135,8 @@ function initGameData()
 		user = "New player",
 		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
 		requireTutorial = true,
+		fireEnable = false,
+		grabEnable = false,
 		chapters = {} 
 	}
 

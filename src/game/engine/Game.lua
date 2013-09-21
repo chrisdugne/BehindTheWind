@@ -39,7 +39,7 @@ function Game:start()
 	---------------------
 
    self.state 					= game.RUNNING
-   self.energiesRemaining 	= 0
+   self.energiesSpent 		= 0
    self.energiesCaught 		= 0
    self.piecesCaught 		= 0
    self.ringsCaught 			= 0
@@ -133,8 +133,13 @@ function Game:stop()
 	
 	------------------------------------------
 	
-	if(game.level == 1) then
+	if(game.level == 1 and game.chapter == 1) then
 		GLOBALS.savedData.requireTutorial = false
+		GLOBALS.savedData.fireEnable = true
+	end
+
+	if(game.level == 2 and game.chapter == 1) then
+		GLOBALS.savedData.grabEnable = true
 	end
 
 	GLOBALS.savedData.chapters[game.chapter].levels[game.level].complete = true
@@ -148,7 +153,7 @@ function Game:stop()
 
 	local score = {
    	energiesCaught 		= self.energiesCaught,
-   	energiesRemaining 	= self.energiesRemaining,
+   	energiesSpent 			= self.energiesSpent,
    	piecesCaught 			= self.piecesCaught,
    	ringsCaught 			= self.ringsCaught,
 	}
@@ -160,13 +165,15 @@ function Game:stop()
 	if(score.ringsCaught > 0) 		then score.ringsBonus 	= 2*score.ringsCaught 		else score.ringsBonus 	= 1 	end 
 	if(score.piecesCaught > 0) 	then score.piecesBonus 	= 3*score.piecesCaught		else score.piecesBonus 	= 1 	end 
 	
+	local energiesRemaining = score.energiesCaught - score.energiesSpent
+	if(energiesRemaining < 1) then energiesRemaining = 1 end
 	
-	-- 10 ms 		= 1pts
+	-- 100 ms 		= 1pts
 	-- timeMax 		= sec
 	-- elapsedTime = millis
-	score.timePoints = CHAPTERS[game.chapter].levels[game.level].properties.timeMax*100 - math.floor(game.elapsedTime/10)
+	score.timePoints = CHAPTERS[game.chapter].levels[game.level].properties.timeMax*10 - math.floor(game.elapsedTime/100)
 	
-	score.points = (score.timePoints + score.energiesCaught * score.energiesRemaining * 10) * score.piecesBonus * score.ringsBonus
+	score.points = (score.timePoints + score.energiesCaught * energiesRemaining) * score.piecesBonus * score.ringsBonus
 	
 	self.score = score
 	
@@ -273,16 +280,16 @@ function Game:fillBoard()
 
 	------------------
 
-	local energiesRemainingIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
-	energiesRemainingIcon.x = display.contentWidth*0.3
-	energiesRemainingIcon.y = display.contentHeight*0.45
-	energiesRemainingIcon:scale(0.5,0.5)
+	local energiesSpentIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
+	energiesSpentIcon.x = display.contentWidth*0.3
+	energiesSpentIcon.y = display.contentHeight*0.45
+	energiesSpentIcon:scale(0.5,0.5)
 	
-   local energiesRemainingText = display.newText( game.hud, score.energiesRemaining, 0, 0, FONT, 25 )
-   energiesRemainingText:setReferencePoint( display.TopLeftReferencePoint )
-   energiesRemainingText:setTextColor( 255 )	
-	energiesRemainingText.x = display.contentWidth*0.35
-	energiesRemainingText.y = display.contentHeight*0.42
+   local energiesSpentText = display.newText( game.hud, score.energiesSpent, 0, 0, FONT, 25 )
+   energiesSpentText:setReferencePoint( display.TopLeftReferencePoint )
+   energiesSpentText:setTextColor( 255 )	
+	energiesSpentText.x = display.contentWidth*0.35
+	energiesSpentText.y = display.contentHeight*0.42
 
 	------------------
 

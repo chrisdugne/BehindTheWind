@@ -80,6 +80,7 @@ level = {}
 -------------------------------------
 
 local MOTION_SPEED = 60
+local smallShape = {  -17,-17, 17,-17, 17,0, -17,0}
 
 -------------------------------------
 
@@ -136,7 +137,13 @@ function designLevel()
 		end
 		
 		if(requireBody) then
-   		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
+			
+			if((tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32) and tiles[i].sheet == 1) then
+      		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = smallShape } )
+			else
+      		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
+      	end
+		
       	tile.isFixedRotation = true
       end
 

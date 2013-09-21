@@ -7,7 +7,6 @@ module(..., package.seeall)
 NONE 					= 0
 
 READY_TO_THROW 	= 11
-READY_TO_GRAB 		= 12
 THROWING 			= 13
 GRABBING 			= 14
 
@@ -254,6 +253,17 @@ function onTouch( event )
 		local launch = getLaunchVector()
 		physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
 		if(lastX > xStart) then character.lookLeft() else character.lookRight() end
+	else
+		print(leftTouch, rightTouch, lastX)
+		if(leftTouch and lastX > display.contentWidth*0.5) then
+			rightTouch = true
+			leftTouch = false
+      	character.move()
+		elseif(rightTouch and lastX < display.contentWidth*0.5) then
+			leftTouch = true
+			rightTouch = false
+      	character.move()
+		end
 	end
 end
 	
@@ -275,8 +285,6 @@ function characterTouch( event )
    	if(centerTouch) then
       	if(centerTapping == 0) then 
       		setState(READY_TO_THROW)
-      	elseif(centerTapping == 1) then 
-      		setState(READY_TO_GRAB)
       	end
    	end
 
@@ -290,9 +298,9 @@ function characterTouch( event )
    	end
    	
 		if(currentState == READY_TO_THROW) then
-			if(character.throwFire) then
+			if(character.throwFire and GLOBALS.savedData.fireEnable) then
    			setState(THROWING, function() character.setThrowing() end)
-			elseif(character.throwGrab) then
+			elseif(character.throwGrab and GLOBALS.savedData.grabEnable) then
    			setState(GRABBING, function() character.setGrabbing() end)
 			end
 		end 
@@ -303,12 +311,6 @@ function characterTouch( event )
 		
 		if(currentState == READY_TO_THROW) then
 			character.changeThrowStuff()
-			
-			if(character.throwFire) then
-   			character.setThrowing()
-			elseif(character.throwGrab) then
-   			character.setGrabbing()
-			end
 		end
 		
 		-----------------------------
