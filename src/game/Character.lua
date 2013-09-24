@@ -409,7 +409,7 @@ end
 
 function move()
 	
-	if(state == OUT) then return end
+	if(state == OUT or movesLocked) then return end
 	 
 	if(not hanging) then
 		if(touchController.rightTouch) then
@@ -430,6 +430,9 @@ end
 -------------------------------------
 
 function changeThrowStuff()
+
+	if(grabLocked) then return end
+	
 	throwFire = not throwFire
 	throwGrab = not throwGrab
 	

@@ -55,10 +55,17 @@ function start()
    Runtime:addEventListener( "enterFrame", refreshHUD )
 	
 	-----------------------------------------------------------------
+
+ 	if(game.chapter == 1 and (game.level == 2 or game.level == 3 )) then
+ 		if(game.level == 2) then
+ 			character.lookLeft()
+ 		end
+		Runtime:addEventListener( "enterFrame", tutorials.listenHelp )
+	end
    
    timer.performWithDelay(2000, function()
 
-    	if(game.chapter == 1 and (game.level == 1 or game.level == 2 )) then
+    	if(game.chapter == 1 and game.level == 1) then
    		Runtime:addEventListener( "enterFrame", tutorials.listenHelp )
    	end
    	
@@ -90,6 +97,7 @@ end
 function destroy()
    Runtime:removeEventListener( "enterFrame", refreshHUD )
    Runtime:removeEventListener( "enterFrame", tutorials.listenHelp )
+   tutorials.destroy()
 	utils.emptyGroup(game.hud)
 end
 

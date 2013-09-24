@@ -17,6 +17,10 @@ function listenHelp()
 end
    
 
+function destroy()
+	destroyTutoLevel2()
+end
+
 -----------------------------------------------------------------------------------------
 -- TUTO LEVEL 1
 -----------------------------------------------------------------------------------------
@@ -73,65 +77,27 @@ function refreshHUDTutoLevel2()
 
 	if(helpVisibleTouchCenter) then
 		game.hud.help1.x = character.sprite.x
-		game.hud.help1.y = character.sprite.y + 15
+		game.hud.help1.y = character.sprite.y + 10
 	end
-
-	if(character.sprite.x > 500 
-	and character.sprite.x < 660 
-	and character.sprite.y < -135 
-	and character.sprite.y > -210
-	and levelDrawer.level.triggers[2].remaining > 0) then
+	
+	if(character.sprite.x > 180 
+	and character.sprite.x < 230 
+	and character.sprite.y < 310 
+	and character.sprite.y > 250
+	and levelDrawer.level.triggers[1].remaining > 0) then
 	
 		display.remove(game.hud.helpImage)
-		game.hud.helpImage = display.newImage(game.camera, "assets/images/hud/help.throw.png", 600, -200)
-		game.hud.helpImage.alpha = 0.4
+		game.hud.helpImage = display.newImage(game.camera, "assets/images/tutorial/tuto2.1.png", 220, 130)
 	
-		if(not character.throwFire) then
-			if(not helpVisibleTouchCenter) then
-   			if(helpVisible21) then
-      			hideHelpLevel21()
-      		end
-				
-				showHelpTouchCenter()
-			end
-		elseif(not helpVisible21) then
-   		
-   		if(helpVisibleTouchCenter) then
-      		hideHelpTouchCenter()
-      	end
-      	
+		if(not helpVisible21) then
+   		character.grabLocked = true
+      	character.movesLocked = true
    		showHelpLevel21()
 		end 
-		
-	elseif(character.sprite.x > 850 
-	and character.sprite.x < 1000 
-	and character.sprite.y > -360 
-	and character.sprite.y < -280) then
-		
-		
-		display.remove(game.hud.helpImage)
-		game.hud.helpImage = display.newImage(game.camera, "assets/images/hud/help.grab.png", 930, -270)
-		game.hud.helpImage.alpha = 0.4
-	
-		if(not character.throwGrab) then
-			if(not helpVisibleTouchCenter) then
-   			if(helpVisible22) then
-      			hideHelpLevel22()
-      		end
-				
-				showHelpTouchCenter()
-			end
-		elseif(not helpVisible22) then
-   		
-   		if(helpVisibleTouchCenter) then
-      		hideHelpTouchCenter()
-      	end
-      	
-   		showHelpLevel22()
-		end 
-		
 	
 	else
+		character.grabLocked = false
+		character.movesLocked = false
 		destroyTutoLevel2()
 	end 	
 end
@@ -198,25 +164,25 @@ function showHelpLevel21()
 	game.hud.rightArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.right.png")
 	game.hud.rightArrow.alpha = 0.5
 	game.hud.rightArrow:scale(0.15,0.15)
-	game.hud.rightArrow.x = 493 - 20
-	game.hud.rightArrow.y = -250
+	game.hud.rightArrow.x = 110 - 20
+	game.hud.rightArrow.y = 130
 
 	game.hud.leftArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.left.png")
 	game.hud.leftArrow.alpha = 0.5
-	game.hud.leftArrow.x = 493 + 20
-	game.hud.leftArrow.y = -250
+	game.hud.leftArrow.x = 110 + 20
+	game.hud.leftArrow.y = 130
 	game.hud.leftArrow:scale(0.15,0.15)
 
 	game.hud.topArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.top.png")
 	game.hud.topArrow.alpha = 0.5
-	game.hud.topArrow.x = 493
-	game.hud.topArrow.y = -250 + 20
+	game.hud.topArrow.x = 110
+	game.hud.topArrow.y = 130 + 20
 	game.hud.topArrow:scale(0.15,0.15)
 
 	game.hud.bottomArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.down.png")
 	game.hud.bottomArrow.alpha = 0.5
-	game.hud.bottomArrow.x = 493
-	game.hud.bottomArrow.y = -250 - 20
+	game.hud.bottomArrow.x = 110
+	game.hud.bottomArrow.y = 130 - 20
 	game.hud.bottomArrow:scale(0.15,0.15)
 	
 	--------------
@@ -239,12 +205,42 @@ function tweenLevel21On()
 	if(not helpVisible21) then return end
 	game.hud.help1.x = character.sprite.x
 	game.hud.help1.y = character.sprite.y
-	tween21 = transition.to( game.hud.help1, { time=700, alpha=0.9, x=character.sprite.x+40 , y=character.sprite.y+55 ,onComplete=tweenLevel21Off})
+	tween21 = transition.to( game.hud.help1, { time=700, alpha=0.9, x=character.sprite.x+25 , y=character.sprite.y+90 ,onComplete=tweenLevel21Off})
 end
 
 function tweenLevel21Off()
-	tween21 = transition.to( game.hud.help1, { time=700, alpha=0, x=character.sprite.x+10 , y=character.sprite.y+70, onComplete=function() timer.performWithDelay(800, tweenLevel21On) end})
+	tween21 = transition.to( game.hud.help1, { time=700, alpha=0, onComplete=function() timer.performWithDelay(800, tweenLevel21On) end})
 end
+
+----------------------------------------------------------------
+
+--	elseif(character.sprite.x > 850 
+--	and character.sprite.x < 1000 
+--	and character.sprite.y > -360 
+--	and character.sprite.y < -280) then
+--		
+--		
+--		display.remove(game.hud.helpImage)
+--		game.hud.helpImage = display.newImage(game.camera, "assets/images/hud/help.grab.png", 930, -270)
+--		game.hud.helpImage.alpha = 0.4
+--	
+--		if(not character.throwGrab) then
+--			if(not helpVisibleTouchCenter) then
+--   			if(helpVisible22) then
+--      			hideHelpLevel22()
+--      		end
+--				
+--				showHelpTouchCenter()
+--			end
+--		elseif(not helpVisible22) then
+--   		
+--   		if(helpVisibleTouchCenter) then
+--      		hideHelpTouchCenter()
+--      	end
+--      	
+--   		showHelpLevel22()
+--		end 
+--		
 
 ----------------------------------------------------------------
 
