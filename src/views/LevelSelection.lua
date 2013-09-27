@@ -105,10 +105,12 @@ function scene:createLevelContent(level, x, y, locked)
 	widget.alpha = 0
 	game.hud:insert(widget)
 	
-	utils.onTouch(widget, function() 
-		openLevel(level) 
-	end)
-	
+	if(not locked) then
+   	utils.onTouch(widget, function() 
+   		openLevel(level) 
+   	end)
+   end
+   	
 	------------------
 	
 	local score = GLOBALS.savedData.chapters[game.chapter].levels[level].score
