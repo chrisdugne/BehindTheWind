@@ -254,7 +254,6 @@ function onTouch( event )
 		physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
 		if(lastX > xStart) then character.lookLeft() else character.lookRight() end
 	else
-		print(leftTouch, rightTouch, lastX)
 		if(leftTouch and lastX > display.contentWidth*0.5) then
 			rightTouch = true
 			leftTouch = false

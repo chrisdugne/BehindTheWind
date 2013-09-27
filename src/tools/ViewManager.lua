@@ -6,7 +6,6 @@ module(..., package.seeall)
 
 function initBack(chapter)
 
-	print("init back")
 	utils.emptyGroup(game.bg)
 	game.bg = display.newGroup()
 	
@@ -20,7 +19,6 @@ function initBack(chapter)
 		initBackChapter1()
 	end
 	
-	game.bg:toBack()
 end
 
 
@@ -108,6 +106,8 @@ function putBackgroundToBack(level)
    	game.bg.moon:toBack()
    	game.bg.back:toBack()
    end
+   
+	game.bg:toBack()
 end
 
 function putForegroundToFront(level)

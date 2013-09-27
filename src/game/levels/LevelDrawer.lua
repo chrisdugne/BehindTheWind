@@ -269,6 +269,9 @@ function designLevel()
 	------------------------------
 	
 	for k,groupDragLine in pairs(groupDragLines) do
+		-- k est parfois le num en string dans le json groupMotions (gd num de groupe a priori)
+		if(type(k) == "string") then k = tonumber(k) end
+		
 		if(groupDragLine) then
 			local enableDrag = function() addGroupDraggable(groups[k], groupDragLine) end
 			

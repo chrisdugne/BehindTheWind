@@ -34,9 +34,6 @@ end
 
 function Game:start()
 
---	musicManager.playMusic()
-	
-	print("game.start")
 	---------------------
 
    self.state 					= game.RUNNING
@@ -98,7 +95,6 @@ end
 
 function Game:spawn()
 	hud.start()
-	print("game.spawn")
    effectsManager.spawnEffect()
    
    -- laisse le temps du spawn

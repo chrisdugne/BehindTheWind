@@ -20,11 +20,11 @@ DEV				= 1
 
 -----------------------------------------------------------------------------------------
 
--- Mystery
 CHAPTERS = {
 	{title="Chapter1 : Mist", 			nbLevels = 5},
 	{title="Chapter2 : Moonshine", 	nbLevels = 12},
 	{title="Chapter3 : Magic", 		nbLevels = 1},
+--	{title="Chapter4 : Mystery", 		nbLevels = 1},
 }
 
 -----------------------------------------------------------------------------------------
@@ -181,7 +181,7 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 if(DEV) then
---
+---
 --   display.remove(memText)
 --   memText = display.newText( "0", 0, 0, FONT, 25 )
 --   memText:setTextColor( 255 )	
@@ -205,14 +205,12 @@ end
 if(EDITOR) then
    router.openLevelEditor()
 else
---	router.openPlayground()
    router.openAppHome()
 end
 
 -----------------------------------------------------------------------------------------
 -- MEMORY counters (DEV)
 --
-
 --function refreshMemText(text)
 --	if(memText.contentWidth) then
 --		memText.text = character.grabs ..  "    " .. text
