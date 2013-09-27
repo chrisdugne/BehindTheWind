@@ -226,7 +226,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
 	------------------
 	
-	local percent = math.floor(100* (0.5)*(energiesCaught/energiesToCatch) + (0.25)*(ringsCaught/ringsToCatch) + (0.25)*(piecesCaught/piecesToCatch))
+	local percent = math.floor(100* ((0.5)*(energiesCaught/energiesToCatch) + (0.25)*(ringsCaught/ringsToCatch) + (0.25)*(piecesCaught/piecesToCatch)))
 
    local percentText = display.newText( {
 		parent = widget,

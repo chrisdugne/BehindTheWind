@@ -181,8 +181,8 @@ local tileToDrag
 
 function refreshHUDTutoLevel3()
 
-	if(character.sprite.x > 120 
-	and character.sprite.x < 180 
+	if(character.sprite.x > 180 
+	and character.sprite.x < 200 
 	and character.sprite.y < 350 
 	and character.sprite.y > 290) then
 	
@@ -199,7 +199,7 @@ function refreshHUDTutoLevel3()
    		showHelpLevel3()
 			
 		else
-			if(tileToDrag.x < 230) then
+			if(tileToDrag.x < 280) then
       		character.grabLocked = false
       		character.movesLocked = false
       		destroyTutoLevel3()
@@ -237,7 +237,7 @@ function tweenLevel3On()
 	game.hud.finger.x = tileToDrag.x
 	game.hud.finger.y = tileToDrag.y
 	transition.to( game.hud.finger, { time=300, alpha=0.9 })
-	transition.to( game.hud.finger, { time=2500, x=200, transition=easing.inSine, onComplete=tweenLevel3Off })
+	transition.to( game.hud.finger, { time=2500, x=250, transition=easing.inSine, onComplete=tweenLevel3Off })
 end
 
 function tweenLevel3Off()

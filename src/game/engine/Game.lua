@@ -5,8 +5,7 @@ Game = {}
 -----------------------------------------------------------------------------------------
 
 function Game:new()  
-
-	local startZoom = 1.5*aspectRatio
+	local startZoom = 1.2*aspectRatio
 	local camera = display.newGroup()
 	camera.topDistanceCoeff = 0.28
 	camera:scale(startZoom,startZoom)

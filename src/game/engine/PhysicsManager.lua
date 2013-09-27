@@ -231,11 +231,12 @@ end
 -------------------------------------
 
 function thrownFromEnemyPreCollision( event )
-
-	if(event.other.isEnemy
-	or event.other.isSensor
-	or event.other.isAttach) then
-		event.contact.isEnabled = false
+	if(event.contact) then
+   	if(event.other.isEnemy
+   	or event.other.isSensor
+   	or event.other.isAttach) then
+   		event.contact.isEnabled = false
+   	end
 	end
 end
 

@@ -69,8 +69,9 @@ end
 -------------------------------------
 
 function Eye:miniEye(x,y)
+	local scale = 0.3 + random(1,40)*0.01	
 	self.sprite = display.newImage( game.camera, "assets/images/game/mini.eye.png" )
-   self.sprite:scale(0.5,0.5)
+   self.sprite:scale(scale,scale)
    self.sprite.alpha = 0.4
    self.sprite.x = x
    self.sprite.y = y
