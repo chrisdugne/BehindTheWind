@@ -3,7 +3,33 @@
 module(..., package.seeall)
 
 -----------------------------------------------------------------------------------------
+-- var TUTO LEVEL 1
+-----------------------------------------------------------------------------------------
 
+local helpVisible1 = false
+local tween11
+
+-----------------------------------------------------------------------------------------
+-- var TUTO LEVEL 2
+-----------------------------------------------------------------------------------------
+ 
+local helpVisibleLevel2 = false
+
+-----------------------------------------------------------------------------------------
+-- var TUTO LEVEL 3
+-----------------------------------------------------------------------------------------
+ 
+local helpVisibleLevel3 = false
+local tileToDrag
+
+-----------------------------------------------------------------------------------------
+-- var TUTO LEVEL 4
+-----------------------------------------------------------------------------------------
+ 
+local helpVisibleLevel41 = false
+local helpVisibleLevel42 = false
+
+-----------------------------------------------------------------------------------------
 
 function listenHelp()
 
@@ -34,20 +60,21 @@ function destroy()
    end
    
    if(game.level == 4) then
-   	destroyTutoLevel41()
-   	destroyTutoLevel42()
+      if(helpVisibleLevel41) then
+      	destroyTutoLevel41()
+      elseif(helpVisibleLevel42) then
+      	destroyTutoLevel42()
+      end
    end
    
+	character.movesLocked = false
+	character.grabLocked = false
 end
 
 -----------------------------------------------------------------------------------------
 -- TUTO LEVEL 1
 -----------------------------------------------------------------------------------------
  
-
-local helpVisible1 = false
-local tween11
-
 function refreshHUDTutoLevel1()
 	if(character.sprite.x < 150 and not helpVisible1) then
 		showHelpLevel1()
@@ -84,8 +111,6 @@ end
 -- TUTO LEVEL 2
 -----------------------------------------------------------------------------------------
  
-local helpVisibleLevel2 = false
-
 function refreshHUDTutoLevel2()
 
 	if(character.sprite.x > 180 
@@ -184,9 +209,6 @@ end
 -- TUTO LEVEL 3
 -----------------------------------------------------------------------------------------
  
-local helpVisibleLevel3 = false
-local tileToDrag
-
 function refreshHUDTutoLevel3()
 
 	if(character.sprite.x > 180 
@@ -259,27 +281,28 @@ end
 -- TUTO LEVEL 4
 -----------------------------------------------------------------------------------------
  
-local helpVisibleLevel41 = false
-local helpVisibleLevel42 = false
-
 function refreshHUDTutoLevel4()
 
+	print("refreshHUDTutoLevel4")
+	
 	if(character.sprite.x > 110 
 	and character.sprite.x < 260 
 	and character.sprite.y < 330 
 	and character.sprite.y > 270) then
-	
+
+			print("helpVisibleLevel41", tostring(helpVisibleLevel41))
+			print("character.throwFire", tostring(character.throwFire))
 		if(not helpVisibleLevel41 and character.throwFire) then
 			if(helpVisibleLevel42) then
 				destroyTutoLevel42()
 			end
-      	character.movesLocked = true
-   		showHelpLevel41()
+			character.movesLocked = true
+			showHelpLevel41()
 		elseif(helpVisibleLevel41 and character.throwGrab) then
-   		destroyTutoLevel41()
+			destroyTutoLevel41()
 		elseif(not helpVisibleLevel42 and character.throwGrab) then
-      	character.movesLocked = true
-   		showHelpLevel42()
+			character.movesLocked = true
+			showHelpLevel42()
 		end 
 	elseif(helpVisibleLevel42) then
 		-- grab ok
