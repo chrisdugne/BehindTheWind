@@ -176,10 +176,22 @@ end
 function eyeThrow( enemy )
 
 	local viewDirection = vector2D:new(enemy.direction.x,enemy.direction.y)
-	local strength = math.min(viewDirection:magnitude(), 300)
+
+	local strength 
+	local alpha
+
+	if(enemy.sprite.y < character.sprite.y) then
+		alpha = -math.pi*0.4
+		strength = math.min(viewDirection:magnitude(), 100)
+	else
+		alpha = -math.pi*2.26
+		strength = math.min(viewDirection:magnitude(), 300)
+	end
 	
 	local direction = vector2D:new(enemy.direction.x*(0.48 + 0.0004*strength),enemy.direction.y*(0.11 - 0.0003*strength))
-	direction:rotate(-math.pi*0.4 * abs(enemy.sprite.x - character.sprite.x)/(enemy.sprite.x - character.sprite.x))
+	
+
+	direction:rotate(alpha * abs(enemy.sprite.x - character.sprite.x)/(enemy.sprite.x - character.sprite.x) )
 	local force = getThrowVelocity(enemy.sprite.x,enemy.sprite.y, enemy.sprite.x + direction.x, enemy.sprite.y + direction.y)
 
 	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
