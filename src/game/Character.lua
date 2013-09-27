@@ -153,6 +153,7 @@ function die()
 	effectsManager.explode(explosion)
 	
 	timer.performWithDelay(2000, function()
+		print("die = spawn")
 		effectsManager.spawnEffect()
 	end)	
 
@@ -230,6 +231,7 @@ function checkCharacter(event)
 			if(now - timeLastThrow < 2000) then	time = 3000	end
 			
    		timer.performWithDelay(time, function()
+   			print("OUT = spawn")
    			effectsManager.spawnEffect()
    		end)
    	end

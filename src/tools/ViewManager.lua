@@ -4,156 +4,151 @@ module(..., package.seeall)
 
 -----------------------------------------------------------------------------------------
 
--- level 1 background
-local mist1, mist2, moon, grass, back
+function initBack(chapter)
 
------------------------------------------------------------------------------------------
-
-function initBack(level)
-
-	-- try to remove level 1 background
-
-	if(mist1 and mist1.tween) then transition.cancel(mist1.tween) end
-	if(mist2 and mist2.tween) then transition.cancel(mist2.tween) end
-	if(moon and moon.tween) then transition.cancel(moon.tween) end
-	if(grass and grass.tween) then transition.cancel(grass.tween) end
-	display.remove(mist1)
-	display.remove(mist2)
-	display.remove(moon)
-	display.remove(grass)
-
-	-- try to remove global background
-	display.remove(back)
-
-	-- level 0 : App global background
-	if(level == 0) then
+	print("init back")
+	utils.emptyGroup(game.bg)
+	game.bg = display.newGroup()
+	
+	-- App global background
+	if(chapter == 0) then
 		initBackMenu()
 	end
 
-	if(level >= 1) then
-		initBackLevel1()
+	-- chapter1
+	if(chapter >= 1) then
+		initBackChapter1()
 	end
+	
+	game.bg:toBack()
 end
 
 
-function initBackLevel1()
+function initBackChapter1()
 	
-   
-	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
-	mist1.x = display.viewableContentWidth/2  
-	mist1.y = display.viewableContentHeight/2
-	mist1.alpha = 0.37
+	game.bg.mist1 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist1.x = display.contentWidth/2  
+	game.bg.mist1.y = display.contentHeight/2
+	game.bg.mist1.alpha = 0.27
 
-	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
-	mist2.x = display.viewableContentWidth/2  - display.contentWidth
-	mist2.y = display.viewableContentHeight/2
-	mist2.alpha = 0.37 
+	game.bg.mist2 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist2.x = display.contentWidth/2  - display.contentWidth
+	game.bg.mist2.y = display.contentHeight/2
+	game.bg.mist2.alpha = 0.27 
 	
 	moveMists()
 	
-	moon = display.newImageRect( "assets/images/moon.png", 640, 640)  
-	moon.x = 200
-	moon.y = display.contentHeight-200
+	game.bg.moon = display.newImageRect( game.bg, "assets/images/moon.png", 640, 640)  
+	game.bg.moon.x = 200
+	game.bg.moon.y = display.contentHeight-200
 	
 	moveMoon()
 	
-	grass = display.newImageRect( "assets/images/grass.blur.png", 1024, 1024)  
-	grass.x = display.contentWidth/2  
-	grass.y = display.contentHeight*0.8
+	game.bg.grass = display.newImageRect( game.bg, "assets/images/grass.blur.png", 1024, 1024)  
+	game.bg.grass.x = display.contentWidth/2  
+	game.bg.grass.y = display.contentHeight*0.8
 	
 	moveGrass()
 	
-	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
-	back.x = display.viewableContentWidth/2  
-	back.y = display.viewableContentHeight/2
+	game.bg.back = display.newImageRect( game.bg, "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
+	game.bg.back.x = display.viewableContentWidth/2  
+	game.bg.back.y = display.viewableContentHeight/2
 	
 --   local eye = eye:new()
 --   eye:initBackgroundEye(300,300)
 --   eye.sprite.rotation = -20
 --   eye.sprite:toBack()
-   
+    
 	putBackgroundToBack(1)  
 end
 
 
 function initBackMenu()
 	
-	mist1 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
-	mist1.x = display.viewableContentWidth/2  
-	mist1.y = display.viewableContentHeight/2
-	mist1.alpha = 0.27
+	game.bg.mist1 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist1.x = display.contentWidth/2  
+	game.bg.mist1.y = display.contentHeight/2
+	game.bg.mist1.alpha = 0.27
 
-	mist2 = display.newImageRect( "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
-	mist2.x = display.viewableContentWidth/2  - display.contentWidth
-	mist2.y = display.viewableContentHeight/2
-	mist2.alpha = 0.27 
+	game.bg.mist2 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist2.x = display.contentWidth/2  - display.contentWidth
+	game.bg.mist2.y = display.contentHeight/2
+	game.bg.mist2.alpha = 0.27 
 	
 	moveMists()
 	
-	moon = display.newImageRect( "assets/images/moon.png", 640, 640)  
-	moon.x = display.contentWidth-300  
-	moon.y = display.contentHeight/2-260 
+	game.bg.moon = display.newImageRect( game.bg, "assets/images/moon.png", 640, 640)  
+	game.bg.moon.x = display.contentWidth-300  
+	game.bg.moon.y = display.contentHeight/2-260 
 
 	moveMoonBack()
 	
-	back = display.newImageRect( "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
-	back.x = display.viewableContentWidth/2  
-	back.y = display.viewableContentHeight/2
+	game.bg.back = display.newImageRect( game.bg, "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
+	game.bg.back.x = display.viewableContentWidth/2  
+	game.bg.back.y = display.viewableContentHeight/2
 	
 	putBackgroundToBack(0)  
 end
 
+--------------------------------------------------------------------
+
 function putBackgroundToBack(level)
 
 	if(level == 0) then
-   	mist1:toBack()
-   	mist2:toBack()
-   	moon:toBack()
-   	back:toBack()
+   	game.bg.mist1:toBack()
+   	game.bg.mist2:toBack()
+   	game.bg.moon:toBack()
+   	game.bg.back:toBack()
    end
 
-	if(level == 1) then
-   	mist1:toBack()
-   	mist2:toBack()
-   	grass:toBack()
-   	moon:toBack()
-   	back:toBack()
+	if(level >= 1) then
+   	game.bg.mist1:toBack()
+   	game.bg.mist2:toBack()
+   	game.bg.grass:toBack()
+   	game.bg.moon:toBack()
+   	game.bg.back:toBack()
    end
 end
 
 function putForegroundToFront(level)
 
-	if(level == 1) then
-   	mist1:toFront()
-   	mist2:toFront()
+	if(level >= 1) then
+   	game.bg.mist1:toFront()
+   	game.bg.mist2:toFront()
    end
 end
-	
+
+---------------------------------------------------------------------------------	
+
 function moveMists()
-	mist1.tween = transition.to( mist1, { time=30000, x=mist1.x+display.contentWidth })
-	mist2.tween = transition.to( mist2, { time=30000, x=mist2.x+display.contentWidth, onComplete = function() replaceMists() end })
+	transition.to( game.bg.mist2, { time=30000, x=game.bg.mist2.x+display.contentWidth})
+	transition.to( game.bg.mist1, { time=30000, x=game.bg.mist1.x+display.contentWidth })
 end
 
 function replaceMists()
-	mist1.x = display.viewableContentWidth/2  
-	mist2.x = display.viewableContentWidth/2 - display.contentWidth
+	game.bg.mist1.x = display.viewableContentWidth/2  
+	game.bg.mist2.x = display.viewableContentWidth/2 - display.contentWidth
 	moveMists()
 end
 
+---------------------------------------------------------------------------------	
+
 function moveMoonBack()
-	moon.tween = transition.to( moon, { time=170000, x=0, y =display.contentHeight,onComplete = function() moveMoon() end })
+	transition.to( game.bg.moon, { time=170000, x=0, y =display.contentHeight,onComplete = function() moveMoon() end })
 end
 
 function moveMoon()
-	moon.tween = transition.to( moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoonBack() end })
+	transition.to( game.bg.moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoonBack() end })
 end
 
+---------------------------------------------------------------------------------	
+
 function moveGrass()
-	grass.tween = transition.to( grass, { time=40000, rotation=7, transition=easing.inOutExpo, onComplete = function() moveGrassBack() end })
+	transition.to( game.bg.grass, { time=40000, rotation=7, transition=easing.inOutExpo, onComplete = function() moveGrassBack() end })
 end
 
 function moveGrassBack()
-	grass.tween = transition.to( grass, { time=40000, rotation=-7, transition=easing.inOutExpo, onComplete = function() moveGrass() end })
+	transition.to( game.bg.grass, { time=40000, rotation=-7, transition=easing.inOutExpo, onComplete = function() moveGrass() end })
 end
 
 ------------------------------------------------------------------------------------------

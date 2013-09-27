@@ -79,17 +79,21 @@ function start()
 				if(game.state == game.STOPPED) then return end
    			game.state=game.STOPPED
    			hud.destroy()
-   			transition.to(game.camera, {time = 1500, alpha = 0, onComplete = function()
-      			game:destroyBeforeExit()
-      			timer.performWithDelay(1000, function()
-         			router.openLevelSelection()
-      			end)
-   			end})
-   			
+   			transition.to(game.camera, {time = 1500, alpha = 0 })
+   			timer.performWithDelay(1600, backToSelection)
    		end
    	)
    end)
 
+end
+
+-----------------------------------------------------------------------------------------
+
+function backToSelection()
+	game:destroyBeforeExit()
+	timer.performWithDelay(1000, function()
+		router.openLevelSelection()
+	end)
 end
     
 -----------------------------------------------------------------------------------------

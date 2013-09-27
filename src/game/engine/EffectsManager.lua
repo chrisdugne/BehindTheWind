@@ -245,7 +245,6 @@ end
 -----------------------------------------------------------------------------
 
 function spawnEffect()
-	
 	-- a rope has been attached during the fall : cancel the respawn
 	if(character.ropes and #character.ropes > 0) then return end
 		
@@ -255,7 +254,7 @@ function spawnEffect()
 		{
 			title="light",
 			preset="wisps",
-			color={{65,65,262},{55,55,220}},
+			color={{65,65,262},{55,55,220},{55,55,220}},
 			x = x,
 			y = y,
 			perEmit=5,

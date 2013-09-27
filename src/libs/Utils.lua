@@ -110,6 +110,7 @@ function emptyGroup( group )
 	if(group ~= nil) then
 		for i=group.numChildren,1,-1 do
 			local child = group[i]
+			transition.cancel(child)
 			child:removeSelf()
 			child = nil
 		end
@@ -281,8 +282,6 @@ function saveTable(t, filename, directory)
 	if(not directory) then
 		directory = system.DocumentsDirectory
 	end
-
-	print(directory)
 
 	local path = system.pathForFile( filename, directory)
 	local file = io.open(path, "w")

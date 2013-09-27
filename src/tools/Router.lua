@@ -24,6 +24,7 @@ end
 ---------------------------------------------
 
 function openPlayground()
+	print("--> openPlayground")
 	resetScreen()
 	storyboard.gotoScene( "src.views.Playground" )
 end

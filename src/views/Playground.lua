@@ -21,25 +21,19 @@ end
 
 -----------------------------------------------------------------------------------------
 
--- Called when the scene's view does not exist:
-function scene:refreshScene()
-	
-	---------------------
-	-- init playground
-
-	viewManager.initBack(game.level)
-
-	------------------------------
-	
-	game:start()
-	
-end
-
-------------------------------------------
-
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-	self:refreshScene();
+
+	-- pas compris : enterScene est appele 2 fois quand router.openPlayground
+	-- donc pour le game.start je ne le start pas 2 fois -> (pb avec effectsManager sinon)
+	-- par contre, pour init le BG, je ne filtre pas, sinon j'ai des pbs de transitions ??
+	-- surement un pb corona quils contournent en enterScene 2 fois...
+	viewManager.initBack(game.chapter)
+
+	if(not game.state or game.state == game.STOPPED) then
+   	game:start()
+   end
+	
 end
 
 
