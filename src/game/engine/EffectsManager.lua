@@ -601,8 +601,8 @@ function touchPiece( event )
 
    			piece.caught = true
    			game.hud:insert(piece)	
-   			piece.x = piece.x*game.zoom + game.camera.x
-   			piece.y = piece.y*game.zoom + game.camera.y
+   			piece.x = character.screenX() + game.camera.x
+   			piece.y = character.screenY() + game.camera.y
    			
    			---------------------------------------------------------
    			

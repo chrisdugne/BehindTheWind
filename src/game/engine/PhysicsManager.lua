@@ -35,61 +35,63 @@ function stop( )
 end
 
 -------------------------------------
-
-function dragBody( event, params )
-	local body = event.target
-	local phase = event.phase
-	local stage = display.getCurrentStage()
-	
-	local params = {
-		maxForce = 600, 
-		dampingRatio = 0.6, 
-	}
-		
-	if "began" == phase then
-		stage:setFocus( body, event.id )
-		body.isFocus = true
-		body.tempJoint = physics.newJoint( "touch", body, event.x - game.camera.x, event.y-game.camera.y )
-
-		-- Apply optional joint parameters
-		if params then
-			local maxForce, frequency, dampingRatio
-
-			if params.maxForce then
-				-- Internal default is (1000 * mass), so set this fairly high if setting manually
-				body.tempJoint.maxForce = params.maxForce
-			end
-			
-			if params.frequency then
-				-- This is the response speed of the elastic joint: higher numbers = less lag/bounce
-				body.tempJoint.frequency = params.frequency
-			end
-			
-			if params.dampingRatio then
-				-- Possible values: 0 (no damping) to 1.0 (critical damping)
-				body.tempJoint.dampingRatio = params.dampingRatio
-			end
-		end
-	
-	elseif body.isFocus then
-		if "moved" == phase then
-		
-			-- Update the joint to track the touch
-			body.tempJoint:setTarget( event.x - game.camera.x, event.y - game.camera.y )
-
-		elseif "ended" == phase or "cancelled" == phase then
-			stage:setFocus( body, nil )
-			body.isFocus = false
-			
-			-- Remove the joint when the touch ends			
-			body.tempJoint:removeSelf()
-			
-		end
-	end
-
-	-- Stop further propagation of touch event
-	return true
-end
+--		CORONA DRAG_BODY : not used
+-------------------------------------
+-- 
+--function dragBody( event, params )
+--	local body = event.target
+--	local phase = event.phase
+--	local stage = display.getCurrentStage()
+--	
+--	local params = {
+--		maxForce = 600, 
+--		dampingRatio = 0.6, 
+--	}
+--		
+--	if "began" == phase then
+--		stage:setFocus( body, event.id )
+--		body.isFocus = true
+--		body.tempJoint = physics.newJoint( "touch", body, event.x - game.camera.x, event.y-game.camera.y )
+--
+--		-- Apply optional joint parameters
+--		if params then
+--			local maxForce, frequency, dampingRatio
+--
+--			if params.maxForce then
+--				-- Internal default is (1000 * mass), so set this fairly high if setting manually
+--				body.tempJoint.maxForce = params.maxForce
+--			end
+--			
+--			if params.frequency then
+--				-- This is the response speed of the elastic joint: higher numbers = less lag/bounce
+--				body.tempJoint.frequency = params.frequency
+--			end
+--			
+--			if params.dampingRatio then
+--				-- Possible values: 0 (no damping) to 1.0 (critical damping)
+--				body.tempJoint.dampingRatio = params.dampingRatio
+--			end
+--		end
+--	
+--	elseif body.isFocus then
+--		if "moved" == phase then
+--		
+--			-- Update the joint to track the touch
+--			body.tempJoint:setTarget( event.x - game.camera.x, event.y - game.camera.y )
+--
+--		elseif "ended" == phase or "cancelled" == phase then
+--			stage:setFocus( body, nil )
+--			body.isFocus = false
+--			
+--			-- Remove the joint when the touch ends			
+--			body.tempJoint:removeSelf()
+--			
+--		end
+--	end
+--
+--	-- Stop further propagation of touch event
+--	return true
+--end
 
 -----------------------------------------------------------------------------------------------
 
