@@ -185,6 +185,8 @@ function checkCharacter(event)
 
 	local vx, vy = sprite:getLinearVelocity()
 
+--	print(sprite.x,sprite.y)
+
 --	local s = ""
 --	if(hanging) then s = s .. "hanging, " end
 --	if(jumping) then s = s .. "jumping, " end

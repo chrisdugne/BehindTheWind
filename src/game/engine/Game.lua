@@ -136,7 +136,7 @@ function Game:stop()
 		GLOBALS.savedData.fireEnable = true
 	end
 
-	if(game.level == 2 and game.chapter == 1) then
+	if(game.level == 3 and game.chapter == 1) then
 		GLOBALS.savedData.grabEnable = true
 	end
 

@@ -273,6 +273,17 @@ function designLevel()
 		if(type(k) == "string") then k = tonumber(k) end
 		
 		if(groupDragLine) then
+			
+			-- attention @leveldesigner ! pour choisir celle du milieu, il faut que le nbre de tiles dans un groupe draggable soit impair
+			local tileWithIcon = groups[k][(#groups[k] + 1)/2]
+      	if(not tileWithIcon.icons) then tileWithIcon.icons = {} end
+      	
+      	tileWithIcon.icons["draggable"] = display.newImage(game.camera, "assets/images/hud/touch.png")
+      	tileWithIcon.icons["draggable"]:scale(0.2,0.2)
+      	tileWithIcon.icons["draggable"].x = tileWithIcon.x
+      	tileWithIcon.icons["draggable"].y = tileWithIcon.y
+      	tileWithIcon.icons["draggable"].alpha = 0.4
+      	
 			local enableDrag = function() addGroupDraggable(groups[k], groupDragLine) end
 			
 			if(groupDragLine.trigger) then
@@ -284,7 +295,8 @@ function designLevel()
 	end
 	
 	-----------------------------
-	
+	-- to access groups elsewhere
+	level.groups = groups
 end
 
 -------------------------------------
@@ -389,6 +401,7 @@ function addGroupDraggable(group, dragLine)
 			touchController.dragGroup(group, motionLimit, event)
 		end)
 	end
+	
 end
 
 ---------------------------------------------------------------------

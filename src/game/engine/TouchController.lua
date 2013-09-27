@@ -425,6 +425,14 @@ function drag( tile, event, motionLimit )
 		end
 		
 		tile.x, tile.y = x, y    -- move object based on calculations above
+		
+		if(tile.icons) then
+   		for k,icon in pairs(tile.icons) do
+   			if(icon) then
+         		icon.x, icon.y = x, y
+      		end
+   		end
+		end
 
 	elseif event.phase == "ended" or event.phase == "cancelled" then
 		tile.moving = false
