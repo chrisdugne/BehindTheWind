@@ -234,6 +234,8 @@ function thrownFromEnemyPreCollision( event )
 	if(event.contact) then
    	if(event.other.isEnemy
    	or event.other.isSensor
+   	or event.other.isEnemy
+   	or event.other.trigger
    	or event.other.isAttach) then
    		event.contact.isEnabled = false
    	end
@@ -243,6 +245,8 @@ end
 function enemyRockCollision( event )
 	if(not event.other.isEnemy 
 	and not event.other.isSensor
+	and not event.other.isEnemy
+	and not event.other.trigger
 	and not event.other.isGrab) then
 		deleteRock(event.target)
    end
