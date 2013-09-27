@@ -284,6 +284,22 @@ function designLevel()
       	tileWithIcon.icons["draggable"].y = tileWithIcon.y
       	tileWithIcon.icons["draggable"].alpha = 0.4
       	
+      	if(groupDragLine.x2 ~= groupDragLine.x1) then
+         	tileWithIcon.icons["leftright"] = display.newImage(game.camera, "assets/images/hud/leftright.png")
+         	tileWithIcon.icons["leftright"]:scale(0.4,0.4)
+         	tileWithIcon.icons["leftright"].x = tileWithIcon.x
+         	tileWithIcon.icons["leftright"].y = tileWithIcon.y
+         	tileWithIcon.icons["leftright"].alpha = 0.4
+      	end
+
+      	if(groupDragLine.y2 ~= groupDragLine.y1) then
+         	tileWithIcon.icons["updown"] = display.newImage(game.camera, "assets/images/hud/updown.png")
+         	tileWithIcon.icons["updown"]:scale(0.36,0.36)
+         	tileWithIcon.icons["updown"].x = tileWithIcon.x
+         	tileWithIcon.icons["updown"].y = tileWithIcon.y
+         	tileWithIcon.icons["updown"].alpha = 0.4
+      	end
+      	
 			local enableDrag = function() addGroupDraggable(groups[k], groupDragLine) end
 			
 			if(groupDragLine.trigger) then

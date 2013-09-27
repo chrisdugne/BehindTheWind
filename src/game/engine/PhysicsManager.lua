@@ -144,6 +144,35 @@ end
 
 -----------------------------------------------------------------------------------------------
 
+function grab( x1,y1, x2,y2 )
+	
+	utils.emptyGroup(trajectory)
+	local force = getThrowVelocity(x1,y1,x2,y2)
+	
+	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
+	rock.x = character.sprite.x
+	rock.y = character.sprite.y
+	rock:scale(0.1,0.1)
+	physics.addBody( rock, { density=1.0, friction=1, bounce=0.12, radius=3.5 } )
+	rock:setLinearVelocity(force.vx, force.vy)
+	
+	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
+	rock:addEventListener( "collision", grabCollision )
+	rock.isGrab = true
+	
+	effectsManager.simpleBeam(rock)
+
+	character.rock = rock
+	
+	timer.performWithDelay(3000, function()
+		deleteRock(rock)
+	end)
+
+	hud.showFollowRockButton()
+end
+
+-----------------------------------------------------------------------------------------------
+
 function eyeThrow( enemy )
 
 	local viewDirection = vector2D:new(enemy.direction.x,enemy.direction.y)
@@ -199,35 +228,6 @@ function enemyThrow( enemy )
 	
 end
 
------------------------------------------------------------------------------------------------
-
-function grab( x1,y1, x2,y2 )
-	
-	utils.emptyGroup(trajectory)
-	local force = getThrowVelocity(x1,y1,x2,y2)
-	
-	local rock = display.newImage(game.camera, "assets/images/game/rock.png");
-	rock.x = character.sprite.x
-	rock.y = character.sprite.y
-	rock:scale(0.1,0.1)
-	physics.addBody( rock, { density=1.0, friction=1, bounce=0.12, radius=3.5 } )
-	rock:setLinearVelocity(force.vx, force.vy)
-	
-	rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
-	rock:addEventListener( "collision", grabCollision )
-	rock.isGrab = true
-	
-	effectsManager.simpleBeam(rock)
-
-	character.rock = rock
-	
-	timer.performWithDelay(3000, function()
-		deleteRock(rock)
-	end)
-
-	hud.showFollowRockButton()
-end
-
 -------------------------------------
 
 function thrownFromEnemyPreCollision( event )
@@ -278,7 +278,8 @@ function grabCollision( event )
 	and not event.other.isBadRock
 	and not event.other.isEnemy
 	and not event.other.trigger
-	and not event.other.isAttach) then
+	and not event.other.isAttach
+	and event.target == character.rock) then
 
 		if ( event.phase == "ended" ) then
 			local ground = event.other
@@ -319,7 +320,7 @@ function deleteRock(rock)
 	
 	if(destroyedRightNow) then
    	if(rock.isGrab) then
-   		character.grabs = character.grabs - 1
+   		character.grabs = character.grabs - 1 -- deprecated
    	else
       	effectsManager.explode(explosion)
       end

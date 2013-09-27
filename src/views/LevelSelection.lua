@@ -238,9 +238,23 @@ end
 
 function openLevel( level )
 	if(game.level == 0) then
-   	game.level = level
-   	router.openPlayground()
-   end
+		game.level = level
+
+
+--		local top = display.newRect(game.hud, 0, -display.contentHeight/2, display.contentWidth, display.contentHeight/2)
+--		top.alpha = 0
+--		top:setFillColor(0)
+--
+--		local bottom = display.newRect(game.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/2)
+--		bottom.alpha = 0
+--		bottom:setFillColor(0)
+--
+--		transition.to( top, 		{ time=600, alpha=1, y = top.contentHeight/2 })
+--		transition.to( bottom, 	{ time=600, alpha=1, y = display.contentHeight - top.contentHeight/2 })  
+
+		transition.to( game.hud, { time=600, alpha=0 })  
+		timer.performWithDelay(620, router.openPlayground)
+	end
 end
 
 ------------------------------------------

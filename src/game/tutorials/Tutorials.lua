@@ -9,14 +9,16 @@ function listenHelp()
 
    if(game.level == 1) then
       refreshHUDTutoLevel1()
-   end
 
-   if(game.level == 2) then
+   elseif(game.level == 2) then
       refreshHUDTutoLevel2()
-   end
 
-   if(game.level == 3) then
+   elseif(game.level == 3) then
       refreshHUDTutoLevel3()
+
+  	elseif(game.level == 4) then
+      refreshHUDTutoLevel4()
+   
    end
 end
    
@@ -29,6 +31,11 @@ function destroy()
 
    if(game.level == 3) then
    	destroyTutoLevel3()
+   end
+   
+   if(game.level == 4) then
+   	destroyTutoLevel41()
+   	destroyTutoLevel42()
    end
    
 end
@@ -90,10 +97,11 @@ function refreshHUDTutoLevel2()
 		if(not helpVisibleLevel2) then
    		character.grabLocked = true
       	character.movesLocked = true
+ 			character.lookLeft()
    		showHelpLevel2()
 		end 
-	
-	else
+
+	elseif(helpVisibleLevel2) then
 		character.grabLocked = false
 		character.movesLocked = false
 		destroyTutoLevel2()
@@ -245,6 +253,113 @@ function tweenLevel3Off()
 end
 
 ----------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------
+-- TUTO LEVEL 4
+-----------------------------------------------------------------------------------------
+ 
+local helpVisibleLevel41 = false
+local helpVisibleLevel42 = false
+
+function refreshHUDTutoLevel4()
+
+	if(character.sprite.x > 110 
+	and character.sprite.x < 260 
+	and character.sprite.y < 330 
+	and character.sprite.y > 270) then
+	
+		if(not helpVisibleLevel41 and character.throwFire) then
+			if(helpVisibleLevel42) then
+				destroyTutoLevel42()
+			end
+      	character.movesLocked = true
+   		showHelpLevel41()
+		elseif(helpVisibleLevel41 and character.throwGrab) then
+   		destroyTutoLevel41()
+		elseif(not helpVisibleLevel42 and character.throwGrab) then
+      	character.movesLocked = true
+   		showHelpLevel42()
+		end 
+	elseif(helpVisibleLevel42) then
+		-- grab ok
+		character.movesLocked = false
+		destroyTutoLevel42()
+	end 	
+end
+
+function destroyTutoLevel41()
+	helpVisibleLevel41 = false
+	transition.cancel(game.hud.finger)
+	display.remove(game.hud.finger)
+	display.remove(game.hud.helpImage41)
+end
+
+function destroyTutoLevel42()
+	helpVisibleLevel42 = false
+	transition.cancel(game.hud.finger)
+	display.remove(game.hud.finger)
+	display.remove(game.hud.helpImage42)
+end
+
+
+-------------------------------
+
+function showHelpLevel41()
+	helpVisibleLevel41 = true
+	
+	game.hud.helpImage41 = display.newImage(game.camera, "assets/images/tutorial/tuto4.1.png", character.sprite.x - 300, character.sprite.y - 140)
+		
+	game.hud.finger = display.newImage(game.camera, "assets/images/hud/touch.png")
+	game.hud.finger:scale(0.3,0.3)
+	game.hud.finger.alpha = 0.5
+	game.hud.finger.x = character.sprite.x
+	game.hud.finger.y = character.sprite.y + 10
+	
+	--------------
+	
+	tweenLevel41On()
+end
+
+function tweenLevel41On()
+	if(not helpVisibleLevel41) then return end
+	transition.to( game.hud.finger, { time=900, alpha=0.9, onComplete=tweenLevel41Off })
+end
+
+function tweenLevel41Off()
+	transition.to( game.hud.finger, { time=900, alpha=0.2, onComplete=tweenLevel41On})
+end
+
+-------------------------------
+
+function showHelpLevel42()
+	helpVisibleLevel42 = true
+	
+	game.hud.helpImage42 = display.newImage(game.camera, "assets/images/tutorial/tuto4.2.png", character.sprite.x - 280, character.sprite.y - 280)
+		
+	game.hud.finger = display.newImage(game.camera, "assets/images/hud/touch.png")
+	game.hud.finger:scale(0.3,0.3)
+	game.hud.finger.alpha = 0.9
+	
+	--------------
+	
+	tweenLevel42On()
+end
+
+function tweenLevel42On()
+	if(not helpVisibleLevel42) then return end
+	game.hud.finger.x = character.sprite.x
+	game.hud.finger.y = character.sprite.y
+	transition.to( game.hud.finger, { time=700, alpha=0.9, x=character.sprite.x-25 , y=character.sprite.y+90 ,onComplete=tweenLevel42Off})
+end
+
+function tweenLevel42Off()
+	transition.to( game.hud.finger, { time=700, alpha=0, onComplete=function() timer.performWithDelay(800, tweenLevel42On) end})
+end
+
+----------------------------------------------------------------
+
+
 
 ----------------------------------------------------------------
 --

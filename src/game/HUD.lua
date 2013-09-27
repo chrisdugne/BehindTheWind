@@ -56,10 +56,7 @@ function start()
 	
 	-----------------------------------------------------------------
 
- 	if(game.chapter == 1 and (game.level == 2 or game.level == 3 )) then
- 		if(game.level == 2) then
- 			character.lookLeft()
- 		end
+ 	if(game.chapter == 1 and (game.level == 2 or game.level == 3 or game.level == 4 )) then
 		Runtime:addEventListener( "enterFrame", tutorials.listenHelp )
 	end
    

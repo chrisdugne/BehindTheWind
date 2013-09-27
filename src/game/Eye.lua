@@ -116,7 +116,7 @@ function Eye:refresh()
 
 	if(self.throws) then
    	local now = system.getTimer()
-      if(now - self.timeLastThrow > random(3000,6000)) then
+      if(now - self.timeLastThrow > random(6000,10000)) then
    		self.timeLastThrow = now
       	self:throw()
       end

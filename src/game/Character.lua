@@ -37,7 +37,7 @@ hanging 	= false
 throwFire = true 
 throwGrab = false
 
-grabs 	 = 0 -- nb de grappins lancés
+grabs 	 = 0 -- nb de grappins lancés -- deprecated
 
 -------------------------------------
 
@@ -507,7 +507,7 @@ end
 -------------------------------------
 
 function grab( x1,y1, x2,y2 )
-	character.grabs = character.grabs + 1
+	character.grabs = character.grabs + 1 -- deprecated
 	game.energiesSpent = game.energiesSpent + 1
 	timeLastThrow = system.getTimer()
 	physicsManager.grab(x1,y1, x2,y2)

@@ -5,6 +5,7 @@
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
+local top, bottom
 
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
@@ -28,12 +29,20 @@ function scene:enterScene( event )
 	-- donc pour le game.start je ne le start pas 2 fois -> (pb avec effectsManager sinon)
 	-- par contre, pour init le BG, je ne filtre pas, sinon j'ai des pbs de transitions ??
 	-- surement un pb corona quils contournent en enterScene 2 fois...
+
+	transition.to( game.hud, { time=600, alpha=1 })  
 	viewManager.initBack(game.chapter)
 
 	if(not game.state or game.state == game.STOPPED) then
    	game:start()
    end
-	
+   
+--   
+--	timer.performWithDelay(300, function()
+--   	transition.to( top, 		{ time=1400, alpha=0.3, y = -display.contentHeight/2 })
+--   	transition.to( bottom, 	{ time=1400, alpha=0.3, y = display.contentHeight *1.5  })  
+--	end)
+--	
 end
 
 

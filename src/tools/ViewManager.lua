@@ -144,11 +144,11 @@ end
 ---------------------------------------------------------------------------------	
 
 function moveGrass()
-	transition.to( game.bg.grass, { time=40000, rotation=7, transition=easing.inOutExpo, onComplete = function() moveGrassBack() end })
+	transition.to( game.bg.grass, { time=9000, rotation=4, transition=easing.inOutSine, onComplete = function() moveGrassBack() end })
 end
 
 function moveGrassBack()
-	transition.to( game.bg.grass, { time=40000, rotation=-7, transition=easing.inOutExpo, onComplete = function() moveGrass() end })
+	transition.to( game.bg.grass, { time=9000, rotation=-4, transition=easing.inOutSine, onComplete = function() moveGrass() end })
 end
 
 ------------------------------------------------------------------------------------------

@@ -274,7 +274,8 @@ function characterTouch( event )
 	
 	if event.phase == "began" then
 
-		if(character.grabs + #character.ropes > 1) then return true end -- on attend qu'il n'y ait qu'une seule rope pour permettre d'en lancer une 2e ou alors pas plus de 2 grabs d'un coup
+-- deprecated : on ne considere que la collision du dernier grapin lance
+--		if(character.grabs + #character.ropes > 1) then return true end -- on attend qu'il n'y ait qu'une seule rope pour permettre d'en lancer une 2e ou alors pas plus de 2 grabs d'un coup
 				
 		xStart, yStart = event.xStart, event.yStart
 		
