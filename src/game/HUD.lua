@@ -39,38 +39,6 @@ local characterIconsSheet = graphics.newImageSheet( "assets/images/hud/Character
 
 -----------------------------------------------------------------------------------------
 
-function placeFireSmallButton(event)
-	local direction = vector2D:new(hud.FIRE_BUTTON_X - event.x, hud.FIRE_BUTTON_Y - event.y )
-	if(direction:magnitude() > game.hud.throwSwipeMax) then
-		direction:normalize()
-		direction:mult(game.hud.throwSwipeMax)
-	end
-
-	game.hud.fireSmallButton.x = hud.FIRE_BUTTON_X - direction.x
-	game.hud.fireSmallButton.y = hud.FIRE_BUTTON_Y - direction.y
-	
-	physicsManager.refreshTrajectory( game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, FIRE_BUTTON_X - game.camera.x, FIRE_BUTTON_Y - game.camera.y)
-	if(game.hud.fireSmallButton.x > FIRE_BUTTON_X) then character.lookLeft() else character.lookRight() end
-end
-
-function releaseAllButtons()
-	game.hud.leftButton.alpha = 0.6
-	game.hud.rightButton.alpha = 0.6
-	game.hud.fireBigButton.alpha = 0.6
-	game.hud.fireSmallButton.alpha = 0.6
-	game.hud.grabBigButton.alpha = 0.6
-	game.hud.grabSmallButton.alpha = 0.6
-
-	character.mayThrow()
-
-	game.hud.fireSmallButton.x = FIRE_BUTTON_X
-	game.hud.fireSmallButton.y = FIRE_BUTTON_Y
-
-	game.hud.grabSmallButton.x = GRAB_BUTTON_X
-	game.hud.grabSmallButton.y = GRAB_BUTTON_Y
-		
-end
-
 function start()
 	
 	game.hud.energy = display.newImage( game.hud, "assets/images/hud/energy.png")
@@ -153,7 +121,7 @@ function start()
 			
 			if(GLOBALS.savedData.fireEnable) then
 				character.throwFire = true
-   			touchController.setState(THROWING, function() character.setThrowing() end)
+   			character.setThrowing()
    		end 
    		
 		end 
@@ -178,6 +146,33 @@ function start()
 	game.hud.grabBigButton.y = display.contentHeight*0.77
 	game.hud.grabBigButton.alpha = 0.6
 	game.hud.grabBigButton:scale(0.7,0.7)
+	
+	
+	game.hud.grabBigButton:addEventListener( "touch", function(event)
+		if(event.phase == "began") then
+			game.hud.grabBigButton.alpha = 1
+			
+			if(GLOBALS.savedData.grabEnable) then
+				character.throwGrab = true
+   			character.setGrabbing()
+   		end 
+   		
+		end 
+		
+		if(event.phase == "began" or event.phase == "moved") then
+			placeGrabSmallButton(event)
+			
+		elseif(event.phase == "ended") then
+      	character.mayThrow()	
+			character.throwGrab = false
+			game.hud.grabBigButton.alpha = 0.6
+			game.hud.grabSmallButton.x = GRAB_BUTTON_X
+			game.hud.grabSmallButton.y = GRAB_BUTTON_Y
+
+		end
+
+		return true 
+	end)
 
    game.hud.fireSmallButton = display.newImage( game.hud, "assets/images/hud/red.center.png" )
 	game.hud.fireSmallButton.x = FIRE_BUTTON_X
@@ -227,6 +222,55 @@ function start()
    	)
    end)
 
+end
+
+-----------------------------------------------------------------------------------------
+
+function placeFireSmallButton(event)
+	local direction = vector2D:new(hud.FIRE_BUTTON_X - event.x, hud.FIRE_BUTTON_Y - event.y )
+	if(direction:magnitude() > game.hud.throwSwipeMax) then
+		direction:normalize()
+		direction:mult(game.hud.throwSwipeMax)
+	end
+
+	game.hud.fireSmallButton.x = hud.FIRE_BUTTON_X - direction.x
+	game.hud.fireSmallButton.y = hud.FIRE_BUTTON_Y - direction.y
+
+	physicsManager.refreshTrajectory( game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, FIRE_BUTTON_X - game.camera.x, FIRE_BUTTON_Y - game.camera.y)
+	if(game.hud.fireSmallButton.x > FIRE_BUTTON_X) then character.lookLeft() else character.lookRight() end
+end
+
+
+function placeGrabSmallButton(event)
+	local direction = vector2D:new(hud.GRAB_BUTTON_X - event.x, hud.GRAB_BUTTON_Y - event.y )
+	if(direction:magnitude() > game.hud.throwSwipeMax) then
+		direction:normalize()
+		direction:mult(game.hud.throwSwipeMax)
+	end
+
+	game.hud.grabSmallButton.x = hud.GRAB_BUTTON_X - direction.x
+	game.hud.grabSmallButton.y = hud.GRAB_BUTTON_Y - direction.y
+
+	physicsManager.refreshTrajectory( game.hud.grabSmallButton.x - game.camera.x, game.hud.grabSmallButton.y - game.camera.y, GRAB_BUTTON_X - game.camera.x, GRAB_BUTTON_Y - game.camera.y)
+	if(game.hud.fireSmallButton.x > GRAB_BUTTON_X) then character.lookLeft() else character.lookRight() end
+end
+
+function releaseAllButtons()
+	game.hud.leftButton.alpha = 0.6
+	game.hud.rightButton.alpha = 0.6
+	game.hud.fireBigButton.alpha = 0.6
+	game.hud.fireSmallButton.alpha = 0.6
+	game.hud.grabBigButton.alpha = 0.6
+	game.hud.grabSmallButton.alpha = 0.6
+
+	character.mayThrow()
+
+	game.hud.fireSmallButton.x = FIRE_BUTTON_X
+	game.hud.fireSmallButton.y = FIRE_BUTTON_Y
+
+	game.hud.grabSmallButton.x = GRAB_BUTTON_X
+	game.hud.grabSmallButton.y = GRAB_BUTTON_Y
+		
 end
 
 -----------------------------------------------------------------------------------------

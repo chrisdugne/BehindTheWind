@@ -9,7 +9,7 @@ physics.start()
 
 -------------------------------------
 
-local THROW_FORCE 	= 3.9
+local THROW_FORCE 	= 7.9
 local GRAVITY 			= 20
 
 -------------------------------------

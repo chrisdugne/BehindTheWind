@@ -164,7 +164,7 @@ function mayThrow()
 	if(throwFire) then
 		throw(  game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, hud.FIRE_BUTTON_X - game.camera.x, hud.FIRE_BUTTON_Y - game.camera.y)
 	elseif(throwGrab) then
-		grab(  game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, hud.FIRE_BUTTON_X - game.camera.x, hud.FIRE_BUTTON_Y - game.camera.y)
+		grab(  game.hud.grabSmallButton.x - game.camera.x, game.hud.grabSmallButton.y - game.camera.y, hud.GRAB_BUTTON_X - game.camera.x, hud.GRAB_BUTTON_Y - game.camera.y)
 	end
 end
 
