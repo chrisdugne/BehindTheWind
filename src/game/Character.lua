@@ -91,7 +91,7 @@ function init()
    ---------------------------
    
    sprite.isFixedRotation = true
-	sprite:addEventListener( "touch", touchController.characterTouch )
+--	sprite:addEventListener( "touch", touchController.characterTouch )
 	sprite:addEventListener( "collision", collide )
 	sprite:addEventListener( "preCollision", preCollide )
 
@@ -160,12 +160,23 @@ end
 
 -------------------------------------
 
+function mayThrow()
+	if(throwFire) then
+		throw(  game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, hud.FIRE_BUTTON_X - game.camera.x, hud.FIRE_BUTTON_Y - game.camera.y)
+	elseif(throwGrab) then
+		grab(  game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, hud.FIRE_BUTTON_X - game.camera.x, hud.FIRE_BUTTON_Y - game.camera.y)
+	end
+end
+
+-------------------------------------
+
 function spawn()
 
 	resetState()
 	stop()
    setThrowing()
-   throwFire = true
+   
+   throwFire = false
 	throwGrab = false
 	
 	-- replace the character on the spawn point
@@ -430,20 +441,20 @@ function move()
 end
 
 -------------------------------------
-
-function changeThrowStuff()
-
-	if(grabLocked) then return end
-	
-	throwFire = not throwFire
-	throwGrab = not throwGrab
-	
-	if(throwFire) then
-		setThrowing()
-	else	
-		setGrabbing()
-	end
-end
+--
+--function changeThrowStuff()
+--
+--	if(grabLocked) then return end
+--	
+--	throwFire = not throwFire
+--	throwGrab = not throwGrab
+--	
+--	if(throwFire) then
+--		setThrowing()
+--	else	
+--		setGrabbing()
+--	end
+--end
 
 -------------------------------------
 

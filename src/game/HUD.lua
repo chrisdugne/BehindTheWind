@@ -23,6 +23,12 @@ SIMPLE_PIECE_ICON_TOP 	= HUD_TOP
 SIMPLE_PIECE_TEXT_LEFT 	= display.contentWidth*0.23
 SIMPLE_PIECE_TEXT_TOP 	= HUD_TOP
 
+FIRE_BUTTON_X 				= display.contentWidth*0.81
+FIRE_BUTTON_Y 				= display.contentHeight*0.88
+
+GRAB_BUTTON_X 				= display.contentWidth*0.93
+GRAB_BUTTON_Y 				= display.contentHeight*0.77
+
 THROW_ICON_LEFT 	= display.contentWidth*0.04
 THROW_ICON_TOP 	= HUD_TOP
 
@@ -32,6 +38,38 @@ local characterIconsConfig = require("src.game.graphics.CharacterThrowIcons")
 local characterIconsSheet = graphics.newImageSheet( "assets/images/hud/CharacterThrowIcons.png", characterIconsConfig.sheet )
 
 -----------------------------------------------------------------------------------------
+
+function placeFireSmallButton(event)
+	local direction = vector2D:new(hud.FIRE_BUTTON_X - event.x, hud.FIRE_BUTTON_Y - event.y )
+	if(direction:magnitude() > game.hud.throwSwipeMax) then
+		direction:normalize()
+		direction:mult(game.hud.throwSwipeMax)
+	end
+
+	game.hud.fireSmallButton.x = hud.FIRE_BUTTON_X - direction.x
+	game.hud.fireSmallButton.y = hud.FIRE_BUTTON_Y - direction.y
+	
+	physicsManager.refreshTrajectory( game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, FIRE_BUTTON_X - game.camera.x, FIRE_BUTTON_Y - game.camera.y)
+	if(game.hud.fireSmallButton.x > FIRE_BUTTON_X) then character.lookLeft() else character.lookRight() end
+end
+
+function releaseAllButtons()
+	game.hud.leftButton.alpha = 0.6
+	game.hud.rightButton.alpha = 0.6
+	game.hud.fireBigButton.alpha = 0.6
+	game.hud.fireSmallButton.alpha = 0.6
+	game.hud.grabBigButton.alpha = 0.6
+	game.hud.grabSmallButton.alpha = 0.6
+
+	character.mayThrow()
+
+	game.hud.fireSmallButton.x = FIRE_BUTTON_X
+	game.hud.fireSmallButton.y = FIRE_BUTTON_Y
+
+	game.hud.grabSmallButton.x = GRAB_BUTTON_X
+	game.hud.grabSmallButton.y = GRAB_BUTTON_Y
+		
+end
 
 function start()
 	
@@ -49,9 +87,116 @@ function start()
 	game.hud.throwIcon.x = THROW_ICON_LEFT
 	game.hud.throwIcon.y = THROW_ICON_TOP
 	game.hud.throwIcon:scale(0.5,0.5)
+
+	-----------------------------------------------------------------
+	-- Move buttons
+	-- 
+   
+   game.hud.leftButton = display.newImage( game.hud, "assets/images/hud/button.left.png" )
+	game.hud.leftButton.x = display.contentWidth*0.07
+	game.hud.leftButton.y = display.contentHeight*0.90
+	game.hud.leftButton.alpha = 0.6
+	game.hud.leftButton:scale(0.5,0.5)
 	
+	game.hud.leftButton:addEventListener( "touch", function(event)
+		if(event.phase == "began" or event.phase == "moved") then
+			touchController.rightTouch = false 
+			touchController.leftTouch = true 
+			game.hud.leftButton.alpha = 1
+			game.hud.rightButton.alpha = 0.6
+			character.move()
+		elseif(event.phase == "ended") then
+			game.hud.leftButton.alpha = 0.6
+			touchController.leftTouch = false 
+			character.stop()
+		end
+		return true 
+	end)
+
+   game.hud.rightButton = display.newImage( game.hud, "assets/images/hud/button.right.png" )
+	game.hud.rightButton.x = display.contentWidth*0.17
+	game.hud.rightButton.y = display.contentHeight*0.90
+	game.hud.rightButton.alpha = 0.6
+	game.hud.rightButton:scale(0.5,0.5)
+	
+	game.hud.rightButton:addEventListener( "touch", function(event)
+		if(event.phase == "began" or event.phase == "moved") then
+			touchController.leftTouch = false 
+			touchController.rightTouch = true 
+			game.hud.rightButton.alpha = 1
+			game.hud.leftButton.alpha = 0.6
+			character.move()
+		elseif(event.phase == "ended") then
+			touchController.rightTouch = false 
+			game.hud.rightButton.alpha = 0.6
+			character.stop()
+		end
+		return true 
+	end)
+	
+
+	-----------------------------------------------------------------
+	-- Throw buttons
+	-- 
+   
+   game.hud.fireBigButton = display.newImage( game.hud, "assets/images/hud/button.png" )
+	game.hud.fireBigButton.x = FIRE_BUTTON_X
+	game.hud.fireBigButton.y = FIRE_BUTTON_Y
+	game.hud.fireBigButton.alpha = 0.6
+	game.hud.fireBigButton:scale(0.7,0.7)
+	
+	game.hud.throwSwipeMax = game.hud.fireBigButton.contentHeight*0.5 - 10
+	
+	game.hud.fireBigButton:addEventListener( "touch", function(event)
+		if(event.phase == "began") then
+			game.hud.fireBigButton.alpha = 1
+			
+			if(GLOBALS.savedData.fireEnable) then
+				character.throwFire = true
+   			touchController.setState(THROWING, function() character.setThrowing() end)
+   		end 
+   		
+		end 
+		
+		if(event.phase == "began" or event.phase == "moved") then
+			placeFireSmallButton(event)
+			
+		elseif(event.phase == "ended") then
+      	character.mayThrow()	
+			character.throwFire = false
+			game.hud.fireBigButton.alpha = 0.6
+			game.hud.fireSmallButton.x = FIRE_BUTTON_X
+			game.hud.fireSmallButton.y = FIRE_BUTTON_Y
+
+		end
+
+		return true 
+	end)
+
+   game.hud.grabBigButton = display.newImage( game.hud, "assets/images/hud/button.png" )
+	game.hud.grabBigButton.x = display.contentWidth*0.93
+	game.hud.grabBigButton.y = display.contentHeight*0.77
+	game.hud.grabBigButton.alpha = 0.6
+	game.hud.grabBigButton:scale(0.7,0.7)
+
+   game.hud.fireSmallButton = display.newImage( game.hud, "assets/images/hud/red.center.png" )
+	game.hud.fireSmallButton.x = FIRE_BUTTON_X
+	game.hud.fireSmallButton.y = FIRE_BUTTON_Y
+	game.hud.fireSmallButton.alpha = 0.6
+	game.hud.fireSmallButton:scale(0.7,0.7)
+
+   game.hud.grabSmallButton = display.newImage( game.hud, "assets/images/hud/blue.center.png" )
+	game.hud.grabSmallButton.x = display.contentWidth*0.93
+	game.hud.grabSmallButton.y = display.contentHeight*0.77
+	game.hud.grabSmallButton.alpha = 0.6
+	game.hud.grabSmallButton:scale(0.7,0.7)
+	
+	-----------------------------------------------------------------
+
 	if(not GLOBALS.savedData.fireEnable) then game.hud.throwIcon.alpha = 0 end
    
+	-----------------------------------------------------------------
+
    Runtime:addEventListener( "enterFrame", refreshHUD )
 	
 	-----------------------------------------------------------------
@@ -70,8 +215,8 @@ function start()
    		"assets/images/hud/back.png",
    		51, 
    		0.18*aspectRatio,
-   		display.contentWidth*0.05, 
-   		display.contentHeight*0.95, 
+   		display.contentWidth*0.95, 
+   		display.contentHeight*0.05, 
    		function() 
 				if(game.state == game.STOPPED) then return end
    			game.state=game.STOPPED

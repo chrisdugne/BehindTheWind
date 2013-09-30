@@ -74,6 +74,7 @@ function getNbTouches()
 	return nb
 end
 
+
 ---------------------------------------------------------------------
 
 function touchScreen( event )
@@ -88,147 +89,43 @@ function touchScreen( event )
 
 	-----------------------------
 	
-	lastX, lastY = event.x, event.y
+	if(currentState == DRAGGING_TILE) then return end
 
 	-----------------------------
 	
-	if(currentState == DRAGGING_TILE) then return end
+	lastX, lastY = event.x, event.y
    	
 	---------------------------------------------
 
 	if event.phase == "began" then
    	
-   	local nbTouches = getNbTouches() + 1
-		if(nbTouches == 3) then return true end --cancel 3rd finger 
-		
-		----------------------------------------------------------------
-
       display.getCurrentStage():setFocus( game.camera )
-		touches[event.id] = event
-      	
-		swipping 	= false
-		rightTouch 	= false
-		leftTouch 	= false
-		centerTouch = false
 		
-		----------------------------------------------------------------
-		-- multitouch
-		
-		if ( nbTouches > 1 ) then
-			
-			currentState = PINCHING
-			timer.cancel(oneTouchAction)
-   		
-   		if ( not game.camera.distance ) then
-   			local dx,dy = calculateDelta( touches, event )
-   
-   			-- initialize to distance between two touches
-   			if ( dx and dy ) then
-   				local d = math.sqrt( dx*dx + dy*dy )
-   				if ( d > 0 ) then
-   					game.camera.distance = d
-   					game.camera.originalGameZoom = game.zoom
-   				end
-   			end
-   		end
-
-		----------------------------------------------------------------
-		
-		else --- single touch 
-
-      	oneTouchAction = timer.performWithDelay(25, function()
-      		startTouchTime 	= system.getTimer()
-      		xStart, yStart 	= event.xStart, event.yStart
-      
-      		if(xStart > display.contentWidth*0.5) then
-      			rightTouch = true
-      		end
-      
-      		if(xStart < display.contentWidth*0.5) then
-      			leftTouch = true
-      		end
-      		
-      		if(startTouchTime - previousTapTime > TAP_TIME_LIMIT) then 
-      			centerTapping = 0
-      			sideTapping = 0
-      			currentState = NONE
-      		end
-         	
-         	character.move()
-      
-      		Runtime:addEventListener( "enterFrame", onTouch )
-      	end)
-   		
-   	end
    	
 	---------------------------------------------
-	--	 multitouch on camera
 	
 	elseif "moved" == event.phase then
 		
-		if(not touches[event.id]) then return end
-		
-		local nbTouches = getNbTouches()
-   	
-		if nbTouches > 1 then
-			if ( game.camera.distance ) then
-   			local dx,dy = calculateDelta( touches, event )
-	
-				if ( dx and dy ) then
-					local newDistance = math.sqrt( dx*dx + dy*dy )
-					local scale = newDistance / game.camera.distance
-					if ( scale > 0 ) then
-						game.zoom = game.camera.originalGameZoom * scale
-						if(game.zoom < 0.4) then game.zoom = 0.4 end
-						if(game.zoom > 3) then game.zoom = 3 end
-					end
-				end
-			end
+		if(character.throwFire) then
+			hud.placeFireSmallButton(event)
 		end
 
 	----------------------------------------------------------------------
 	
 	elseif event.phase == "ended" or event.phase == "cancelled" then
-
-		if(not touches[event.id]) then return end
 		
-		-----------------------------
-
-		local nbTouchesRemaining = getNbTouches() - 1
-		touches[event.id] = nil
-		
-		-----------------------------
-
-		if(nbTouchesRemaining == 1) then
-			game.camera.distance = nil
-			game.camera.originalGameZoom = nil
-		else
-   		
-   		local now = system.getTimer()
-   		local touchDuration = now - startTouchTime
-   
-   		if(touchDuration < TAP_TIME_LIMIT) then 
-   			previousTapTime = now
-   			sideTapping = sideTapping + 1
-   		end
-      	
-      	cancelAllTouches()
-			character.stop()
-   	end
-
+   	cancelAllTouches()
+		character.stop()
 		setState(NONE)
 		
-		---------------------------------------------
 	end
 
 	return true
 end
 
-
 ---------------------------------------------------------------------
 
 function cancelAllTouches()
-	timer.cancel(oneTouchAction)
 	touches = {}
 
 	display.getCurrentStage():setFocus( nil )
@@ -241,99 +138,10 @@ function cancelAllTouches()
 	leftTouch 	= false
 
 	-----------------------------
+	
+	hud.releaseAllButtons()
 end
 
----------------------------------------------------------------------
-
-function onTouch( event )
-	local now = system.getTimer()
-	local touchDuration = now - startTouchTime
-
-	if(currentState == THROWING or currentState == GRABBING) then
-		local launch = getLaunchVector()
-		physicsManager.refreshTrajectory( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
-		if(lastX > xStart) then character.lookLeft() else character.lookRight() end
-	else
-		if(leftTouch and lastX > display.contentWidth*0.5) then
-			rightTouch = true
-			leftTouch = false
-      	character.move()
-		elseif(rightTouch and lastX < display.contentWidth*0.5) then
-			leftTouch = true
-			rightTouch = false
-      	character.move()
-		end
-	end
-end
-	
----------------------------------------------------------------------
-
-function characterTouch( event )
-	
-	lastX, lastY = event.x, event.y
-	
-	if event.phase == "began" then
-
--- deprecated : on ne considere que la collision du dernier grapin lance
---		if(character.grabs + #character.ropes > 1) then return true end -- on attend qu'il n'y ait qu'une seule rope pour permettre d'en lancer une 2e ou alors pas plus de 2 grabs d'un coup
-				
-		xStart, yStart = event.xStart, event.yStart
-		
-   	lastTouchCharacterTime = system.getTimer()
-		centerTouch = true
-		
-   	if(centerTouch) then
-      	if(centerTapping == 0) then 
-      		setState(READY_TO_THROW)
-      	end
-   	end
-
-   	Runtime:addEventListener( "enterFrame", onTouch )
-   	display.getCurrentStage():setFocus( character.sprite )
-
-	elseif event.phase == "moved" then
-	
-   	if(currentState ~= THROWING and currentState ~= GRABBING) then
-   		xStart, yStart = lastX, lastY
-   	end
-   	
-		if(currentState == READY_TO_THROW) then
-			if(character.throwFire and GLOBALS.savedData.fireEnable) then
-   			setState(THROWING, function() character.setThrowing() end)
-			elseif(character.throwGrab and GLOBALS.savedData.grabEnable) then
-   			setState(GRABBING, function() character.setGrabbing() end)
-			end
-		end 
-		
-	elseif event.phase == "ended" then
-	
-		-----------------------------
-		
-		if(currentState == READY_TO_THROW) then
-			character.changeThrowStuff()
-		end
-		
-		-----------------------------
-   	
-   	if(currentState == THROWING) then
-   		local launch = getLaunchVector()
-			character.throw( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
-   	elseif(currentState == GRABBING) then
-   		local launch = getLaunchVector()
-			character.grab( launch.x - game.camera.x,launch.y - game.camera.y, xStart - game.camera.x,yStart - game.camera.y)
-   	end
-
-		-----------------------------
-
-   	display.getCurrentStage():setFocus( nil )
-   	Runtime:removeEventListener( "enterFrame", onTouch )
-   	
-   	
-	end
-	
-	return true -- cancel the touchScreen
-end
-	
 ---------------------------------------------------------------------
 
 function setState(state, toApply)

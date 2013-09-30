@@ -382,8 +382,8 @@ function refreshTrajectory(fingerX, fingerY, xStart, yStart)
 
 	utils.emptyGroup(trajectory)
 
-	for i = 1,180 do
-		local trajectoryPosition = getTrajectoryPoint( startingPosition, startingVelocity, i )
+	for i = 1,18 do
+		local trajectoryPosition = getTrajectoryPoint( startingPosition, startingVelocity, i*3 )
 		local circ = display.newCircle( trajectory, trajectoryPosition.x, trajectoryPosition.y, 1 )
 		circ.alpha = 0.5
 	end
