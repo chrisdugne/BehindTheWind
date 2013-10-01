@@ -175,6 +175,8 @@ end
 
 function spawn()
 
+	if(game.state == game.STOPPED) then print("krak !") return end
+	
 	resetState()
 	stop()
    setThrowing()
@@ -208,6 +210,21 @@ function checkCharacter(event)
 --	if(collideOnRight) then s = s .. "on right tile, " end
 --	if(collideOnLeft) then s = s .. "on left tile, " end
 --   print(s, vx, vy, previousVy)
+   
+   ------------------------------------------------------
+
+	if(throwFire) then
+		physicsManager.refreshTrajectory( game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, hud.FIRE_BUTTON_X - game.camera.x, hud.FIRE_BUTTON_Y - game.camera.y)
+		if(game.hud.fireSmallButton.x > hud.FIRE_BUTTON_X) then lookLeft() else lookRight() end
+
+	elseif(event.id == throwTouchFingerId and character.throwGrab) then
+		physicsManager.refreshTrajectory( game.hud.grabSmallButton.x - game.camera.x, game.hud.grabSmallButton.y - game.camera.y, hud.GRAB_BUTTON_X - game.camera.x, hud.GRAB_BUTTON_Y - game.camera.y)
+		if(game.hud.fireSmallButton.x > hud.GRAB_BUTTON_X) then lookLeft() else lookRight() end
+
+	end
+
+	------------------------------------------------------
+   
    
 	if(nbFramesToKeep > 0 ) then
 		nbFramesToKeep = nbFramesToKeep - 1
@@ -379,17 +396,17 @@ end
 -------------------------------------
 
 function setThrowing()
-	if(not GLOBALS.savedData.fireEnable) then return end
-	
-	effectsManager.stopCharacterLight()
-	effectsManager.setCharacterThrowing()
+--	if(not GLOBALS.savedData.fireEnable) then return end
+----	
+----	effectsManager.stopCharacterLight()
+----	effectsManager.setCharacterThrowing()
 end
 
 function setGrabbing()
-	if(not GLOBALS.savedData.grabEnable) then return end
-	
-	effectsManager.stopCharacterLight()
-	effectsManager.setCharacterGrabbing()
+--	if(not GLOBALS.savedData.grabEnable) then return end
+----	
+----	effectsManager.stopCharacterLight()
+----	effectsManager.setCharacterGrabbing()
 end
 
 function setHanging(value)

@@ -255,9 +255,6 @@ function placeFireSmallButton(event)
 
 	game.hud.fireSmallButton.x = hud.FIRE_BUTTON_X - direction.x
 	game.hud.fireSmallButton.y = hud.FIRE_BUTTON_Y - direction.y
-
-	physicsManager.refreshTrajectory( game.hud.fireSmallButton.x - game.camera.x, game.hud.fireSmallButton.y - game.camera.y, FIRE_BUTTON_X - game.camera.x, FIRE_BUTTON_Y - game.camera.y)
-	if(game.hud.fireSmallButton.x > FIRE_BUTTON_X) then character.lookLeft() else character.lookRight() end
 end
 
 
@@ -270,9 +267,6 @@ function placeGrabSmallButton(event)
 
 	game.hud.grabSmallButton.x = hud.GRAB_BUTTON_X - direction.x
 	game.hud.grabSmallButton.y = hud.GRAB_BUTTON_Y - direction.y
-
-	physicsManager.refreshTrajectory( game.hud.grabSmallButton.x - game.camera.x, game.hud.grabSmallButton.y - game.camera.y, GRAB_BUTTON_X - game.camera.x, GRAB_BUTTON_Y - game.camera.y)
-	if(game.hud.fireSmallButton.x > GRAB_BUTTON_X) then character.lookLeft() else character.lookRight() end
 end
 
 function releaseAllButtons(fingerId)
@@ -407,7 +401,7 @@ end
 function showDropButton()
 	display.remove(game.hud.dropButton)
 	game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/button.drop.png" )
-	game.hud.dropButton.x = GRAB_BUTTON_X - display.contentWidth*0.1
+	game.hud.dropButton.x = GRAB_BUTTON_X - 130
 	game.hud.dropButton.y = GRAB_BUTTON_Y
 	game.hud.dropButton.alpha = 0.8
 

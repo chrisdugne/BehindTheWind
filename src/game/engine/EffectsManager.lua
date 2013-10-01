@@ -725,106 +725,6 @@ function collideTrigger( event )
    end
 end
 
-------------------------------------------------------------------------------------------
--- CHARACTER
-------------------------------------------------------------------------------------------
-
-function setCharacterThrowing()
-
-	character.lightReadyToThrow = CBE.VentGroup{
-		{
-			preset="wisps",
-			title="characterLight", -- The pop that appears when a mortar shot explodes
-			color={{105,15,12}},
-			perEmit=1,
-			emissionNum=0,
-			emitDelay=150,
-			fadeInTime=225,
-			scale=0.15,
-			startAlpha=1,
-			physics={
-				divisionDamping = true,
-				xDamping = 1.17,
-				yDamping = 1,
-				gravityY=0.06,
-			}
-		}
-	}
-	
-	character.lightReadyToThrow.static = true
-	game.camera:insert(character.lightReadyToThrow:get("characterLight").content)
-	
-	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
-
-	registerNewEffect(character.lightReadyToThrow)
-end
-
-------------------------------------------
-
-function setCharacterGrabbing()
-	
-	character.lightReadyToGrab = CBE.VentGroup{
-		{
-			preset="wisps",
-			title="characterLight", -- The pop that appears when a mortar shot explodes
-			color={{105,135,182}},
-			perEmit=1,
-			emissionNum=0,
-			emitDelay=150,
-			fadeInTime=225,
-			scale=0.17,
-			startAlpha=1,
-			physics={
-				divisionDamping = true,
-				xDamping = 1.17,
-				yDamping = 1,
-				gravityY=0.06,
-			}
-		}
-	}
-	
-	character.lightReadyToGrab.static = true
-	game.camera:insert(character.lightReadyToGrab:get("characterLight").content)
-
-	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
-	
-	registerNewEffect(character.lightReadyToGrab)
-end
-
-------------------------------------------
-
-function refreshCharacterLightCoordinates()
-	
-	if(character.lightReadyToGrab) then
-		effect = character.lightReadyToGrab
-	elseif(character.lightReadyToThrow) then
-		effect = character.lightReadyToThrow
-   end
-   
-	if(effect.num) then -- else detruit depuis le dernier enterFrame ?
-		effect:get("characterLight").x = character.sprite.x + 6*character.sprite.xScale 
-		effect:get("characterLight").y = character.sprite.y + 5
-   end
-end
-
-------------------------------------------
-
-function stopCharacterLight()
-
-	Runtime:removeEventListener( "enterFrame", refreshCharacterLightCoordinates )	
-
-	if(character.lightReadyToThrow) then
-		destroyEffect(character.lightReadyToThrow, true)
-	end
-	
-	if(character.lightReadyToGrab) then
-		destroyEffect(character.lightReadyToGrab, true)
-	end
-	
-	character.lightReadyToGrab = nil
-	character.lightReadyToThrow = nil
-	
-end
 
 ------------------------------------------------------------------------------------------
 -- Items
@@ -1032,3 +932,106 @@ function lightAttach(body)
 	
 	registerNewEffect(beam)
 end
+
+------------------------------------------------------------------------------------------
+-- CHARACTER
+------------------------------------------------------------------------------------------
+-- DEPRECATED : plus de switch de throw => pas besoin de lights => gain en perfs
+------------------------------------------------------------------------------------------
+-- 
+--function setCharacterThrowing()
+--
+--	character.lightReadyToThrow = CBE.VentGroup{
+--		{
+--			preset="wisps",
+--			title="characterLight", -- The pop that appears when a mortar shot explodes
+--			color={{105,15,12}},
+--			perEmit=1,
+--			emissionNum=0,
+--			emitDelay=150,
+--			fadeInTime=225,
+--			scale=0.15,
+--			startAlpha=1,
+--			physics={
+--				divisionDamping = true,
+--				xDamping = 1.17,
+--				yDamping = 1,
+--				gravityY=0.06,
+--			}
+--		}
+--	}
+--	
+--	character.lightReadyToThrow.static = true
+--	game.camera:insert(character.lightReadyToThrow:get("characterLight").content)
+--	
+--	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
+--
+--	registerNewEffect(character.lightReadyToThrow)
+--end
+--
+--------------------------------------------
+--
+--function setCharacterGrabbing()
+--	
+--	character.lightReadyToGrab = CBE.VentGroup{
+--		{
+--			preset="wisps",
+--			title="characterLight", -- The pop that appears when a mortar shot explodes
+--			color={{105,135,182}},
+--			perEmit=1,
+--			emissionNum=0,
+--			emitDelay=150,
+--			fadeInTime=225,
+--			scale=0.17,
+--			startAlpha=1,
+--			physics={
+--				divisionDamping = true,
+--				xDamping = 1.17,
+--				yDamping = 1,
+--				gravityY=0.06,
+--			}
+--		}
+--	}
+--	
+--	character.lightReadyToGrab.static = true
+--	game.camera:insert(character.lightReadyToGrab:get("characterLight").content)
+--
+--	Runtime:addEventListener( "enterFrame", refreshCharacterLightCoordinates )
+--	
+--	registerNewEffect(character.lightReadyToGrab)
+--end
+--
+--------------------------------------------
+--
+--function refreshCharacterLightCoordinates()
+--	
+--	if(character.lightReadyToGrab) then
+--		effect = character.lightReadyToGrab
+--	elseif(character.lightReadyToThrow) then
+--		effect = character.lightReadyToThrow
+--   end
+--   
+--	if(effect.num) then -- else detruit depuis le dernier enterFrame ?
+--		effect:get("characterLight").x = character.sprite.x + 6*character.sprite.xScale 
+--		effect:get("characterLight").y = character.sprite.y + 5
+--   end
+--end
+--
+--------------------------------------------
+--
+--function stopCharacterLight()
+--
+--	Runtime:removeEventListener( "enterFrame", refreshCharacterLightCoordinates )	
+--
+--	if(character.lightReadyToThrow) then
+--		destroyEffect(character.lightReadyToThrow, true)
+--	end
+--	
+--	if(character.lightReadyToGrab) then
+--		destroyEffect(character.lightReadyToGrab, true)
+--	end
+--	
+--	character.lightReadyToGrab = nil
+--	character.lightReadyToThrow = nil
+--	
+--end
