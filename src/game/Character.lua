@@ -111,7 +111,6 @@ function init()
 end	
 
 function destroy()
-	effectsManager.stopCharacterLight()
 	utils.destroyFromDisplay(sprite)
 	Runtime:removeEventListener( "enterFrame", checkCharacter )
 end
@@ -140,7 +139,6 @@ function die()
 	exit()
 	stop()
 	state = OUT 
-	effectsManager.stopCharacterLight()
 		
 	local explosion = {
 		x = sprite.x,
