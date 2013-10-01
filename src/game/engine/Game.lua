@@ -36,6 +36,7 @@ function Game:start()
 	---------------------
 
    self.state 					= game.RUNNING
+   self.creationTime 		= system.getTimer()
    self.energiesSpent 		= 0
    self.energiesCaught 		= 0
    self.piecesCaught 		= 0
@@ -46,10 +47,6 @@ function Game:start()
 
 	utils.emptyGroup(self.camera)
 
-	---------------------
-
-	hud.initFollowRockButton()
-	
 	---------------------
 	-- engines
 
@@ -108,6 +105,7 @@ end
 function Game:destroyBeforeExit()
 	self:reset()
    self.state = game.STOPPED
+   self.creationTime = nil
 	Runtime:removeEventListener( "enterFrame", self.refreshCamera )
 	Runtime:removeEventListener( "enterFrame", self.refreshEnemies )
 end
@@ -124,6 +122,7 @@ function Game:stop()
 	Runtime:removeEventListener( "enterFrame", self.refreshEnemies )
 
    self.state = game.STOPPED
+   self.creationTime = nil
    self.elapsedTime = system.getTimer() - game.startTime
 
 	touchController.stop()

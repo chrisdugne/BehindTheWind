@@ -166,6 +166,9 @@ function mayThrow()
 	elseif(throwGrab) then
 		grab(  game.hud.grabSmallButton.x - game.camera.x, game.hud.grabSmallButton.y - game.camera.y, hud.GRAB_BUTTON_X - game.camera.x, hud.GRAB_BUTTON_Y - game.camera.y)
 	end
+	
+	throwFire = false
+	throwGrab = false
 end
 
 -------------------------------------
@@ -376,27 +379,17 @@ end
 -------------------------------------
 
 function setThrowing()
-	
 	if(not GLOBALS.savedData.fireEnable) then return end
 	
 	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterThrowing()
-	
-	if(game.hud.throwIcon and game.hud.throwIcon.setFrame) then
-		game.hud.throwIcon:setFrame(1)
-	end
 end
 
 function setGrabbing()
-
 	if(not GLOBALS.savedData.grabEnable) then return end
 	
 	effectsManager.stopCharacterLight()
 	effectsManager.setCharacterGrabbing()
-
-	if(game.hud.throwIcon and game.hud.throwIcon.setFrame) then
-		game.hud.throwIcon:setFrame(2)
-	end
 end
 
 function setHanging(value)

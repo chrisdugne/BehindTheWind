@@ -134,8 +134,6 @@ function throw( x1,y1, x2,y2 )
 		deleteRock(rock)
 	end)
 
-	hud.showFollowRockButton()
-
 	----------------------------------------
 	
 	effectsManager.consumeEnergy()
@@ -170,7 +168,6 @@ function grab( x1,y1, x2,y2 )
 		deleteRock(rock)
 	end)
 
-	hud.showFollowRockButton()
 end
 
 -----------------------------------------------------------------------------------------------
@@ -324,10 +321,6 @@ end
 
 function deleteRock(rock)
 	
-	if(character.rock == rock) then
-   	hud.hideFollowRockButton()
-   end
-
 	local explosion = {
 		x = rock.x,
 		y = rock.y,

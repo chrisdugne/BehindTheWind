@@ -6,73 +6,79 @@ module(..., package.seeall)
 
 NONE 					= 0
 
-READY_TO_THROW 	= 11
-THROWING 			= 13
-GRABBING 			= 14
+--READY_TO_THROW 	= 11
+--THROWING 			= 13
+--GRABBING 			= 14
 
 DRAGGING_TILE 		= 101
-PINCHING 			= 102
+--PINCHING 			= 102
 
 ---------------------------------------------------------------------
 
-SWIPE_MAX 			= 140 
+--SWIPE_MAX 			= 140 
 
 ---------------------------------------------------------------------
 
 currentState 				= NONE
-swipping						= false
 rightTouch					= false
 leftTouch					= false
-centerTouch					= false
+moveTouchFingerId			= nil
+throwTouchFingerId		= nil
 
-local previousState 		= NONE
+
+--swipping						= false
+--centerTouch					= false
+
+--local previousState 		= NONE
 local xStart				= 0
 local yStart				= 0
 local lastX					= 0
 local lastY					= 0
-local startTouchTime		= 0
-local previousTapTime	= 0
+--local startTouchTime		= 0
+--local previousTapTime	= 0
 
-local lastTouchCharacterTime = 0
+--local lastTouchCharacterTime = 0
 
-local centerTapping		= 0
-local sideTapping			= 0
+--local centerTapping		= 0
+--local sideTapping			= 0
 
-local touches = {}
+--local touches = {}
+
+
 
 ---------------------------------------------------------------------
 
-local TAP_TIME_LIMIT		= 250
+--local TAP_TIME_LIMIT		= 250
 
 ---------------------------------------------------------------------
 
 function start()
 	display.getCurrentStage():addEventListener( "touch", touchScreen )
 	
-   currentState 				= NONE
-   swipping						= false
+--   currentState 				= NONE
+--   swipping						= false
    rightTouch					= false
    leftTouch					= false
-   centerTouch					= false
+--   centerTouch					= false
    
-	touches = {}
+--	touches = {}
 end
 
 function stop()
 	display.getCurrentStage():removeEventListener( "touch", touchScreen )
-	Runtime:removeEventListener( "enterFrame", onTouch )
+--	Runtime:removeEventListener( "enterFrame", onTouch )
 	display.getCurrentStage():setFocus( nil )
 end
 
 ---------------------------------------------------------------------
-
-function getNbTouches()
-	local nb = 0
-	for k,v in pairs(touches) do
-		if(v) then nb = nb + 1 end
-	end
-	return nb
-end
+--
+--function getNbTouches()
+--	local nb = 0
+--	for k,v in pairs(touches) do
+--		if(v) then nb = nb + 1 end
+--	end
+--	return nb
+--end
 
 
 ---------------------------------------------------------------------
@@ -83,7 +89,7 @@ function touchScreen( event )
 	--	OUT  : dont listen action
 
 	if(character.state == character.OUT) then
-   	cancelAllTouches()
+   	cancelAllTouches(event.id)
 		return 
 	end
 
@@ -106,15 +112,19 @@ function touchScreen( event )
 	
 	elseif "moved" == event.phase then
 		
-		if(character.throwFire) then
+		if(event.id == throwTouchFingerId and character.throwFire) then
 			hud.placeFireSmallButton(event)
+		
+		elseif(event.id == throwTouchFingerId and character.throwGrab) then
+			hud.placeGrabSmallButton(event)
+		
 		end
 
 	----------------------------------------------------------------------
 	
 	elseif event.phase == "ended" or event.phase == "cancelled" then
 		
-   	cancelAllTouches()
+   	cancelAllTouches(event.id)
 		character.stop()
 		setState(NONE)
 		
@@ -125,21 +135,18 @@ end
 
 ---------------------------------------------------------------------
 
-function cancelAllTouches()
-	touches = {}
+function cancelAllTouches(fingerId)
 
 	display.getCurrentStage():setFocus( nil )
-	Runtime:removeEventListener( "enterFrame", onTouch )
 
 	-----------------------------
 
-	swipping 	= false
 	rightTouch 	= false
 	leftTouch 	= false
 
 	-----------------------------
 	
-	hud.releaseAllButtons()
+	hud.releaseAllButtons(fingerId)
 end
 
 ---------------------------------------------------------------------
@@ -148,7 +155,7 @@ function setState(state, toApply)
 	
 	if(currentState ~= state) then
 		xStart, yStart = lastX, lastY
-		previousState = currentState
+--		previousState = currentState
 		currentState = state
 		
 		if(toApply ~= nil) then
@@ -253,27 +260,27 @@ end
 
 ---------------------------------------------------------------------
 
-function calculateDelta( previousTouches, event )
-	local id,touch = next( previousTouches )
-	if event.id == id then
-		id,touch = next( previousTouches, id )
-		assert( id ~= event.id )
-	end
-
-	local dx = touch.x - event.x
-	local dy = touch.y - event.y
-	return dx, dy
-end
-
----------------------------------------------------------------------
-
-function getLaunchVector()
-
-	local direction = vector2D:new(xStart - lastX, yStart - lastY )
-	if(direction:magnitude() > SWIPE_MAX) then
-		direction:normalize()
-		direction:mult(SWIPE_MAX)
-	end
-
-	return vector2D:new(xStart - direction.x, yStart - direction.y)
-end
+--function calculateDelta( previousTouches, event )
+--	local id,touch = next( previousTouches )
+--	if event.id == id then
+--		id,touch = next( previousTouches, id )
+--		assert( id ~= event.id )
+--	end
+--
+--	local dx = touch.x - event.x
+--	local dy = touch.y - event.y
+--	return dx, dy
+--end
+--
+-----------------------------------------------------------------------
+--
+--function getLaunchVector()
+--
+--	local direction = vector2D:new(xStart - lastX, yStart - lastY )
+--	if(direction:magnitude() > SWIPE_MAX) then
+--		direction:normalize()
+--		direction:mult(SWIPE_MAX)
+--	end
+--
+--	return vector2D:new(xStart - direction.x, yStart - direction.y)
+--end

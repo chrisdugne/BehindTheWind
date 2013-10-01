@@ -376,6 +376,7 @@ function addGroupMotion(group, motion)
 		group[i].bodyType = "kinematic"
 		group[i].xStart = group[i].x
 		group[i].yStart = group[i].y
+		group[i].creationTime = game.creationTime
 		startMoveTile(group[i], motionVector, duration)
 	end
 end
@@ -385,7 +386,7 @@ end
 -- amelioration : enterframe qui verif les x,y bien dans les bounds x1y1,x2y2 + stop tween + startMoveTile
 function startMoveTile(tile, motionVector, duration)
 	
-	if(game.state == game.STOPPED) then return end
+	if(game.creationTime ~= tile.creationTime) then return end -- game stopped OR quickly gone to another level during 'duration'
 
 	-- replace force au cas ou lag pendant le timer
 	tile.x = tile.xStart
@@ -394,8 +395,7 @@ function startMoveTile(tile, motionVector, duration)
 	tile:setLinearVelocity( motionVector.x , motionVector.y )
 
 	timer.performWithDelay(duration, function()
-	
-		if(game.state == game.STOPPED) then return end
+		if(game.creationTime ~= tile.creationTime) then return end -- game stopped OR quickly gone to another level during 'duration'
 		
    	tile:setLinearVelocity( - motionVector.x , - motionVector.y )
    	timer.performWithDelay(duration, function()
