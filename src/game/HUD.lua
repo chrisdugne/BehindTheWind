@@ -284,13 +284,18 @@ function releaseAllButtons(fingerId)
 	end
 
 	if(fingerId == touchController.throwTouchFingerId) then
-		character.mayThrow()
 
+		if(character.throwFire) then
+   		game.hud.fireBigButton.alpha 		= 0.6
+   		game.hud.fireSmallButton.alpha 	= 0.6
+   	elseif(character.throwGrab) then
+   		game.hud.grabBigButton.alpha 		= 0.6
+   		game.hud.grabSmallButton.alpha 	= 0.6
+		end
+		
+		character.mayThrow()
 		touchController.throwTouchFingerId = nil
-		game.hud.fireBigButton.alpha 		= 0.6
-		game.hud.fireSmallButton.alpha 	= 0.6
-		game.hud.grabBigButton.alpha 		= 0.6
-		game.hud.grabSmallButton.alpha 	= 0.6
+		
 		game.hud.fireSmallButton.x = FIRE_BUTTON_X
 		game.hud.fireSmallButton.y = FIRE_BUTTON_Y
 

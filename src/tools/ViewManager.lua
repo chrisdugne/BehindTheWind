@@ -138,7 +138,7 @@ function moveMoonBack()
 end
 
 function moveMoon()
-	transition.to( game.bg.moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight/2, onComplete = function() moveMoonBack() end })
+	transition.to( game.bg.moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight*0.3, onComplete = function() moveMoonBack() end })
 end
 
 ---------------------------------------------------------------------------------	
