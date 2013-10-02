@@ -34,7 +34,7 @@ timeLastThrow	= 0
 jumping 	= false 
 hanging 	= false 
 
-throwFire = true 
+throwFire = false 
 throwGrab = false
 
 grabs 	 = 0 -- nb de grappins lancés -- deprecated

@@ -600,31 +600,34 @@ function touchPiece( event )
    			---------------------------------------------------------
 
    			piece.caught = true
-   			game.hud:insert(piece)	
-   			piece.x = character.screenX() + game.camera.x
-   			piece.y = character.screenY() + game.camera.y
-   			
-   			---------------------------------------------------------
-   			
-   			local xTo, yTo
-   			
-   			if(piece.type == levelDrawer.SIMPLE_PIECE) then 
-   				xTo, yTo = hud.SIMPLE_PIECE_ICON_LEFT, hud.SIMPLE_PIECE_ICON_TOP
-   				game.ringsCaught 	= game.ringsCaught + 1
-   			else	 
-   				xTo, yTo = hud.PIECE_ICON_LEFT, hud.PIECE_ICON_TOP
-   				game.piecesCaught = game.piecesCaught + 1
-   			end
-
-   			---------------------------------------------------------
-
-   			transition.to(piece, {time = 1000, x = xTo, y = yTo})
-
-   			---------------------------------------------------------
    			
    			-- detach piece body (body only useful to find out if piece is onScreen, now it's on HUD)
    			piece.light.body = nil
    			destroyEffect(piece.light)
+
+   			---------------------------------------------------------
+
+				--- delay : to avoid error : Cannot translate an object before collision is resolved.
+				timer.performWithDelay(20, function()
+				
+      			game.hud:insert(piece)	
+      			piece.x = character.screenX() + game.camera.x
+   				piece.y = character.screenY() + game.camera.y
+   			
+      			---------------------------------------------------------
+      			
+      			local xTo, yTo
+      			
+      			if(piece.type == levelDrawer.SIMPLE_PIECE) then 
+      				xTo, yTo = hud.SIMPLE_PIECE_ICON_LEFT, hud.SIMPLE_PIECE_ICON_TOP
+      				game.ringsCaught 	= game.ringsCaught + 1
+      			else	 
+      				xTo, yTo = hud.PIECE_ICON_LEFT, hud.PIECE_ICON_TOP
+      				game.piecesCaught = game.piecesCaught + 1
+      			end
+         			transition.to(piece, {time = 1000, x = xTo, y = yTo})
+				end)
+
          end
       end
    end
