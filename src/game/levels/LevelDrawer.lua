@@ -18,6 +18,11 @@ TILES_CLASSIC 	= 8
 TILES_GREEN 	= 9
 PLANTS 			= 10
 
+LEVEL_HUGE_CLASSIC 	= 11
+LEVEL_HUGE_GREEN 		= 12
+LEVEL_HUGE_GREY 		= 13
+LEVEL_HUGE_SOBER 		= 14
+
 ---------------
 -- LEVEL MISC
 
@@ -37,6 +42,7 @@ treesSheetConfig 			= require("src.game.graphics.Trees")
 levelMiscSheetConfig 	= require("src.game.graphics.LevelMisc")
 pieceSheetConfig 			= require("src.game.graphics.Piece")
 plantsSheetConfig 		= require("src.game.graphics.Plants")
+levelHugeSheetConfig 	= require("src.game.graphics.LevelHuge")
 
 tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
 tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
@@ -48,32 +54,44 @@ levelMiscImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelMisc.pn
 pieceImageSheet 			= graphics.newImageSheet( "assets/images/game/Piece.png", pieceSheetConfig.sheet )
 simplePieceImageSheet	= graphics.newImageSheet( "assets/images/game/SimplePiece.png", pieceSheetConfig.sheet )
 plantsImageSheet 			= graphics.newImageSheet( "assets/images/game/Plants.png", plantsSheetConfig.sheet )
+levelHugeImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelHuge.png", levelHugeSheetConfig.sheet )
+levelHugeGreenImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-green.png", levelHugeSheetConfig.sheet )
+levelHugeGreyImageSheet = graphics.newImageSheet( "assets/images/game/LevelHuge-grey.png", levelHugeSheetConfig.sheet )
+levelHugeSoberImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-sober.png", levelHugeSheetConfig.sheet )
 
 -------------------------------------
 
 sheetConfigs = {}
-sheetConfigs[TILES] 			= tilesSheetConfig
-sheetConfigs[TREES] 			= treesSheetConfig
-sheetConfigs[TILES_GREY] 	= tilesSheetConfig
-sheetConfigs[TILES_DARK] 	= tilesSheetConfig
-sheetConfigs[LEVEL_MISC] 	= levelMiscSheetConfig
-sheetConfigs[PIECE] 			= pieceSheetConfig
-sheetConfigs[SIMPLE_PIECE] = pieceSheetConfig
-sheetConfigs[TILES_CLASSIC] = tilesSheetConfig
-sheetConfigs[TILES_GREEN] 	= tilesSheetConfig
-sheetConfigs[PLANTS] 		= plantsSheetConfig
+sheetConfigs[TILES] 						= tilesSheetConfig
+sheetConfigs[TREES] 						= treesSheetConfig
+sheetConfigs[TILES_GREY] 				= tilesSheetConfig
+sheetConfigs[TILES_DARK] 				= tilesSheetConfig
+sheetConfigs[LEVEL_MISC] 				= levelMiscSheetConfig
+sheetConfigs[PIECE] 						= pieceSheetConfig
+sheetConfigs[SIMPLE_PIECE] 			= pieceSheetConfig
+sheetConfigs[TILES_CLASSIC] 			= tilesSheetConfig
+sheetConfigs[TILES_GREEN] 				= tilesSheetConfig
+sheetConfigs[PLANTS] 					= plantsSheetConfig
+sheetConfigs[LEVEL_HUGE_CLASSIC] 	= levelHugeSheetConfig
+sheetConfigs[LEVEL_HUGE_GREEN] 		= levelHugeSheetConfig
+sheetConfigs[LEVEL_HUGE_GREY] 		= levelHugeSheetConfig
+sheetConfigs[LEVEL_HUGE_SOBER] 		= levelHugeSheetConfig
 
 imageSheets = {}
-imageSheets[TILES] 			= tilesImageSheet
-imageSheets[TREES] 			= treesImageSheet
-imageSheets[TILES_GREY] 	= tilesGreyImageSheet
-imageSheets[TILES_DARK] 	= tilesDarkImageSheet
-imageSheets[LEVEL_MISC] 	= levelMiscImageSheet
-imageSheets[PIECE] 			= pieceImageSheet
-imageSheets[SIMPLE_PIECE]  = simplePieceImageSheet
-imageSheets[TILES_CLASSIC] = tilesClassicImageSheet
-imageSheets[TILES_GREEN] 	= tilesGreenImageSheet
-imageSheets[PLANTS] 			= plantsImageSheet
+imageSheets[TILES] 						= tilesImageSheet
+imageSheets[TREES] 						= treesImageSheet
+imageSheets[TILES_GREY] 				= tilesGreyImageSheet
+imageSheets[TILES_DARK] 				= tilesDarkImageSheet
+imageSheets[LEVEL_MISC] 				= levelMiscImageSheet
+imageSheets[PIECE] 						= pieceImageSheet
+imageSheets[SIMPLE_PIECE] 	 			= simplePieceImageSheet
+imageSheets[TILES_CLASSIC] 			= tilesClassicImageSheet
+imageSheets[TILES_GREEN] 				= tilesGreenImageSheet
+imageSheets[PLANTS] 						= plantsImageSheet
+imageSheets[LEVEL_HUGE_CLASSIC] 		= levelHugeImageSheet
+imageSheets[LEVEL_HUGE_GREEN] 		= levelHugeGreenImageSheet
+imageSheets[LEVEL_HUGE_GREY] 			= levelHugeGreyImageSheet
+imageSheets[LEVEL_HUGE_SOBER] 		= levelHugeSoberImageSheet
 
 level = {}
 
@@ -138,7 +156,7 @@ function designLevel()
 		
 		if(requireBody) then
 			
-			if((tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32) and tiles[i].sheet == 1) then
+			if((tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32) and tiles[i].sheet == TILES) then
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = smallShape } )
 			else
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
