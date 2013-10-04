@@ -507,12 +507,16 @@ function jump()
 	leavingFloor 	= floor
 	jumping 			= true
 	
+	local vx, vy = sprite:getLinearVelocity()
+	print(math.rad(floor.rotation))
+	vx = vx * math.cos(math.rad(floor.rotation))
+	vy = JUMP_SPEED * math.cos(math.rad(floor.rotation))
+
 	floor = nil
 	collideOnLeft = nil
 	collideOnRight = nil
 	
-	local vx, vy = sprite:getLinearVelocity()
-	sprite:setLinearVelocity( vx, JUMP_SPEED )
+	sprite:setLinearVelocity( vx, vy )
 end
 
 -------------------------------------

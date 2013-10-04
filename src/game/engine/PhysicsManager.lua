@@ -277,7 +277,10 @@ function thrownFromCharacterPreCollision( event )
 end
 
 function rockCollision( event )
-	if(event.other ~= character.sprite and not event.other.isSensor) then
+	if(event.other ~= character.sprite 
+	and not event.other.isSensor
+	and not event.other.isAttach
+	and not event.other.isGrab) then
 		deleteRock(event.target)
    end
 end
