@@ -82,10 +82,10 @@ function init()
    sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
    
    physics.addBody( sprite, { 
-   	density = 10, 
-   	friction = 1, 
-   	bounce = 0.2,
-   	radius = RADIUS
+   	density 		= 10, 
+   	friction 	= 1, 
+   	bounce 		= 0.2,
+   	radius 		= RADIUS
    })
 
    ---------------------------
@@ -438,6 +438,12 @@ function move()
 			goRight()
 		elseif(touchController.leftTouch) then
 			goLeft()
+		end
+	else
+		if(touchController.rightTouch) then
+			sprite:applyForce( 300, 0, sprite.x, sprite.y )
+		elseif(touchController.leftTouch) then
+			sprite:applyForce( -300, 0, sprite.x, sprite.y )
 		end
 	end
 
