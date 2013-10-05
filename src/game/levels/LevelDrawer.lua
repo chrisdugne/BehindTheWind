@@ -336,7 +336,12 @@ function designLevel()
 			local enableDrag = function() addGroupDraggable(groups[k], groupDragLine) end
 			
 			if(groupDragLine.trigger) then
-				level.triggers[groupDragLine.trigger].start = enableDrag 
+   			if(level.triggers[groupDragLine.trigger].start) then
+   				level.triggers[groupDragLine.trigger].start[#level.triggers[groupDragLine.trigger].start+1] = enableDrag
+   			else
+   				level.triggers[groupDragLine.trigger].start = {}
+   				level.triggers[groupDragLine.trigger].start[1] = enableDrag 
+   			end
 			else
    			 enableDrag()
 			end
@@ -460,6 +465,8 @@ function hitTrigger(trigger)
 	level.triggers[trigger].remaining = level.triggers[trigger].remaining - 1
 	
 	if(level.triggers[trigger].remaining == 0) then
-		level.triggers[trigger].start()
+		for i = 1, #level.triggers[trigger].start do
+			level.triggers[trigger].start[i]()
+		end
 	end
 end
