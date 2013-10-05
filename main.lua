@@ -245,6 +245,24 @@ local function onKeyEvent( event )
       end
    end
 
+	-- TO TEST 
+   if ( keyName == "volumeUp" and phase == "down" ) then
+      local masterVolume = audio.getVolume()
+      print( "volume:", masterVolume )
+      if ( masterVolume < 1.0 ) then
+         masterVolume = masterVolume + 0.1
+         audio.setVolume( masterVolume )
+      end
+   elseif ( keyName == "volumeDown" and phase == "down" ) then
+      local masterVolume = audio.getVolume()
+      print( "volume:", masterVolume )
+      if ( masterVolume > 0.0 ) then
+         masterVolume = masterVolume - 0.1
+         audio.setVolume( masterVolume )
+      end
+   end
+
+
    return true  --SEE NOTE BELOW
 end
 
