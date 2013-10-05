@@ -162,19 +162,21 @@ function designLevel()
 			if((tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32) and tiles[i].sheet == TILES) then
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = smallShape } )
          	tile.isFixedRotation = true
-			elseif(tiles[i].num == 2 and (tiles[i].sheet == LEVEL_HUGE_CLASSIC or tiles[i].sheet == LEVEL_HUGE_SOBER or tiles[i].sheet == LEVEL_HUGE_GREY or tiles[i].sheet == LEVEL_HUGE_GREEN  )) then
-				type = "dynamic" 
-				local circle = display.newCircle(game.camera, tiles[i].x, tiles[i].y, 17)
-				circle.alpha = 0
-				
-      		physics.addBody( circle, "static", { radius = 17 } )
-      		physics.addBody( tile, type, { density="10", friction=0.3, bounce=0 } )
-      		
-      		physics.newJoint( "pivot", circle, tile, circle.x, circle.y )
 			else
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
          	tile.isFixedRotation = true
       	end
+
+-- TILE ROTATION ON CENTER
+-- TODO : floor pas par rapport au x,y du floor, mais par rapport au fait que le x,y de la collision est "aux pieds" du character
+-- TODO : jump vx,vy * sinus(rad(rotation))
+-- TODO : on rope Attach :  physics.newJoint( "pivot", attach, floor, collision.x, collision.y)
+--			elseif(tiles[i].num == 2 and (tiles[i].sheet == LEVEL_HUGE_CLASSIC or tiles[i].sheet == LEVEL_HUGE_SOBER or tiles[i].sheet == LEVEL_HUGE_GREY or tiles[i].sheet == LEVEL_HUGE_GREEN  )) then
+--				local circle = display.newCircle(game.camera, tiles[i].x, tiles[i].y, 17)
+--				circle.alpha = 0
+--      		physics.addBody( circle, "static", { radius = 17 } )
+--      		physics.addBody( tile, "dynamic", { density="10", friction=0.3, bounce=0 } )
+--      		physics.newJoint( "pivot", circle, tile, circle.x, circle.y )
 		
       end
 

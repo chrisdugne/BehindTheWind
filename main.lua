@@ -16,12 +16,12 @@ SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
 -----------------------------------------------------------------------------------------
 
 DEV				= 1
---EDITOR 			= 1
+EDITOR 			= 1
 
 -----------------------------------------------------------------------------------------
 
 CHAPTERS = {
-	{title="Chapter1 : Mist", 			nbLevels = 5},
+	{title="Chapter1 : Mist", 			nbLevels = 8},
 	{title="Chapter2 : Moonshine", 	nbLevels = 12},
 	{title="Chapter3 : Magic", 		nbLevels = 1},
 --	{title="Chapter4 : Mystery", 		nbLevels = 1},
