@@ -121,11 +121,11 @@ function scene:displayContent()
 	
 	display.remove(buyButton)
 	display.remove(textBuyButton)
-	buyButton, textBuyButton = viewManager.buildEffectButton( T "Buy", 26, 0.36,  buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
+	buyButton, textBuyButton = viewManager.buildEffectButton(game.hud, T "Buy", 26, 0.36,  buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
 
 	display.remove(restoreButton)
 	display.remove(textRestoreButton)
-	restoreButton, textRestoreButton = viewManager.buildEffectButton( T "Restore", 20, 0.36,  buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
+	restoreButton, textRestoreButton = viewManager.buildEffectButton(game.hud, T "Restore", 20, 0.36,  buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
 
 end
 

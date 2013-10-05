@@ -291,7 +291,14 @@ function designLevel()
 			local startMotion = function() timer.performWithDelay(1, function () addGroupMotion(groups[k], groupMotion) end) end
 			
 			if(groupMotion.trigger) then
-				level.triggers[groupMotion.trigger].start = startMotion 
+			
+   			if(level.triggers[groupMotion.trigger].start) then
+   				level.triggers[groupMotion.trigger].start[#level.triggers[groupMotion.trigger].start+1] = startMotion
+   			else
+   				level.triggers[groupMotion.trigger].start = {}
+   				level.triggers[groupMotion.trigger].start[1] = startMotion 
+   			end
+   			
 			else
    			 startMotion()
 			end

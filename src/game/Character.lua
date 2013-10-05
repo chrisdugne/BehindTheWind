@@ -4,7 +4,7 @@ module(..., package.seeall)
 
 -------------------------------------
 
-local CHARACTER_SPEED = 135
+local CHARACTER_SPEED = 138
 local JUMP_SPEED = -267
 local RADIUS = 16
 
@@ -82,7 +82,7 @@ function init()
    sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
    
    physics.addBody( sprite, { 
-   	density = 5, 
+   	density = 10, 
    	friction = 1, 
    	bounce = 0.2,
    	radius = RADIUS
@@ -151,6 +151,7 @@ function die()
 	effectsManager.explode(explosion)
 	
 	timer.performWithDelay(2000, function()
+   	physicsManager.detachAllRopes()
 		effectsManager.spawnEffect()
 	end)	
 

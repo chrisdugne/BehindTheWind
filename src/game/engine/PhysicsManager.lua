@@ -9,8 +9,12 @@ physics.start()
 
 -------------------------------------
 
-local THROW_FORCE 	= 7.9
+local THROW_FORCE 	= 11
 local GRAVITY 			= 20
+
+local ROPE_LENGTH 	= 70
+local ROPE_FREQUENCY = 1.27
+local ROPE_DAMPING 	= 0.19
 
 -------------------------------------
 
@@ -378,9 +382,9 @@ function refreshTrajectory(fingerX, fingerY, xStart, yStart)
 
 	utils.emptyGroup(trajectory)
 
-	for i = 1,18 do
-		local trajectoryPosition = getTrajectoryPoint( startingPosition, startingVelocity, i*3 )
-		local circ = display.newCircle( trajectory, trajectoryPosition.x, trajectoryPosition.y, 1 )
+	for i = 1,40 do
+		local trajectoryPosition = getTrajectoryPoint( startingPosition, startingVelocity, i*1.4 )
+		local circ = display.newCircle( trajectory, trajectoryPosition.x, trajectoryPosition.y, 2.7 )
 		circ.alpha = 0.5
 	end
 end
@@ -389,7 +393,7 @@ function getTrajectoryPoint( startingPosition, startingVelocity, n )
    --velocity and gravity are given per second but we want time step values here
    local t = 1/display.fps  --seconds per time step at 60fps
    local stepVelocity = { x=t*startingVelocity.x, y=t*startingVelocity.y }
-   local stepGravity = { x=t*0, y=t*20 }
+   local stepGravity = { x=t*0, y=t*GRAVITY }
    return {
       x = startingPosition.x + n * stepVelocity.x + 0.5 * (n*n+n) * stepGravity.x,
       y = startingPosition.y + n * stepVelocity.y + 0.5 * (n*n+n) * stepGravity.y
@@ -442,10 +446,10 @@ function buildRopeTo(x,y,ground)
 
 	local joint = physics.newJoint( "distance", character.sprite, attach, character.sprite.x,character.sprite.y, attach.x,attach.y )
 	
-	joint.isSensor = true
-	joint.length = 75
-	joint.frequency = 1.7
-	joint.dampingRatio = 0.29
+	joint.isSensor 		= true
+	joint.length 			= ROPE_LENGTH
+	joint.frequency 		= ROPE_FREQUENCY
+	joint.dampingRatio 	= ROPE_DAMPING
 
 	rope.joint = joint
 	

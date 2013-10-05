@@ -29,6 +29,7 @@ function scene:refreshScene()
 	---------------------------------------------------------------
 	
 	viewManager.buildEffectButton(
+		game.hud,
 		"assets/images/hud/back.png",
 		51, 
 		0.18*aspectRatio,
@@ -90,6 +91,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 	------------------
 	
 	viewManager.buildEffectButton(
+		game.hud,
 		chapter,
 		51, 
 		0.67,

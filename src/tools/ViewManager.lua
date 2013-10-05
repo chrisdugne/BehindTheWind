@@ -195,18 +195,18 @@ end
 -- MENU TOOLS
 -----------------------------------------------------------------------------------------
 
-function buildEffectButton(titleOrIcon, titleSize, scale, x, y, action, isLocked )
-   buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, true )
+function buildEffectButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked )
+   buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, true )
 end
 
-function buildSimpleButton(titleOrIcon, titleSize, scale, x, y, action, isLocked )
-   buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, false )
+function buildSimpleButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked )
+   buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, false )
 end
 
 -----------------------------------------------------------------------------------------
 
 
-function buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, effect )
+function buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, effect )
 	
 	--------------------------------------
 
@@ -221,7 +221,7 @@ function buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, effe
 	planet.y = y
 	planet.alpha = 0
 	planet.color = color
-	game.hud:insert(planet)
+	parent:insert(planet)
 	transition.to( planet, { time=2000, alpha=1 })
 	planet:toFront()
 
@@ -233,7 +233,7 @@ function buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, effe
    	icon.x = planet.x
    	icon.y = planet.y
    	icon.alpha = 0
-   	game.hud:insert(icon)
+   	parent:insert(icon)
    	
    	transition.to( icon, { time=2000, alpha=1 }) 
    	icon:toFront()
@@ -243,7 +243,7 @@ function buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, effe
    	text.x = x
    	text.y = y
    	text.alpha = 0
-   	game.hud:insert(text)
+   	parent:insert(text)
    	
    	transition.to( text, { time=2000, alpha=1 })
    	text:toFront()
@@ -257,7 +257,7 @@ function buildButton(titleOrIcon, titleSize, scale, x, y, action, isLocked, effe
    	lock.x = x
    	lock.y = y
    	lock.alpha = 0
-   	game.hud:insert(lock)
+   	parent:insert(lock)
    	transition.to( lock, { time=2000, alpha=0.6 })
    	planet:setFillColor(30,30,30)
    	lock:toFront()

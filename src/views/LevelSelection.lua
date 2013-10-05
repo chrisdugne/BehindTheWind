@@ -31,6 +31,7 @@ function scene:refreshScene()
 	-----------------------------------------------------
 
 	viewManager.buildEffectButton(
+		game.hud,
 		"assets/images/hud/back.png",
 		51, 
 		0.18*aspectRatio,
@@ -215,6 +216,7 @@ function scene:createLevelContent(level, x, y, locked)
 	------------------
 	
 	viewManager.buildEffectButton(
+		game.hud,
 		level,
 		51, 
 		0.32*aspectRatio,

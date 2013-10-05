@@ -59,10 +59,11 @@ function start()
 	timer.performWithDelay(2000, function()
 
 		if(game.chapter == 1 and game.level == 1) then
-   		tutorials.start()
+			tutorials.start()
 		end
 
 		viewManager.buildSimpleButton(
+		game.hud,
 		"assets/images/hud/back.png",
 		51, 
 		0.18*aspectRatio,
@@ -401,8 +402,8 @@ end
 function showDropButton()
 	display.remove(game.hud.dropButton)
 	game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/button.drop.png" )
-	game.hud.dropButton.x = GRAB_BUTTON_X - 130
-	game.hud.dropButton.y = GRAB_BUTTON_Y
+	game.hud.dropButton.x = display.contentWidth*0.12
+	game.hud.dropButton.y = display.contentHeight * 0.77
 	game.hud.dropButton.alpha = 0.8
 
 	game.hud.dropButton:addEventListener( "touch", function(event)

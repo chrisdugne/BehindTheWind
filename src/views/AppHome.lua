@@ -43,6 +43,7 @@ function scene:refreshScene()
 	---------------------------------------------------------------
 
 	viewManager.buildEffectButton(
+		game.hud,
 		"assets/images/hud/play.png", 
 		21, 
 		0.66*aspectRatio,
@@ -65,6 +66,7 @@ function scene:refreshScene()
 	print(scale)
 	
 	viewManager.buildEffectButton(
+		game.hud,
 		"assets/images/hud/settings.png", 
 		0,
 		scale,
