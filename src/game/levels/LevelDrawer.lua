@@ -5,23 +5,28 @@ module(..., package.seeall)
 -------------------------------------
 -- SHEETS
 
-TILES 			= 1
-TREES 			= 2
-TILES_GREY 		= 3
-TILES_DARK 		= 4
-LEVEL_MISC 		= 5
+TILES 					= 1
+TREES 					= 2
+TILES_GREY 				= 3
+TILES_DARK 				= 4
+LEVEL_MISC 				= 5
 
-PIECE 			= 6 -- SAME NUM FOR MISC
-SIMPLE_PIECE 	= 7 -- SAME NUM FOR MISC
+PIECE 					= 6 -- SAME NUM FOR MISC
+SIMPLE_PIECE 			= 7 -- SAME NUM FOR MISC
 
-TILES_CLASSIC 	= 8
-TILES_GREEN 	= 9
-PLANTS 			= 10
+TILES_CLASSIC 			= 8
+TILES_GREEN 			= 9
+PLANTS 					= 10
 
 LEVEL_HUGE_CLASSIC 	= 11
 LEVEL_HUGE_GREEN 		= 12
 LEVEL_HUGE_GREY 		= 13
 LEVEL_HUGE_SOBER 		= 14
+
+IVY 						= 15
+IVY_MINI 				= 16
+IVY_STRETCH 			= 17
+IVY_STRETCH_MINI 		= 18
 
 ---------------
 -- LEVEL MISC
@@ -43,21 +48,29 @@ levelMiscSheetConfig 	= require("src.game.graphics.LevelMisc")
 pieceSheetConfig 			= require("src.game.graphics.Piece")
 plantsSheetConfig 		= require("src.game.graphics.Plants")
 levelHugeSheetConfig 	= require("src.game.graphics.LevelHuge")
+ivySheetConfig 			= require("src.game.graphics.Ivy")
+ivyMiniSheetConfig 		= require("src.game.graphics.IvyMini")
+ivyStretchSheetConfig 	= require("src.game.graphics.IvyStretch")
+ivyStretchMiniSheetConfig = require("src.game.graphics.IvyStretchMini")
 
-tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png", tilesSheetConfig.sheet )
-tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png", tilesSheetConfig.sheet )
-tilesDarkImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.dark.png", tilesSheetConfig.sheet )
-tilesClassicImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.classic.png", tilesSheetConfig.sheet )
-tilesGreenImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.greenish.png", tilesSheetConfig.sheet )
-treesImageSheet 			= graphics.newImageSheet( "assets/images/game/Trees.png", treesSheetConfig.sheet )
-levelMiscImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelMisc.png", levelMiscSheetConfig.sheet )
-pieceImageSheet 			= graphics.newImageSheet( "assets/images/game/Piece.png", pieceSheetConfig.sheet )
-simplePieceImageSheet	= graphics.newImageSheet( "assets/images/game/SimplePiece.png", pieceSheetConfig.sheet )
-plantsImageSheet 			= graphics.newImageSheet( "assets/images/game/Plants.png", plantsSheetConfig.sheet )
-levelHugeImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelHuge.png", levelHugeSheetConfig.sheet )
-levelHugeGreenImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-green.png", levelHugeSheetConfig.sheet )
-levelHugeGreyImageSheet = graphics.newImageSheet( "assets/images/game/LevelHuge-grey.png", levelHugeSheetConfig.sheet )
-levelHugeSoberImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-sober.png", levelHugeSheetConfig.sheet )
+tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png"					, tilesSheetConfig.sheet )
+tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png"			, tilesSheetConfig.sheet )
+tilesDarkImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.dark.png"			, tilesSheetConfig.sheet )
+tilesClassicImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.classic.png"		, tilesSheetConfig.sheet )
+tilesGreenImageSheet 	= graphics.newImageSheet( "assets/images/game/tiles.greenish.png"		, tilesSheetConfig.sheet )
+treesImageSheet 			= graphics.newImageSheet( "assets/images/game/Trees.png"					, treesSheetConfig.sheet )
+levelMiscImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelMisc.png"			, levelMiscSheetConfig.sheet )
+pieceImageSheet 			= graphics.newImageSheet( "assets/images/game/Piece.png"					, pieceSheetConfig.sheet )
+simplePieceImageSheet	= graphics.newImageSheet( "assets/images/game/SimplePiece.png"			, pieceSheetConfig.sheet )
+plantsImageSheet 			= graphics.newImageSheet( "assets/images/game/Plants.png"				, plantsSheetConfig.sheet )
+levelHugeImageSheet 		= graphics.newImageSheet( "assets/images/game/LevelHuge.png"			, levelHugeSheetConfig.sheet )
+levelHugeGreenImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-green.png"	, levelHugeSheetConfig.sheet )
+levelHugeGreyImageSheet = graphics.newImageSheet( "assets/images/game/LevelHuge-grey.png"		, levelHugeSheetConfig.sheet )
+levelHugeSoberImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-sober.png"	, levelHugeSheetConfig.sheet )
+ivyImageSheet				= graphics.newImageSheet( "assets/images/game/Ivy.png"					, ivySheetConfig.sheet )
+ivyMiniImageSheet			= graphics.newImageSheet( "assets/images/game/IvyMini.png"				, ivyMiniSheetConfig.sheet )
+ivyStretchImageSheet		= graphics.newImageSheet( "assets/images/game/IvyStretch.png"			, ivyStretchSheetConfig.sheet )
+ivyStretchMiniImageSheet= graphics.newImageSheet( "assets/images/game/IvyStretchMini.png"		, ivyStretchMiniSheetConfig.sheet )
 
 -------------------------------------
 
@@ -76,6 +89,10 @@ sheetConfigs[LEVEL_HUGE_CLASSIC] 	= levelHugeSheetConfig
 sheetConfigs[LEVEL_HUGE_GREEN] 		= levelHugeSheetConfig
 sheetConfigs[LEVEL_HUGE_GREY] 		= levelHugeSheetConfig
 sheetConfigs[LEVEL_HUGE_SOBER] 		= levelHugeSheetConfig
+sheetConfigs[IVY] 						= ivySheetConfig
+sheetConfigs[IVY_MINI] 					= ivyMiniSheetConfig
+sheetConfigs[IVY_STRETCH] 				= ivyStretchSheetConfig
+sheetConfigs[IVY_STRETCH_MINI] 		= ivyStretchMiniSheetConfig
 
 imageSheets = {}
 imageSheets[TILES] 						= tilesImageSheet
@@ -92,6 +109,10 @@ imageSheets[LEVEL_HUGE_CLASSIC] 		= levelHugeImageSheet
 imageSheets[LEVEL_HUGE_GREEN] 		= levelHugeGreenImageSheet
 imageSheets[LEVEL_HUGE_GREY] 			= levelHugeGreyImageSheet
 imageSheets[LEVEL_HUGE_SOBER] 		= levelHugeSoberImageSheet
+imageSheets[IVY] 							= ivyImageSheet
+imageSheets[IVY_MINI] 					= ivyMiniImageSheet
+imageSheets[IVY_STRETCH] 				= ivyStretchImageSheet
+imageSheets[IVY_STRETCH_MINI] 		= ivyStretchMiniImageSheet
 
 level = {}
 
