@@ -11,7 +11,8 @@ NONE 					= 0
 --GRABBING 			= 14
 
 DRAGGING_TILE 		= 101
---PINCHING 			= 102
+TOUCHING_TILE 		= 102
+--PINCHING 			= 103
 
 ---------------------------------------------------------------------
 
@@ -96,6 +97,7 @@ function touchScreen( event )
 	-----------------------------
 	
 	if(currentState == DRAGGING_TILE) then return end
+	if(currentState == TOUCHING_TILE) then return end
 
 	-----------------------------
 	
@@ -130,7 +132,7 @@ function touchScreen( event )
 		
 	end
 
-	return true
+	return false
 end
 
 ---------------------------------------------------------------------
@@ -163,6 +165,46 @@ function setState(state, toApply)
 		end
 	end
 	
+end
+
+---------------------------------------------------------------------
+
+function touchTile( tile, event )
+	if(event.phase == "began") then
+
+		tile.touchX = tile.x
+		tile.touchY = tile.y
+		if(not tile.draggable) then
+      	display.getCurrentStage():setFocus( event.target )
+   		setState(TOUCHING_TILE)
+		end
+
+	elseif(event.phase == "ended" or event.phase == "cancelled" ) then
+
+		if(tile.draggable) then
+			tile.releaseX = tile.x
+			tile.releaseY = tile.y
+		else
+			display.getCurrentStage():setFocus( nil )
+   		setState(NONE)
+		end
+
+		if((not tile.draggable) or (tile.touchX == tile.releaseX and tile.touchY == tile.releaseY)) then
+--			character.sprite.angularVelocity = 0		
+--			character.sprite.rotation = 0
+			physicsManager.buildRopeTo(tile.touchX, tile.touchY, tile)
+			
+			timer.performWithDelay(20, function()
+				if(#character.ropes > 1) then
+					physicsManager.detachPreviousRope()	
+				end
+			end)
+		end
+
+
+	end
+
+	return false 
 end
 
 ---------------------------------------------------------------------

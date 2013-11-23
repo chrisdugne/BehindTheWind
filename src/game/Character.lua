@@ -7,6 +7,7 @@ module(..., package.seeall)
 local CHARACTER_SPEED = 138
 local JUMP_SPEED = -267
 local RADIUS = 16
+local HANGING_FORCE = 100
 
 NOT_MOVING 	= 0
 GOING_LEFT 	= 1
@@ -82,14 +83,15 @@ function init()
    sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
    
    physics.addBody( sprite, { 
-   	density 		= 10, 
-   	friction 	= 1, 
-   	bounce 		= 0.2,
+   	density 		= 2, 
+   	friction 	= 2, 
+   	bounce 		= 0.45,
    	radius 		= RADIUS
    })
 
    ---------------------------
    
+--   sprite.isFixedRotation = false
    sprite.isFixedRotation = true
 --	sprite:addEventListener( "touch", touchController.characterTouch )
 	sprite:addEventListener( "collision", collide )
@@ -100,6 +102,19 @@ function init()
    sprite.y = levelDrawer.level.spawnY
    sprite.alpha = 0
    
+   ---------------------------
+   
+   sprite:addEventListener( "touch", function(event)
+   
+		if(#ropes == 0) then return false end 
+
+		if(event.phase == "began") then
+			physicsManager.detachAllRopes() 
+		end 
+
+		return true 
+	end)
+	
    ---------------------------
    -- reset
       
@@ -187,6 +202,8 @@ function spawn()
    sprite.x = levelDrawer.level.spawnX
    sprite.y = levelDrawer.level.spawnY
    sprite.alpha = 1
+--   sprite.angularVelocity = 0
+--   sprite.rotation = 0
    
 	sprite:setFrame(1)
    sprite:setLinearVelocity(0,6)
@@ -441,9 +458,9 @@ function move()
 		end
 	else
 		if(touchController.rightTouch) then
-			sprite:applyForce( 300, 0, sprite.x, sprite.y )
+			sprite:applyForce( HANGING_FORCE, 0, sprite.x, sprite.y )
 		elseif(touchController.leftTouch) then
-			sprite:applyForce( -300, 0, sprite.x, sprite.y )
+			sprite:applyForce( -HANGING_FORCE, 0, sprite.x, sprite.y )
 		end
 	end
 

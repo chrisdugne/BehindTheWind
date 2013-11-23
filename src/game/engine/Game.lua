@@ -5,7 +5,7 @@ Game = {}
 -----------------------------------------------------------------------------------------
 
 function Game:new()  
-	local startZoom = 1.2*aspectRatio
+	local startZoom = 0.75*aspectRatio*aspectRatio
 	local camera = display.newGroup()
 	camera.topDistanceCoeff = 0.28
 	camera:scale(startZoom,startZoom)
@@ -364,16 +364,18 @@ function Game:refreshCamera(event)
 			or touchController.currentState == touchController.THROWING
 			or touchController.currentState == touchController.GRABBING	) then
 				
-   			if(game.camera.centerReached) then
-         		game.camera.y = display.contentHeight*0.5 - character.screenY()
+				local verticalToReach = display.contentHeight*0.8 - character.screenY()
+				
+   			if(game.camera.verticalReached) then
+         		game.camera.y = verticalToReach
    			
    			elseif(not game.camera.tween) then
    				game.camera.tween = transition.to(game.camera, {
    					time=250, 
-   					y = display.contentHeight*0.5 - character.screenY(),
+   					y = verticalToReach,
    					onComplete = function() 
    						game.camera.tween = nil 
-         				game.camera.centerReached = true
+         				game.camera.verticalReached = true
    						end
    				})
    			end
@@ -385,7 +387,7 @@ function Game:refreshCamera(event)
       		end
       		
       		game.camera.tween = nil
-      		game.camera.centerReached = false
+      		game.camera.verticalReached = false
       		
          	local topDistance 	= character.screenY() + game.camera.y
          	local bottomDistance = display.contentHeight - topDistance

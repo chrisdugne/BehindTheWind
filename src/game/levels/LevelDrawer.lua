@@ -164,10 +164,10 @@ function designLevel()
 		
 		tile.startX 		= tiles[i].x
 		tile.startY 		= tiles[i].y
-		tile.isFloor 		= true
+		tile.isFloor 		= (not tile.background) and (not tile.foreground)
 		
 		local type 			= "static"
-		local requireBody = not tile.background and not tile.foreground
+		local requireBody = tile.isFloor
 		
 		--------------------
 
@@ -293,6 +293,11 @@ function designLevel()
 		
 		--------------------
 		
+		if(tile and tile.isFloor) then
+      	tile:addEventListener( "touch", function(event)
+      		touchController.touchTile(tile, event)
+      	end)	
+		end
 	end 
 	
 	------------------------------
@@ -479,6 +484,7 @@ function addGroupDraggable(group, dragLine)
 	motionLimit.vertical 	= dragLine.y2 - dragLine.y1
 
 	for i = 1, #group do
+		group[i].draggable = true
 		group[i]:addEventListener( "touch", function(event)
 			touchController.dragGroup(group, motionLimit, event)
 		end)

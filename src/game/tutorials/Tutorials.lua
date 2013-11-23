@@ -34,18 +34,18 @@ local requireHelpLevel4 = true
 
 function start()
 	
-   if(game.level == 2) then
-   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel2 )
-
-   elseif(game.level == 3) then
-   	requireHelpLevel3 = true
-   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel3 )
-
-  	elseif(game.level == 4) then
-   	requireHelpLevel4 = true
-   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel4 )
-   
-   end
+--   if(game.level == 2) then
+--   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel2 )
+--
+--   elseif(game.level == 3) then
+--   	requireHelpLevel3 = true
+--   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel3 )
+--
+--  	elseif(game.level == 4) then
+--   	requireHelpLevel4 = true
+--   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel4 )
+--   
+--   end
    
 end
 

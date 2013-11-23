@@ -90,10 +90,10 @@ function buildButtons()
 	-- 
 
 	game.hud.leftButton = display.newImage( game.hud, "assets/images/hud/button.left.png" )
-	game.hud.leftButton.x = display.contentWidth*0.07
-	game.hud.leftButton.y = display.contentHeight*0.90
+	game.hud.leftButton:scale(aspectRatio*0.5, aspectRatio*0.5)
+	game.hud.leftButton.x = game.hud.leftButton.contentWidth/2 + display.contentWidth*0.007
+	game.hud.leftButton.y = display.contentHeight - game.hud.leftButton.contentHeight/2 - display.contentWidth*0.007
 	game.hud.leftButton.alpha = 0.6
-	game.hud.leftButton:scale(0.5,0.5)
 
 	game.hud.leftButton:addEventListener( "touch", function(event)
 
@@ -116,10 +116,10 @@ function buildButtons()
 	end)
 
 	game.hud.rightButton = display.newImage( game.hud, "assets/images/hud/button.right.png" )
-	game.hud.rightButton.x = display.contentWidth*0.17
-	game.hud.rightButton.y = display.contentHeight*0.90
+	game.hud.rightButton:scale(aspectRatio*0.5, aspectRatio*0.5)
+	game.hud.rightButton.x = game.hud.rightButton.contentWidth/2 + game.hud.leftButton.contentWidth + display.contentWidth*0.015
+	game.hud.rightButton.y = display.contentHeight - game.hud.rightButton.contentHeight/2 - display.contentWidth*0.007
 	game.hud.rightButton.alpha = 0.6
-	game.hud.rightButton:scale(0.5,0.5)
 
 	game.hud.rightButton:addEventListener( "touch", function(event)
 
@@ -141,108 +141,107 @@ function buildButtons()
 		return true 
 	end)
 
-
 	-----------------------------------------------------------------
 	-- Throw buttons
-	-- 
-
-		game.hud.fireBigButton = display.newImage( game.hud, "assets/images/hud/button.png" )
-		game.hud.fireBigButton.x = FIRE_BUTTON_X
-		game.hud.fireBigButton.y = FIRE_BUTTON_Y
-		game.hud.fireBigButton.alpha = 0.6
-		game.hud.fireBigButton:scale(0.7,0.7)
-
-		game.hud.throwSwipeMax = game.hud.fireBigButton.contentHeight*0.5 - 10
-
-		game.hud.fireBigButton:addEventListener( "touch", function(event)
-
-			if(character.throwGrab) then return false end
-			if(event.id == touchController.moveTouchFingerId) then return false end
-
-			if(event.phase == "began") then
-				game.hud.fireBigButton.alpha = 1
-				touchController.throwTouchFingerId= event.id 
-
-				if(GLOBALS.savedData.fireEnable) then
-					character.throwFire = true
-					character.setThrowing()
-				end 
-
-			end 
-
-			if(event.phase == "began" or event.phase == "moved") then
-				placeFireSmallButton(event)
-
-			elseif(event.phase == "ended") then
-				character.mayThrow()	
-				game.hud.fireBigButton.alpha = 0.6
-				game.hud.fireSmallButton.x = FIRE_BUTTON_X
-				game.hud.fireSmallButton.y = FIRE_BUTTON_Y
-				touchController.throwTouchFingerId = nil
-			end
-
-			return true 
-		end)
-
-		game.hud.fireSmallButton = display.newImage( game.hud, "assets/images/hud/red.center.png" )
-		game.hud.fireSmallButton.x = FIRE_BUTTON_X
-		game.hud.fireSmallButton.y = FIRE_BUTTON_Y
-		game.hud.fireSmallButton.alpha = 0.6
-		game.hud.fireSmallButton:scale(0.7,0.7)
-
-		if(not GLOBALS.savedData.fireEnable) then	
-   		game.hud.fireBigButton.alpha = 0
-   		game.hud.fireSmallButton.alpha = 0
-   	end
-
-		-----------------------------------------------------------
-		
-		game.hud.grabBigButton = display.newImage( game.hud, "assets/images/hud/button.png" )
-		game.hud.grabBigButton.x = GRAB_BUTTON_X
-		game.hud.grabBigButton.y = GRAB_BUTTON_Y
-		game.hud.grabBigButton.alpha = 0.6
-		game.hud.grabBigButton:scale(0.7,0.7)
-
-		game.hud.grabBigButton:addEventListener( "touch", function(event)
-
-			if(character.throwFire) then return false end
-			if(event.id == touchController.moveTouchFingerId) then return false end
-
-			if(event.phase == "began") then
-				game.hud.grabBigButton.alpha = 1
-				touchController.throwTouchFingerId= event.id 
-
-				if(GLOBALS.savedData.grabEnable) then
-					character.throwGrab = true
-					character.setGrabbing()
-				end 
-
-			end 
-
-			if(event.phase == "began" or event.phase == "moved") then
-				placeGrabSmallButton(event)
-
-			elseif(event.phase == "ended") then
-				character.mayThrow()	
-				game.hud.grabBigButton.alpha = 0.6
-				game.hud.grabSmallButton.x = GRAB_BUTTON_X
-				game.hud.grabSmallButton.y = GRAB_BUTTON_Y
-				touchController.throwTouchFingerId = nil
-			end
-
-			return true 
-		end)
-
-		game.hud.grabSmallButton = display.newImage( game.hud, "assets/images/hud/blue.center.png" )
-		game.hud.grabSmallButton.x = GRAB_BUTTON_X
-		game.hud.grabSmallButton.y = GRAB_BUTTON_Y
-		game.hud.grabSmallButton.alpha = 0.6
-		game.hud.grabSmallButton:scale(0.7,0.7)
-
-		if(not GLOBALS.savedData.grabEnable) then	
-   		game.hud.grabBigButton.alpha = 0
-   		game.hud.grabSmallButton.alpha = 0
-   	end
+--	-- 
+--
+--	game.hud.fireBigButton = display.newImage( game.hud, "assets/images/hud/button.png" )
+--	game.hud.fireBigButton.x = FIRE_BUTTON_X
+--	game.hud.fireBigButton.y = FIRE_BUTTON_Y
+--	game.hud.fireBigButton.alpha = 0.6
+--	game.hud.fireBigButton:scale(0.7,0.7)
+--
+--	game.hud.throwSwipeMax = game.hud.fireBigButton.contentHeight*0.5 - 10
+--
+--	game.hud.fireBigButton:addEventListener( "touch", function(event)
+--
+--		if(character.throwGrab) then return false end
+--		if(event.id == touchController.moveTouchFingerId) then return false end
+--
+--		if(event.phase == "began") then
+--			game.hud.fireBigButton.alpha = 1
+--			touchController.throwTouchFingerId= event.id 
+--
+--			if(GLOBALS.savedData.fireEnable) then
+--				character.throwFire = true
+--				character.setThrowing()
+--			end 
+--
+--		end 
+--
+--		if(event.phase == "began" or event.phase == "moved") then
+--			placeFireSmallButton(event)
+--
+--		elseif(event.phase == "ended") then
+--			character.mayThrow()	
+--			game.hud.fireBigButton.alpha = 0.6
+--			game.hud.fireSmallButton.x = FIRE_BUTTON_X
+--			game.hud.fireSmallButton.y = FIRE_BUTTON_Y
+--			touchController.throwTouchFingerId = nil
+--		end
+--
+--		return true 
+--	end)
+--
+--	game.hud.fireSmallButton = display.newImage( game.hud, "assets/images/hud/red.center.png" )
+--	game.hud.fireSmallButton.x = FIRE_BUTTON_X
+--	game.hud.fireSmallButton.y = FIRE_BUTTON_Y
+--	game.hud.fireSmallButton.alpha = 0.6
+--	game.hud.fireSmallButton:scale(0.7,0.7)
+--
+--	if(not GLOBALS.savedData.fireEnable) then	
+--		game.hud.fireBigButton.alpha = 0
+--		game.hud.fireSmallButton.alpha = 0
+--	end
+--
+--	-----------------------------------------------------------
+--
+--	game.hud.grabBigButton = display.newImage( game.hud, "assets/images/hud/button.png" )
+--	game.hud.grabBigButton.x = GRAB_BUTTON_X
+--	game.hud.grabBigButton.y = GRAB_BUTTON_Y
+--	game.hud.grabBigButton.alpha = 0.6
+--	game.hud.grabBigButton:scale(0.7,0.7)
+--
+--	game.hud.grabBigButton:addEventListener( "touch", function(event)
+--
+--		if(character.throwFire) then return false end
+--		if(event.id == touchController.moveTouchFingerId) then return false end
+--
+--		if(event.phase == "began") then
+--			game.hud.grabBigButton.alpha = 1
+--			touchController.throwTouchFingerId= event.id 
+--
+--			if(GLOBALS.savedData.grabEnable) then
+--				character.throwGrab = true
+--				character.setGrabbing()
+--			end 
+--
+--		end 
+--
+--		if(event.phase == "began" or event.phase == "moved") then
+--			placeGrabSmallButton(event)
+--
+--		elseif(event.phase == "ended") then
+--			character.mayThrow()	
+--			game.hud.grabBigButton.alpha = 0.6
+--			game.hud.grabSmallButton.x = GRAB_BUTTON_X
+--			game.hud.grabSmallButton.y = GRAB_BUTTON_Y
+--			touchController.throwTouchFingerId = nil
+--		end
+--
+--		return true 
+--	end)
+--
+--	game.hud.grabSmallButton = display.newImage( game.hud, "assets/images/hud/blue.center.png" )
+--	game.hud.grabSmallButton.x = GRAB_BUTTON_X
+--	game.hud.grabSmallButton.y = GRAB_BUTTON_Y
+--	game.hud.grabSmallButton.alpha = 0.6
+--	game.hud.grabSmallButton:scale(0.7,0.7)
+--
+--	if(not GLOBALS.savedData.grabEnable) then	
+--		game.hud.grabBigButton.alpha = 0
+--		game.hud.grabSmallButton.alpha = 0
+--	end
 end
 
 -----------------------------------------------------------------------------------------

@@ -10,11 +10,11 @@ physics.start()
 -------------------------------------
 
 local THROW_FORCE 	= 11
-local GRAVITY 			= 20
+local GRAVITY 			= 18
 
-local ROPE_LENGTH 	= 70
-local ROPE_FREQUENCY = 1.27
-local ROPE_DAMPING 	= 0.19
+local ROPE_LENGTH 	= 100
+local ROPE_FREQUENCY = 1.7
+local ROPE_DAMPING 	= 1.9
 
 -------------------------------------
 
@@ -25,6 +25,7 @@ local trajectory = nil
 function start( )
 	
 	physics.setGravity( 0, GRAVITY )
+	physics.setScale( 40 )
 --	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
@@ -417,6 +418,10 @@ function buildRopeTo(x,y,ground)
 	
 	--------------------------
 
+	if(not x or not y or not ground) then return end
+	
+	--------------------------
+
 	local rope = {}
 	rope.num = #character.ropes+1
 
@@ -472,7 +477,7 @@ function buildRopeTo(x,y,ground)
 
 	character.setHanging(true)
 	
-	hud.showDropButton()
+--	hud.showDropButton()
 end
 
 ---------------------------------------------------------------------------
