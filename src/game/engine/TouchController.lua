@@ -170,10 +170,12 @@ end
 ---------------------------------------------------------------------
 
 function touchTile( tile, event )
+	
 	if(event.phase == "began") then
 
 		tile.touchX = tile.x
 		tile.touchY = tile.y
+	
 		if(not tile.draggable) then
       	display.getCurrentStage():setFocus( event.target )
    		setState(TOUCHING_TILE)
@@ -181,15 +183,15 @@ function touchTile( tile, event )
 
 	elseif(event.phase == "ended" or event.phase == "cancelled" ) then
 
-		if(tile.draggable) then
-			tile.releaseX = tile.x
-			tile.releaseY = tile.y
-		else
+		tile.releaseX = tile.x
+		tile.releaseY = tile.y
+			
+		if(not tile.draggable) then
 			display.getCurrentStage():setFocus( nil )
    		setState(NONE)
 		end
-
-		if((not tile.draggable) or (tile.touchX == tile.releaseX and tile.touchY == tile.releaseY)) then
+	
+		if(tile.grabbable and (tile.touchX == tile.releaseX and tile.touchY == tile.releaseY)) then
 --			character.sprite.angularVelocity = 0		
 --			character.sprite.rotation = 0
 			physicsManager.buildRopeTo(tile.touchX, tile.touchY, tile)

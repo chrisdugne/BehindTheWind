@@ -234,6 +234,18 @@ function designLevel()
 		end
 		
 		--------------------
+		--
+		-- Grabbable
+		-- 
+		
+		if(isRealTile(tile)) then
+			print("------->",tile.num)
+			if(tile.num == 4) then
+				tile.grabbable = true
+			end
+		end
+		
+		--------------------
 		-- Level Misc 
 		-- 
 		
@@ -384,6 +396,16 @@ function designLevel()
 	-----------------------------
 	-- to access groups elsewhere
 	level.groups = groups
+end
+
+-------------------------------------
+
+function isRealTile(tile)
+	return tile.sheet == TILES
+	or  tile.sheet == TILES_CLASSIC
+	or  tile.sheet == TILES_GREEN
+	or  tile.sheet == TILES_GREY
+	or  tile.sheet == TILES_DARK
 end
 
 -------------------------------------

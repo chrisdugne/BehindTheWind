@@ -364,7 +364,7 @@ function Game:refreshCamera(event)
 			or touchController.currentState == touchController.THROWING
 			or touchController.currentState == touchController.GRABBING	) then
 				
-				local verticalToReach = display.contentHeight*0.8 - character.screenY()
+				local verticalToReach = display.contentHeight*0.7 - character.screenY()
 				
    			if(game.camera.verticalReached) then
          		game.camera.y = verticalToReach
