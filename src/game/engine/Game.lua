@@ -44,6 +44,13 @@ function Game:start()
 	self.score 					= {}
 
 	---------------------
+	
+	self.camera.offsetX 	= 0
+	self.camera.offsetY 	= 0
+	self.camera.markX 	= 0
+	self.camera.markY 	= 0
+
+	---------------------
 
 	utils.emptyGroup(self.camera)
 
@@ -364,7 +371,7 @@ function Game:refreshCamera(event)
 			or touchController.currentState == touchController.THROWING
 			or touchController.currentState == touchController.GRABBING	) then
 				
-				local verticalToReach = display.contentHeight*0.7 - character.screenY()
+				local verticalToReach = display.contentHeight*0.7 - character.screenY() - game.camera.offsetY
 				
    			if(game.camera.verticalReached) then
          		game.camera.y = verticalToReach
@@ -381,6 +388,8 @@ function Game:refreshCamera(event)
    			end
       	
       	else
+      		print("--===")
+      		print(game.camera.offsetY)
       	
       		if(game.camera.tween) then
       			transition.cancel(game.camera.tween)
@@ -395,9 +404,10 @@ function Game:refreshCamera(event)
          	if(bottomDistance < display.contentHeight*game.camera.topDistanceCoeff) then
          		game.camera.y = display.contentHeight*(1 - game.camera.topDistanceCoeff) - character.screenY()
          	elseif(topDistance < display.contentHeight*game.camera.topDistanceCoeff) then
-         		game.camera.y = display.contentHeight*game.camera.topDistanceCoeff - character.screenY() 
+         		game.camera.y = display.contentHeight*game.camera.topDistanceCoeff - character.screenY()
          	end
       	
+      		game.camera.y =  game.camera.y - game.camera.offsetY
       	end
       
       elseif(game.focus == ROCK) then

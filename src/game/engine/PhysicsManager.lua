@@ -477,7 +477,7 @@ function buildRopeTo(x,y,ground)
 
 	character.setHanging(true)
 	
---	hud.showDropButton()
+	hud.showDropButton()
 end
 
 ---------------------------------------------------------------------------

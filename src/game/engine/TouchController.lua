@@ -101,35 +101,42 @@ function touchScreen( event )
 
 	-----------------------------
 	
-	lastX, lastY = event.x, event.y
-   	
-	---------------------------------------------
+	dragScreen(event)
+
+--	-----------------------------
+--	
+--	lastX, lastY = event.x, event.y
+--   	
+--	---------------------------------------------
 
 	if event.phase == "began" then
    	
       display.getCurrentStage():setFocus( game.camera )
-		
-   	
-	---------------------------------------------
-	
-	elseif "moved" == event.phase then
-		
-		if(event.id == throwTouchFingerId and character.throwFire) then
-			hud.placeFireSmallButton(event)
-		
-		elseif(event.id == throwTouchFingerId and character.throwGrab) then
-			hud.placeGrabSmallButton(event)
-		
-		end
-
-	----------------------------------------------------------------------
-	
+--		
+--   	
+--	---------------------------------------------
+--	
+--	elseif "moved" == event.phase then
+--		
+--		if(event.id == throwTouchFingerId and character.throwFire) then
+--			hud.placeFireSmallButton(event)
+--		
+--		elseif(event.id == throwTouchFingerId and character.throwGrab) then
+--			hud.placeGrabSmallButton(event)
+--		
+--		end
+--
+--	----------------------------------------------------------------------
+--	
 	elseif event.phase == "ended" or event.phase == "cancelled" then
-		
-   	cancelAllTouches(event.id)
-		character.stop()
-		setState(NONE)
-		
+      
+      display.getCurrentStage():setFocus( nil )
+      
+--		
+--   	cancelAllTouches(event.id)
+--		character.stop()
+--		setState(NONE)
+--		
 	end
 
 	return false
@@ -296,6 +303,30 @@ function drag( tile, event, motionLimit )
 
 	elseif event.phase == "ended" or event.phase == "cancelled" then
 		tile.moving = false
+		
+	end
+
+	return true
+end
+	
+---------------------------------------------------------------------
+--- ici on prend en compte le game.zoom
+-- car les x,y des events sont ceux du screen
+-- or on bouge les x,y dans le monde, la camera => il faut compter le zoom
+
+function dragScreen( event )
+	
+	if event.phase == "began" then
+		game.camera.markX = game.camera.x*game.zoom    -- store x location of object
+		game.camera.markY = game.camera.y*game.zoom    -- store y location of object
+	
+	elseif event.phase == "moved" then
+		local x = ((event.x - event.xStart) + game.camera.markX)/game.zoom
+		local y = ((event.y - event.yStart) + game.camera.markY)/game.zoom
+		
+		game.camera.offsetX, game.camera.offsetY = x, y    -- move object based on calculations above
+
+	elseif event.phase == "ended" or event.phase == "cancelled" then
 		
 	end
 

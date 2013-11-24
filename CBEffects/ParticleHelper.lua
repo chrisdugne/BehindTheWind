@@ -315,6 +315,11 @@ local function createPhysics()
 	-- physicsLoop()
 	------------------------------------------------------------------------------
 	local function physicsLoop()
+	
+		---- ADDED BY CHRIS ------
+--		if(#effectsManager.effects == 0) then print("couik") return false
+		--------------------------
+		
 		for k, v in pairs(pPhysics._objects) do
 			if pPhysics._objects[k] then
 				pPhysics._objects[k]._numUpdates = pPhysics._objects[k]._numUpdates + 1

@@ -474,15 +474,15 @@ function drawFollow( )
 	local follow = CBE.VentGroup{
 		{
 			preset="wisps",
-			title="followLight", -- The pop that appears when a mortar shot explodes
+			title="light",
 			color={{105,135,182}},
 			perEmit=1,
 			emissionNum=1,
 			emitDelay=210,
-			fadeInTime=920,
+			fadeInTime=520,
 			scale=0.3,
 			physics={
-				gravityX=0.53,
+				gravityX=0.83,
 				gravityY=0.04,
 			},
 			x = character.sprite.x,
@@ -491,11 +491,9 @@ function drawFollow( )
 	}
 	
 	follow.static = true
-	follow:start("followLight")
-	game.camera:insert(follow:get("followLight").content)
 	
 	registerNewEffect(follow)
-	timer.performWithDelay(3000, function() destroyEffect(follow) end)
+	game.camera:insert(follow:get("light").content)
 end
 
 -----------------------------------------------------------------------------

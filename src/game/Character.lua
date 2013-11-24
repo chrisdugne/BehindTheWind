@@ -85,7 +85,7 @@ function init()
    physics.addBody( sprite, { 
    	density 		= 2, 
    	friction 	= 2, 
-   	bounce 		= 0.45,
+   	bounce 		= 0.15,
    	radius 		= RADIUS
    })
 
