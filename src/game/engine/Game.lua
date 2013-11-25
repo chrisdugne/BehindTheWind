@@ -360,63 +360,10 @@ function Game:refreshCamera(event)
 	game.camera.yScale = game.zoom
 	
 	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
-		
-		if(not character.rock or game.focus == CHARACTER) then	
-      	game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5
-			
-			local vx,vy = character.sprite:getLinearVelocity()
-			      	
-      	if(character.hanging 
-      	or touchController.currentState == touchController.PINCHING
-			or touchController.currentState == touchController.THROWING
-			or touchController.currentState == touchController.GRABBING	) then
-				
-				local verticalToReach = display.contentHeight*0.7 - character.screenY() - game.camera.offsetY
-				
-   			if(game.camera.verticalReached) then
-         		game.camera.y = verticalToReach
-   			
-   			elseif(not game.camera.tween) then
-   				game.camera.tween = transition.to(game.camera, {
-   					time=250, 
-   					y = verticalToReach,
-   					onComplete = function() 
-   						game.camera.tween = nil 
-         				game.camera.verticalReached = true
-   						end
-   				})
-   			end
-      	
-      	else
-      		print("--===")
-      		print(game.camera.offsetY)
-      	
-      		if(game.camera.tween) then
-      			transition.cancel(game.camera.tween)
-      		end
-      		
-      		game.camera.tween = nil
-      		game.camera.verticalReached = false
-      		
-         	local topDistance 	= character.screenY() + game.camera.y
-         	local bottomDistance = display.contentHeight - topDistance
-   
-         	if(bottomDistance < display.contentHeight*game.camera.topDistanceCoeff) then
-         		game.camera.y = display.contentHeight*(1 - game.camera.topDistanceCoeff) - character.screenY()
-         	elseif(topDistance < display.contentHeight*game.camera.topDistanceCoeff) then
-         		game.camera.y = display.contentHeight*game.camera.topDistanceCoeff - character.screenY()
-         	end
-      	
-      		game.camera.y =  game.camera.y - game.camera.offsetY
-      	end
-      
-      elseif(game.focus == ROCK) then
-      	if(character.rock.x) then 
-      		game.camera.x = -character.rock.x*game.zoom + display.contentWidth*0.5
-      		game.camera.y = -character.rock.y*game.zoom + display.contentHeight*0.5
-      	end
-      end
-	end
+		game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5 + game.camera.offsetX
+	 	game.camera.y = -character.sprite.y*game.zoom + display.contentHeight*0.5 + game.camera.offsetY
+   end
+ 	
 end
 
 --------------------------------------------------------------------------------------------------------------------------

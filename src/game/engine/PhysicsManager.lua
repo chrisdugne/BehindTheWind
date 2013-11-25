@@ -13,8 +13,8 @@ local THROW_FORCE 	= 11
 local GRAVITY 			= 18
 
 local ROPE_LENGTH 	= 100
-local ROPE_FREQUENCY = 1.7
-local ROPE_DAMPING 	= 1.9
+local ROPE_FREQUENCY = 1.9
+local ROPE_DAMPING 	= 2.4
 
 -------------------------------------
 
@@ -530,6 +530,7 @@ function detachPreviousRope()
 	end
 	
 	return true -- not to get a touchScreen !
+	
 end
 
 ---------------------------------------------------------------------------

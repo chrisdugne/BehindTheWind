@@ -64,9 +64,16 @@ end
 
 -------------------------------------
 
-function exit()
+function exit(completeExit)
+	
+	if(#ropes > 0) then
+		timer.performWithDelay(500, function()
+      	physicsManager.detachAllRopes()
+		end) 
+	end
+	 
 	sprite:setLinearVelocity(0,0)
-	transition.to( sprite, { time=100, alpha=0})
+	transition.to( sprite, { time=100, alpha=0, onComplete=completeExit})
 end
 
 -------------------------------------

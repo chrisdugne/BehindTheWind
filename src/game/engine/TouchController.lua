@@ -10,6 +10,7 @@ NONE 					= 0
 --THROWING 			= 13
 --GRABBING 			= 14
 
+DRAGGING_SCREEN 	= 100
 DRAGGING_TILE 		= 101
 TOUCHING_TILE 		= 102
 --PINCHING 			= 103
@@ -131,12 +132,10 @@ function touchScreen( event )
 	elseif event.phase == "ended" or event.phase == "cancelled" then
       
       display.getCurrentStage():setFocus( nil )
-      
---		
---   	cancelAllTouches(event.id)
---		character.stop()
---		setState(NONE)
---		
+   	cancelAllTouches(event.id)
+		character.stop()
+		setState(NONE)
+		
 	end
 
 	return false
@@ -317,16 +316,36 @@ end
 function dragScreen( event )
 	
 	if event.phase == "began" then
-		game.camera.markX = game.camera.x*game.zoom    -- store x location of object
-		game.camera.markY = game.camera.y*game.zoom    -- store y location of object
+		game.camera.markX = game.camera.offsetX    -- store x location of object
+		game.camera.markY = game.camera.offsetY    -- store y location of object
+		setState(DRAGGING_SCREEN)
 	
-	elseif event.phase == "moved" then
-		local x = ((event.x - event.xStart) + game.camera.markX)/game.zoom
-		local y = ((event.y - event.yStart) + game.camera.markY)/game.zoom
+	elseif event.phase == "moved" and currentState == DRAGGING_SCREEN then
 		
-		game.camera.offsetX, game.camera.offsetY = x, y    -- move object based on calculations above
+		local x = ((event.x - event.xStart) + game.camera.markX)
+		local y = ((event.y - event.yStart) + game.camera.markY)
+		
+		game.camera.offsetX = x
+		game.camera.offsetY = y
+		
+		if(game.camera.offsetX > display.contentWidth*0.4 ) then
+			game.camera.offsetX = display.contentWidth*0.4
+		end
+
+		if(game.camera.offsetX < -display.contentWidth*0.4 ) then
+			game.camera.offsetX = -display.contentWidth*0.4
+		end
+
+		if(game.camera.offsetY > display.contentHeight*0.4 ) then
+			game.camera.offsetY = display.contentHeight*0.4
+		end
+
+		if(game.camera.offsetY < -display.contentHeight*0.4 ) then
+			game.camera.offsetY = -display.contentHeight*0.4
+		end
 
 	elseif event.phase == "ended" or event.phase == "cancelled" then
+		setState(NONE)
 		
 	end
 

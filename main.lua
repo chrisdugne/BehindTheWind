@@ -240,12 +240,20 @@ local function onKeyEvent( event )
       if ( storyboard.currentScene == "splash" ) then
          native.requestExit()
       else
---      	native.setKeyboardFocus( nil )
--- 		nothing
+         if ( storyboard.isOverlay ) then
+            storyboard.hideOverlay()
+         else
+            local lastScene = storyboard.returnTo
+            print( "previous scene", lastScene )
+            if ( lastScene ) then
+               storyboard.gotoScene( lastScene, { effect="crossFade", time=500 } )
+            else
+               native.requestExit()
+            end
+         end
       end
    end
 
-	-- TO TEST 
    if ( keyName == "volumeUp" and phase == "down" ) then
       local masterVolume = audio.getVolume()
       print( "volume:", masterVolume )
@@ -261,7 +269,6 @@ local function onKeyEvent( event )
          audio.setVolume( masterVolume )
       end
    end
-
 
    return true  --SEE NOTE BELOW
 end

@@ -306,8 +306,9 @@ function reachExitEffect(x,y)
 	registerNewEffect(light)	
 	game.camera:insert(light:get("light").content)
 	
-	character.exit()
-	game:stop()
+	character.exit(function()
+		game:stop()
+	end)
 end
 
 -----------------------------------------------------------------------------
