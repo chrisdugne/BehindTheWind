@@ -359,7 +359,7 @@ function Game:refreshCamera(event)
 	game.camera.xScale = game.zoom
 	game.camera.yScale = game.zoom
 	
-	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY) then
+	if(character.sprite and character.sprite.y < levelDrawer.level.bottomY and character.state ~= character.OUT) then
 		game.camera.x = -character.sprite.x*game.zoom + display.contentWidth*0.5 + game.camera.offsetX
 	 	game.camera.y = -character.sprite.y*game.zoom + display.contentHeight*0.5 + game.camera.offsetY
    end

@@ -57,6 +57,7 @@ function Eye:init(x,y)
 
    ---------------------------
    
+   self.sprite.isEnemy 			 = true
    self.sprite.isFixedRotation = true
 	self.sprite:addEventListener( "collision", function(event) self:collide(event) end )
 	self.sprite:addEventListener( "preCollision", function(event) self:preCollide(event) end )

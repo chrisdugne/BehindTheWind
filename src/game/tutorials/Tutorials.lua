@@ -37,15 +37,15 @@ function start()
 --   if(game.level == 2) then
 --   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel2 )
 --
---   elseif(game.level == 3) then
---   	requireHelpLevel3 = true
---   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel3 )
+     if(game.level == 3) then
+   	requireHelpLevel3 = true
+   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel3 )
 --
 --  	elseif(game.level == 4) then
 --   	requireHelpLevel4 = true
 --   	Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel4 )
 --   
---   end
+   end
    
 end
 
@@ -207,12 +207,21 @@ function refreshHUDTutoLevel3()
 
    		character.grabLocked = true
       	character.movesLocked = true
+      	
+      	game.hud.leftButton.alpha = 0
+      	game.hud.rightButton.alpha = 0
+
    		showHelpLevel3()
 			
 		else
 			if(tileToDrag.x < 290) then
       		character.grabLocked = false
       		character.movesLocked = false
+      		
+      	
+      		game.hud.leftButton.alpha = 1
+      		game.hud.rightButton.alpha = 1
+      	
       		destroyTutoLevel3()
 			end
 		end 
@@ -245,7 +254,7 @@ end
 function tweenLevel3On()
 	if(not helpVisibleLevel3) then return end
 	game.hud.finger.x = tileToDrag.x
-	game.hud.finger.y = tileToDrag.y
+	game.hud.finger.y = tileToDrag.y + tileToDrag.contentHeight*0.5
 	transition.to( game.hud.finger, { time=300, alpha=0.9 })
 	transition.to( game.hud.finger, { time=2500, x=250, transition=easing.inSine, onComplete=tweenLevel3Off })
 end

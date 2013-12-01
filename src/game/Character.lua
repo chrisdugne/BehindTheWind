@@ -6,7 +6,12 @@ module(..., package.seeall)
 
 local CHARACTER_SPEED = 138
 local JUMP_SPEED = -267
-local RADIUS = 16
+
+local DENSITY 			= 20
+local FRICTION 		= 1
+local BOUNCE 			= 0.15
+local RADIUS 			= 16
+
 local HANGING_FORCE = 100
 
 NOT_MOVING 	= 0
@@ -90,9 +95,9 @@ function init()
    sprite = display.newSprite( game.camera, playerSheet, playerWalk.sequence )
    
    physics.addBody( sprite, { 
-   	density 		= 2, 
-   	friction 	= 2, 
-   	bounce 		= 0.15,
+   	density 		= DENSITY, 
+   	friction 	= FRICTION, 
+   	bounce 		= BOUNCE,
    	radius 		= RADIUS
    })
 
@@ -319,7 +324,7 @@ function collide( event )
 
 	-------------------------------------------
 
-	if(event.other.isBadRock) then
+	if(event.other.isBadRock or event.other.isEnemy) then
 		die()
 		return
 	end

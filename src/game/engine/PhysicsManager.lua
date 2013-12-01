@@ -10,7 +10,7 @@ physics.start()
 -------------------------------------
 
 local THROW_FORCE 	= 11
-local GRAVITY 			= 18
+local GRAVITY 			= 16
 
 local ROPE_LENGTH 	= 100
 local ROPE_FREQUENCY = 1.9

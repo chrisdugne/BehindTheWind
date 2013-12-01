@@ -718,7 +718,7 @@ function preCollideTrigger( event )
 end
 
 function collideTrigger( event )
-	if(event.other.isRock) then
+	if(event.other == character.sprite) then
 		if(not event.target.light.beingDestroyed) then
    		destroyEffect(event.target.light)
       end
