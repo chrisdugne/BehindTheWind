@@ -691,6 +691,7 @@ function drawTrigger(x, y, trigger)
 	
 	local body = display.newImage("assets/images/game/energy.body.png")
 	body.trigger = trigger
+	body.isSensor = true
 	body.light = light
 	body.x = x
 	body.y = y
@@ -703,7 +704,6 @@ function drawTrigger(x, y, trigger)
    
    game.camera:insert(body)
 	body:addEventListener( "preCollision", preCollideTrigger )
-	body:addEventListener( "collision", collideTrigger )
 
 	light.body = body
 	light.static = true
@@ -714,19 +714,70 @@ end
 function preCollideTrigger( event )
 	if(event.contact) then
 		event.contact.isEnabled = false
-   end
+
+		if(event.other == character.sprite) then
+			
+			if(not event.target.light.beingDestroyed) then
+				destroyEffect(event.target.light)
+			end
+
+			levelDrawer.hitTrigger(event.target.trigger)
+		end
+	end
 end
 
-function collideTrigger( event )
-	if(event.other == character.sprite) then
-		if(not event.target.light.beingDestroyed) then
-   		destroyEffect(event.target.light)
-      end
-      
-		levelDrawer.hitTrigger(event.target.trigger)
-   end
+
+function drawTriggerTouched(x,y)
+	local follow = CBE.VentGroup{
+		{
+			preset="wisps",
+			title="light",
+			color={{12,122,211},{55,255,20},{255,255,20}},
+			perEmit=3,
+			emissionNum=1,
+			emitDelay=110,
+			fadeInTime=520,
+			scale=0.4,
+			physics={
+				gravityX=0.33,
+				gravityY=0.04,
+			},
+			x = x,
+			y = y,
+		}
+	}
+	
+	follow.static = true
+	
+	registerNewEffect(follow)
+	game.camera:insert(follow:get("light").content)
 end
 
+function unlockTrigger(x, y)
+	local unlock = CBE.VentGroup{
+		{
+			preset="wisps",
+			title="light",
+			color={{12,122,211},{55,255,20},{255,255,20}},
+			perEmit=3,
+			emissionNum=1,
+			emitDelay=110,
+			fadeInTime=1520,
+			scale=0.38,
+			physics={
+				gravityX=0.03,
+				gravityY=0.04,
+			},
+			x = x,
+			y = y,
+		}
+	}
+	
+	unlock.static = true
+	
+	registerNewEffect(unlock)
+	game.camera:insert(unlock:get("light").content)
+end
 
 ------------------------------------------------------------------------------------------
 -- Items

@@ -224,7 +224,9 @@ function designLevel()
 			
       	if(not level.triggers[tile.trigger]) then
       		level.triggers[tile.trigger] = {
-      			remaining = 0
+      			remaining = 0,
+      			lockX = tile.x,
+      			lockY = tile.y,
       		}
       	end
    
@@ -523,6 +525,12 @@ function hitTrigger(trigger)
 	if(level.triggers[trigger].remaining == 0) then
 		for i = 1, #level.triggers[trigger].start do
 			level.triggers[trigger].start[i]()
+			
+			local x,y = level.triggers[trigger].lockX, level.triggers[trigger].lockY
+			
+			timer.performWithDelay(200, function() effectsManager.drawTriggerTouched(x,y) end)
+			timer.performWithDelay(600, function() effectsManager.drawTriggerTouched(x,y) end)
+			effectsManager.unlockTrigger(x,y)
 		end
 	end
 end
