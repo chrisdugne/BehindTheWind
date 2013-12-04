@@ -22,7 +22,6 @@ function Game:new()
 		hud 		= display.newGroup(),
 		focus 	= CHARACTER,
 		state		= STOPPED,
-		score 	= {}
 	}
 
 	setmetatable(object, { __index = Game })
@@ -41,7 +40,8 @@ function Game:start()
    self.energiesCaught 		= 0
    self.piecesCaught 		= 0
    self.ringsCaught 			= 0
-	self.score 					= {}
+	
+	scoreManager.score 		= {}
 
 	---------------------
 	
@@ -156,7 +156,6 @@ function Game:stop()
 
 	local score = {
    	energiesCaught 		= self.energiesCaught,
-   	energiesSpent 			= self.energiesSpent,
    	piecesCaught 			= self.piecesCaught,
    	ringsCaught 			= self.ringsCaught,
 	}
@@ -168,17 +167,13 @@ function Game:stop()
 	if(score.ringsCaught > 0) 		then score.ringsBonus 	= 2*score.ringsCaught 		else score.ringsBonus 	= 1 	end 
 	if(score.piecesCaught > 0) 	then score.piecesBonus 	= 3*score.piecesCaught		else score.piecesBonus 	= 1 	end 
 	
-	local energiesRemaining = score.energiesCaught - score.energiesSpent
-	if(energiesRemaining < 1) then energiesRemaining = 1 end
-	
 	-- 100 ms 		= 1pts
 	-- timeMax 		= sec
 	-- elapsedTime = millis
 	score.timePoints = CHAPTERS[game.chapter].levels[game.level].properties.timeMax*10 - math.floor(game.elapsedTime/100)
+	score.points = (score.timePoints + score.energiesCaught * score.energiesCaught) * score.piecesBonus * score.ringsBonus
 	
-	score.points = (score.timePoints + score.energiesCaught * energiesRemaining) * score.piecesBonus * score.ringsBonus
-	
-	self.score = score
+	scoreManager.score = score
 	
 	------------------------------------------
 	
@@ -209,7 +204,7 @@ function Game:stop()
 	
 	timer.performWithDelay(700, function()
 		self:reset()
-		self:displayScore()
+		scoreManager:displayScore()
 	end)
 	
 end
@@ -223,130 +218,29 @@ function Game:reset()
 	physicsManager.stop()
 end
 
-------------------------------------------
-
-function Game:displayScore()
-	
-	local top = display.newRect(self.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
-   top.alpha = 0
-   top:setFillColor(0)
-   
-   local bottom = display.newRect(self.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
-   bottom.alpha = 0
-   bottom:setFillColor(0)
-
-   local board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth/2, display.contentHeight/2, 20)
-   board.x = display.contentWidth/2
-   board.y = display.contentHeight/2
-   board.alpha = 0
-   board:setFillColor(0)
-   
-	transition.to( top, { time=800, alpha=1, y = top.contentHeight/2 })
-	transition.to( bottom, { time=800, alpha=1, y = display.contentHeight - top.contentHeight/2 })  
-	transition.to( board, { time=800, alpha=0.7, onComplete= function() self:fillBoard() end})  
-	
-end
-
---------------------------------------------------------------------------------------------------------------------------
---- RESULT BOARD
 --------------------------------------------------------------------------------------------------------------------------
 
-function Game:fillBoard()
+function Game:openLevel( level )
+	print("openLevel", level)
+	if(self.level == 0) then
+		self.level = level
 
-	local score = self.score
-	
-	------------------
+--		local top = display.newRect(game.hud, 0, -display.contentHeight/2, display.contentWidth, display.contentHeight/2)
+--		top.alpha = 1
+--		top:setFillColor(0)
+--
+--		local bottom = display.newRect(game.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/2)
+--		bottom.alpha = 1
+--		bottom:setFillColor(0)
+--
+--		transition.to( top, 		{ time=600, alpha=0, y = top.contentHeight/2 })
+--		transition.to( bottom, 	{ time=600, alpha=0, y = display.contentHeight - top.contentHeight/2 })  
 
-	local timeIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
-	timeIcon.x = display.contentWidth*0.3
-	timeIcon.y = display.contentHeight*0.35
-	timeIcon:scale(0.5,0.5)
-	
-   local timeText = display.newText( game.hud, score.time, 0, 0, FONT, 25 )
-   timeText:setTextColor( 255 )	
-   timeText:setReferencePoint( display.TopLeftReferencePoint )
-	timeText.x = display.contentWidth*0.34
-	timeText.y = display.contentHeight*0.32
-
-	------------------
-	
-	local energiesCaughtIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
-	energiesCaughtIcon.x = display.contentWidth*0.3
-	energiesCaughtIcon.y = display.contentHeight*0.4
-	energiesCaughtIcon:scale(0.5,0.5)
-	
-   local energiesCaughtText = display.newText( game.hud, score.energiesCaught, 0, 0, FONT, 25 )
-   energiesCaughtText:setReferencePoint( display.TopLeftReferencePoint )
-   energiesCaughtText:setTextColor( 255 )	
-	energiesCaughtText.x = display.contentWidth*0.35
-	energiesCaughtText.y = display.contentHeight*0.37
-
-	------------------
-
-	local energiesSpentIcon = display.newImage( game.hud, "assets/images/hud/energy.png")
-	energiesSpentIcon.x = display.contentWidth*0.3
-	energiesSpentIcon.y = display.contentHeight*0.45
-	energiesSpentIcon:scale(0.5,0.5)
-	
-   local energiesSpentText = display.newText( game.hud, score.energiesSpent, 0, 0, FONT, 25 )
-   energiesSpentText:setReferencePoint( display.TopLeftReferencePoint )
-   energiesSpentText:setTextColor( 255 )	
-	energiesSpentText.x = display.contentWidth*0.35
-	energiesSpentText.y = display.contentHeight*0.42
-
-	------------------
-
-	local piece = display.newSprite( game.hud, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
-	piece.x 			= display.contentWidth*0.3
-	piece.y 			= display.contentHeight*0.5
-	piece:play()
-	
-   local piecesCaughtText = display.newText( game.hud, score.piecesCaught, 0, 0, FONT, 25 )
-   piecesCaughtText:setReferencePoint( display.TopLeftReferencePoint )
-   piecesCaughtText:setTextColor( 255 )	
-	piecesCaughtText.x = display.contentWidth*0.35
-	piecesCaughtText.y = display.contentHeight*0.47
-
-	
-	------------------
-
-	local ring = display.newSprite( game.hud, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
-	ring.x 		= display.contentWidth*0.3
-	ring.y 		= display.contentHeight*0.55
-	ring:play()
-	
-   local ringsCaughtText = display.newText( game.hud, score.ringsCaught, 0, 0, FONT, 25 )
-   ringsCaughtText:setReferencePoint( display.TopLeftReferencePoint )
-   ringsCaughtText:setTextColor( 255 )	
-	ringsCaughtText.x = display.contentWidth*0.35
-	ringsCaughtText.y = display.contentHeight*0.52
-
-	------------------
-	-- score final
-	
-   local scoreText = display.newText( game.hud, score.points .. " pts", 0, 0, FONT, 35 )
-   scoreText:setReferencePoint( display.TopLeftReferencePoint )
-   scoreText:setTextColor( 255 )	
-	scoreText.x = display.contentWidth*0.6
-	scoreText.y = display.contentHeight*0.35
-	
-	------------------
-	-- play button
-	
-	viewManager.buildEffectButton(
-		game.hud,
-		"assets/images/hud/play.png", 
-		21, 
-		0.26*aspectRatio,
-		display.contentWidth*0.65, 	
-		display.contentHeight*0.65, 	
-		function()
-			router.openLevelSelection() 
-		end
-	)
-	
+		transition.to( self.hud, { time=600, alpha=0 })  
+		timer.performWithDelay(620, router.openPlayground)
+	end
 end
-	
+
 --------------------------------------------------------------------------------------------------------------------------
 --- CAMERA
 --------------------------------------------------------------------------------------------------------------------------

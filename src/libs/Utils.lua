@@ -338,6 +338,32 @@ end
 
 --------------------------------------------------------
 
+function displayCounter(numToReach, writer, referencePoint, x, next, nextMillis)
+
+	timer.performWithDelay(5, function()
+   	
+   	local ratio = (4 * numToReach)/(numToReach - writer.currentDisplay)
+   	local toAdd = math.floor(numToReach/ratio)
+   	if(toAdd == 0) then toAdd = 1 end
+   	
+		writer.currentDisplay = math.round(writer.currentDisplay + toAdd)
+		
+		if(writer.currentDisplay >= numToReach) then
+			writer.currentDisplay = math.round(numToReach)	
+      	next()
+		else
+			nextMillis = 100/(numToReach - writer.currentDisplay)
+   		displayCounter(numToReach, writer, referencePoint, x, next, nextMillis)
+   	end
+		
+		writer.text = writer.currentDisplay 
+      writer:setReferencePoint( referencePoint )
+   	writer.x = x
+	end)
+end
+
+--------------------------------------------------------
+
 function loadUserData(file)
 	return loadTable(system.pathForFile( file , system.DocumentsDirectory))
 end

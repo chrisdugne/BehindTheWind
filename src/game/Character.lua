@@ -86,7 +86,8 @@ end
 function init()
 
    ---------------------------
-
+	
+	state = NOT_MOVING
 	ropes = {}
    grabs	= 0  --> pas dans le resetState, puisquil peut y avoir un grab raté en cours de chute lors d'un respawn qui va resetState
 

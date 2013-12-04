@@ -25,6 +25,7 @@ function scene:refreshScene()
 	viewManager.initBack(0)
 	
 	---------------------------------------------------------------
+	-- tests
 	
 	game.hud.title = display.newImage( game.hud, "assets/images/hud/title.png" )
 	game.hud.title.x = display.contentWidth*0.7
@@ -44,7 +45,7 @@ function scene:refreshScene()
 
 	viewManager.buildEffectButton(
 		game.hud,
-		"assets/images/hud/play.png", 
+		"assets/images/hud/play.black.png", 
 		21, 
 		0.66*aspectRatio,
 		display.contentWidth*0.5, 	

@@ -15,7 +15,7 @@ SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
 
 -----------------------------------------------------------------------------------------
 
---DEV				= 1
+DEV				= 1
 --EDITOR 			= 1
 
 -----------------------------------------------------------------------------------------
@@ -71,6 +71,8 @@ hud					= require "src.game.HUD"
 tutorials			= require "src.game.tutorials.Tutorials"
 
 Game					= require "src.game.engine.Game"
+ScoreManager		= require "src.game.engine.ScoreManager"
+
 touchController 	= require "src.game.engine.TouchController"
 physicsManager		= require "src.game.engine.PhysicsManager"
 effectsManager		= require "src.game.engine.EffectsManager"
@@ -90,7 +92,8 @@ random 	= math.random
 
 -----------------------------------------------------------------------------------------
 
-game = Game:new()
+game 				= Game:new()
+scoreManager 	= ScoreManager:new()
 
 -----------------------------------------------------------------------------------------
 -- Translations

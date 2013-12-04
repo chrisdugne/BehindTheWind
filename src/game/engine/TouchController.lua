@@ -73,7 +73,6 @@ function stop()
 end
 
 ---------------------------------------------------------------------
---
 --function getNbTouches()
 --	local nb = 0
 --	for k,v in pairs(touches) do
@@ -81,8 +80,6 @@ end
 --	end
 --	return nb
 --end
-
-
 ---------------------------------------------------------------------
 
 function touchScreen( event )
