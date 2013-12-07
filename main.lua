@@ -4,7 +4,7 @@
 --
 -----------------------------------------------------------------------------------------
 
-APP_NAME 			= "BTW"
+APP_NAME 			= "Behind The Wind"
 APP_VERSION 		= "1.4.3"
 
 -----------------------------------------------------------------------------------------
@@ -21,9 +21,9 @@ DEV				= 1
 -----------------------------------------------------------------------------------------
 
 CHAPTERS = {
-	{title="Chapter1 : Mist", 			nbLevels = 6},
-	{title="Chapter2 : Moonshine", 	nbLevels = 12},
-	{title="Chapter3 : Magic", 		nbLevels = 1},
+	{title="Chapter1 : Mist", 				name = "Mist", 			nbLevels = 6},
+	{title="Chapter2 : Moonshine", 		name = "Moonshine",		nbLevels = 12},
+	{title="Chapter3 : Magic", 			name = "Magic",			nbLevels = 1},
 --	{title="Chapter4 : Mystery", 		nbLevels = 1},
 }
 
@@ -62,6 +62,8 @@ xml 					= require "src.libs.Xml"
 utils 				= require "src.libs.Utils"
 vector2D				= require "src.libs.Vector2D"
 gameCenter			= require "src.libs.GameCenter"
+
+require "src.libs.multiLines"
 
 ---- Game libs
 character			= require "src.game.Character"

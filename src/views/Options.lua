@@ -37,9 +37,22 @@ function scene:refreshScene()
    
 	transition.to( top, { time=500, y = top.contentHeight/2 })
 	transition.to( bottom, { time=500, y = display.contentHeight - top.contentHeight/2 })  
-	transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})  
+	transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})
+	
+	---------------------------------------------------------------
 
-	hud.setBackToHome()
+	viewManager.buildEffectButton(
+	game.hud,
+	"assets/images/hud/back.png",
+	51, 
+	0.18*aspectRatio,
+	display.contentWidth*0.1, 
+	display.contentHeight*0.1, 
+	function() 
+		router.openAppHome()
+	end
+	)
+	  
 end
 
 function scene:displayContent()
@@ -47,49 +60,49 @@ function scene:displayContent()
 	-----------------------------------------------------------------------------------------------
 
 	if(not GLOBALS.savedData.fullGame) then
-		viewManager.buildEffectButton(game.hud, T "Full version", 12, 0.36, display.contentWidth*0.77, 	display.contentHeight*0.38, 	router.openBuy)
+		viewManager.buildEffectButton(game.hud, T "Full version", 26, 0.72, display.contentWidth*0.77, 	display.contentHeight*0.38, 	router.openBuy)
 	else
 		thanksText = display.newText(game.hud, "Thank you for purchasing the full version !", 0, 0, 70, 100, FONT, 12 )
 		thanksText.x = display.contentWidth*0.75
 		thanksText.y = display.contentHeight*0.4
 	end
-	viewManager.buildEffectButton(game.hud, "Reset", 	21, 0.36, display.contentWidth*0.77, 	display.contentHeight*0.61, function()	self:reset() end)
+	viewManager.buildEffectButton(game.hud, "Reset", 	38, 0.72, display.contentWidth*0.77, 	display.contentHeight*0.61, function()	self:reset() end)
 	
 	-----------------------------------------------------------------------------------------------
 
-	uralysText = display.newText(game.hud, "Created by ", 0, 0, FONT, 13 )
-	uralysText.x = game.hud.board.x - game.hud.board.contentWidth/2 + uralysText.contentWidth/2 + 30
-	uralysText.y = game.hud.board.y/2 + 25
+	uralysText = display.newText(game.hud, "Created by ", 0, 0, FONT, 26 )
+	uralysText.x = display.contentWidth*0.25
+	uralysText.y = display.contentHeight*0.3
 
 	uralysImage = display.newImage(game.hud, "assets/images/others/logo.png")
-	uralysImage.x = game.hud.board.x - game.hud.board.contentWidth/2 + uralysImage.contentWidth/2 + 100
-	uralysImage.y = game.hud.board.y/2 + 25
+	uralysImage.x = display.contentWidth*0.35
+	uralysImage.y = display.contentHeight*0.3
 	
 	utils.onTouch(uralysImage,  function(event) system.openURL( "http://www.uralys.com" ) end)
 
 	-----------------------------------------------------------------------------------------------
 
 	coronaImage = display.newImage(game.hud, "assets/images/others/corona.png")
-	coronaImage:scale(0.3,0.3)
-	coronaImage.x = game.hud.board.x - game.hud.board.contentWidth/2 + coronaImage.contentWidth/2 + 20
-	coronaImage.y = game.hud.board.y/2 + 110
+	coronaImage:scale(0.6,0.6)
+	coronaImage.x = display.contentWidth*0.3
+	coronaImage.y = display.contentHeight*0.47
 	utils.onTouch(coronaImage,  function(event) system.openURL( "http://www.coronalabs.com" ) end)
 
 	cbeffectsImage = display.newImage(game.hud, "assets/images/others/cbeffects.png")
-	cbeffectsImage:scale(0.2,0.2)
-	cbeffectsImage.x = game.hud.board.x - game.hud.board.contentWidth/2 + cbeffectsImage.contentWidth/2 + 130
-	cbeffectsImage.y = game.hud.board.y/2 + 100
+	cbeffectsImage:scale(0.4,0.4)
+	cbeffectsImage.x = display.contentWidth*0.5
+	cbeffectsImage.y = display.contentHeight*0.47
 	utils.onTouch(cbeffectsImage,  function(event) system.openURL( "http://gymbyl.com" ) end)
 
-	velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 13 )
-	velvetText.x = game.hud.board.x - game.hud.board.contentWidth/2 + velvetText.contentWidth/2 + 100
-	velvetText.y = cbeffectsImage.y + 45
+	velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 26 )
+	velvetText.x = display.contentWidth*0.3
+	velvetText.y = display.contentHeight*0.65
 	utils.onTouch(velvetText,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
 
 	playImage = display.newImage(game.hud, "assets/images/hud/play.png")
-	playImage:scale(0.2,0.2)
-	playImage.x = velvetText.x + 80
-	playImage.y = velvetText.y
+	playImage:scale(0.5,0.5)
+	playImage.x = display.contentWidth*0.43
+	playImage.y = display.contentHeight*0.65
 	utils.onTouch(playImage,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
 end
 

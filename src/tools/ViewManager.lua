@@ -196,11 +196,11 @@ end
 -----------------------------------------------------------------------------------------
 
 function buildEffectButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked )
-   buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, true )
+   return buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, true )
 end
 
 function buildSimpleButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked )
-   buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, false )
+   return buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLocked, false )
 end
 
 -----------------------------------------------------------------------------------------
@@ -239,10 +239,11 @@ function buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLock
    	icon:toFront()
 	else
    	local text = display.newText( titleOrIcon, 0, 0, FONT, titleSize )
-   	text:setTextColor( 111 )	
+   	text:setTextColor( 255 )	
    	text.x = x
    	text.y = y
    	text.alpha = 0
+   	planet.text = text
    	parent:insert(text)
    	
    	transition.to( text, { time=2000, alpha=1 })
@@ -267,5 +268,7 @@ function buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLock
 			effectsManager.buttonEffect(x,y,scale)
 		end
 	end
+	
+	return planet
 	
 end

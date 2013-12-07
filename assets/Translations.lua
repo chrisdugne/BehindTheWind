@@ -4,6 +4,14 @@ local translations =
         ["fr"] = "Version complète",
     },
 
+    ["Chapter"] = {
+        ["fr"] = "Chapitre",
+    },
+
+    ["Level"] = {
+        ["fr"] = "Niveau",
+    },
+
     ["Buy"] = {
         ["fr"] = "Acheter",
     },
@@ -20,8 +28,8 @@ local translations =
         ["fr"] = "- Plus de publicité",
     },
 
-    ["The game is locked\n Unlock it with a dollar !"] = {
-        ["fr"] = "Le jeu est en démo\n Débloquez tous les niveaux pour moins d'un euro !",
+    ["I'm an Indie Game Developer.\n Give me the chance to build the sequel : \n \n Unlock the game with only 1 coin !"] = {
+        ["fr"] = "Je suis un développeur indépendant. \n Donnez moi la chance de construire une séquelle en débloquant le jeu avec 1 simple pièce !",
     },
 
     ["Cancel"] = {

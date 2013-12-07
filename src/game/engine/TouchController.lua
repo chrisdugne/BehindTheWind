@@ -174,6 +174,13 @@ end
 
 function touchTile( tile, event )
 	
+	--------------
+	
+	if(character.grabLocked) then return end
+	if(character.state == character.OUT) then return end
+
+	--------------
+	
 	if(event.phase == "began") then
 
 		tile.touchX = tile.x
@@ -183,6 +190,8 @@ function touchTile( tile, event )
       	display.getCurrentStage():setFocus( event.target )
    		setState(TOUCHING_TILE)
 		end
+
+	--------------
 
 	elseif(event.phase == "ended" or event.phase == "cancelled" ) then
 
@@ -206,6 +215,7 @@ function touchTile( tile, event )
 			end)
 		end
 
+	--------------
 
 	end
 

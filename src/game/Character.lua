@@ -71,6 +71,8 @@ end
 
 function exit(completeExit)
 	
+	state = OUT 
+	
 	if(#ropes > 0) then
 		timer.performWithDelay(500, function()
       	physicsManager.detachAllRopes()

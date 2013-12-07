@@ -85,9 +85,10 @@ function Game:start()
 
 	------------------------------
 
-	if(self.level > 1 or DEV) then
+	if(self.chapter == 1 and self.level > 1) then
 		self.camera.alpha = 1
    	self:spawn()
+   	viewManager.displayIntroTitle(CHAPTERS[game.chapter].name .. ", " .. (T "Level") .. game.level, display.contentWidth*0.26, display.contentHeight*0.27, true)
    else
 		self.camera.alpha = 0
    	self:startIntro()

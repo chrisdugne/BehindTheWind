@@ -81,12 +81,19 @@ function ScoreManager:displayEnergies()
 	energiesCaughtIcon.y = display.contentHeight*0.39
 	energiesCaughtIcon:scale(0.5,0.5)
 	
-   local energiesCaughtText = display.newText( game.hud, self.score.energiesCaught, 0, 0, FONT, 25 )
+	local text = self.score.energiesCaught .. " / " .. #CHAPTERS[game.chapter].levels[game.level].energies
+	
+   local energiesCaughtText = display.newText( game.hud, text, 0, 0, FONT, 25 )
    energiesCaughtText:setReferencePoint( display.CenterLeftReferencePoint )
    energiesCaughtText:setTextColor( 255 )	
 	energiesCaughtText.x = display.contentWidth*0.34
 	energiesCaughtText.y = display.contentHeight*0.39
 
+
+   local plus = display.newText( game.hud, "+", 0, 0, FONT, 38 )
+   plus:setTextColor( 255 )	
+	plus.x = display.contentWidth*0.62
+	plus.y = display.contentHeight*0.39
 
    local energyPoints = display.newText( game.hud, "", 0, 0, FONT, 38 )
    energyPoints:setTextColor( 255 )	
@@ -104,22 +111,19 @@ end
 
 function ScoreManager:displayRing()
 
-	local ring = display.newSprite( game.hud, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
-	ring.x 		= display.contentWidth*0.3
-	ring.y 		= display.contentHeight*0.46
-	ring:play()
+	if(self.score.ringsCaught > 0) then
+   	local ring = display.newSprite( game.hud, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+   	ring.x 		= display.contentWidth*0.3
+   	ring.y 		= display.contentHeight*0.46
+		ring:play()
+   	
+      local ringsBonus = display.newText( game.hud, "x " .. self.score.ringsBonus, 0, 0, FONT, 38 )
+      ringsBonus:setTextColor( 255 )	
+      ringsBonus:setReferencePoint( display.CenterRightReferencePoint )
+   	ringsBonus.x = display.contentWidth*0.72
+   	ringsBonus.y = display.contentHeight*0.46
+	end
 	
-   local ringsCaughtText = display.newText( game.hud, self.score.ringsCaught, 0, 0, FONT, 25 )
-   ringsCaughtText:setReferencePoint( display.CenterLeftReferencePoint )
-   ringsCaughtText:setTextColor( 255 )	
-	ringsCaughtText.x = display.contentWidth*0.34
-	ringsCaughtText.y = display.contentHeight*0.46
-	
-   local ringsBonus = display.newText( game.hud, "x " .. self.score.ringsBonus, 0, 0, FONT, 38 )
-   ringsBonus:setTextColor( 255 )	
-   ringsBonus:setReferencePoint( display.CenterRightReferencePoint )
-	ringsBonus.x = display.contentWidth*0.72
-	ringsBonus.y = display.contentHeight*0.46
 	
 	timer.performWithDelay(150, function()
    	self:displayPiece()
@@ -127,23 +131,19 @@ function ScoreManager:displayRing()
 end
 
 function ScoreManager:displayPiece()
-
-	local piece = display.newSprite( game.hud, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
-	piece.x 		= display.contentWidth*0.3
-	piece.y 		= display.contentHeight*0.53
-	piece:play()
 	
-   local piecesCaughtText = display.newText( game.hud, self.score.piecesCaught, 0, 0, FONT, 25 )
-   piecesCaughtText:setReferencePoint( display.CenterLeftReferencePoint )
-   piecesCaughtText:setTextColor( 255 )	
-	piecesCaughtText.x = display.contentWidth*0.34
-	piecesCaughtText.y = display.contentHeight*0.53
-	
-   local piecesBonus = display.newText( game.hud, "x " .. self.score.piecesBonus, 0, 0, FONT, 38 )
-   piecesBonus:setTextColor( 255 )	
-   piecesBonus:setReferencePoint( display.CenterRightReferencePoint )
-	piecesBonus.x = display.contentWidth*0.72
-	piecesBonus.y = display.contentHeight*0.53
+	if(self.score.piecesCaught > 0) then
+   	local piece = display.newSprite( game.hud, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+   	piece.x 		= display.contentWidth*0.3
+   	piece.y 		= display.contentHeight*0.53
+		piece:play()
+		
+      local piecesBonus = display.newText( game.hud, "x " .. self.score.piecesBonus, 0, 0, FONT, 38 )
+      piecesBonus:setTextColor( 255 )	
+      piecesBonus:setReferencePoint( display.CenterRightReferencePoint )
+   	piecesBonus.x = display.contentWidth*0.72
+   	piecesBonus.y = display.contentHeight*0.53
+	end
 	
 	timer.performWithDelay(150, function()
    	self:displayTotal()

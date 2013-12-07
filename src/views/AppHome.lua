@@ -63,20 +63,35 @@ function scene:refreshScene()
 
 	---------------------------------------------------------------
 	
-	local scale = 0.13*aspectRatio
-	print(scale)
+	local scale = 0.23*aspectRatio
 	
 	viewManager.buildEffectButton(
 		game.hud,
 		"assets/images/hud/settings.png", 
 		0,
 		scale,
-		60, 
-		display.contentHeight - 60, 
+		display.contentWidth * 0.06, 
+		display.contentHeight * 0.93, 
 		function() 
-			self:openOptions() 
+			router:openOptions() 
 		end
 	)
+
+	---------------------------------------------------------------
+	
+	if(not GLOBALS.savedData.fullGame) then	
+   	viewManager.buildEffectButton(
+   		game.hud,
+   		"assets/images/hud/lock.png", 
+   		0,
+   		scale,
+   		display.contentWidth * 0.15, 
+   		display.contentHeight * 0.93,
+   		function() 
+   			router:openBuy() 
+   		end
+   	)
+	end
 
 	---------------------------------------------------------------
 	
@@ -84,16 +99,6 @@ function scene:refreshScene()
    	timer.performWithDelay(600, gameCenter.init)
    end
    
-end
-
-------------------------------------------
-
-function scene:openOptions()
-	router.openOptions()	
-end
-
-function scene:openPodiums()
-	router.openPodiums()	
 end
 
 ------------------------------------------

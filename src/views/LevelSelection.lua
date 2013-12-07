@@ -123,6 +123,10 @@ function scene:createLevelContent(level, x, y, locked)
    box.y = widget.contentHeight/2
    box.alpha = 0.3
    box:setFillColor(0)
+   
+   if(not locked) then
+      box.alpha = 0.4
+   end
 
 	------------------
 
@@ -142,7 +146,7 @@ function scene:createLevelContent(level, x, y, locked)
 		width = 100,            --required for multiline and alignment
 		height = 40,           --required for multiline and alignment
 		font = FONT,   
-		fontSize = 22,
+		fontSize = 24,
 		align = "left"
 	} )
 
@@ -176,11 +180,11 @@ function scene:createLevelContent(level, x, y, locked)
 			parent = widget,
 			text = score.points .. " pts",     
 			x = 140,
-			y = 165,
+			y = 150,
 			width = 200,            --required for multiline and alignment
 			height = 40,           --required for multiline and alignment
 			font = FONT,   
-			fontSize = 19,
+			fontSize = 25,
 			align = "right"
 		} )
    
@@ -188,11 +192,11 @@ function scene:createLevelContent(level, x, y, locked)
 			parent = widget,
 			text = score.time,     
 			x = 140,
-			y = 195,
+			y = 185,
 			width = 200,            --required for multiline and alignment
 			height = 40,           --required for multiline and alignment
 			font = FONT,   
-			fontSize = 13,
+			fontSize = 22,
 			align = "right"
 		})
    end
@@ -205,11 +209,11 @@ function scene:createLevelContent(level, x, y, locked)
 		parent = widget,
 		text = percent .. " %",     
 		x = 90,
-		y = 185,
+		y = 175,
 		width = 150,            --required for multiline and alignment
 		height = 40,           --required for multiline and alignment
 		font = FONT,   
-		fontSize = 20,
+		fontSize = 30,
 		align = "left"
 	} )
 	

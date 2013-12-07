@@ -7,15 +7,6 @@
 local scene = storyboard.newScene()
 local buyMenu
 
-local statusText
-local mainText
-local secondText
-local lockImage
-local coffeeImage
-
-local buyButton, textBuyButton
-local restoreButton, textRestoreButton
-
 -----------------------------------------------------------------------------------------
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
@@ -27,12 +18,12 @@ local restoreButton, textRestoreButton
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
 
-   if ( store.availableStores.apple ) then
-       store.init( "apple", storeTransaction )
-   elseif ( store.availableStores.google ) then
-       store.init( "google", storeTransaction )
-   end
-	
+	if ( store.availableStores.apple ) then
+		store.init( "apple", storeTransaction )
+	elseif ( store.availableStores.google ) then
+		store.init( "google", storeTransaction )
+	end
+
 	buyMenu = display.newGroup()
 	game.scene = buyMenu
 end
@@ -42,8 +33,8 @@ end
 --- STORE
 
 function storeTransaction( event )
-   print( "storeTransaction" )
-   utils.tprint(event)
+	print( "storeTransaction" )
+	utils.tprint(event)
 
 	local transaction = event.transaction
 
@@ -74,27 +65,41 @@ function scene:refreshScene()
 
 	utils.emptyGroup(buyMenu)
 
-	hud.setBackToHome()
-   
-   local top = display.newRect(buyMenu, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
-   top:setFillColor(0)
-   
-   local bottom = display.newRect(buyMenu, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
-   bottom:setFillColor(0)
+	---------------------------------------------------------------
 
-   local board = display.newRoundedRect(buyMenu, 0, 0, 3*display.contentWidth/4, display.contentHeight/2, 20)
-   board.x = display.contentWidth/2
-   board.y = display.contentHeight/2
-   board.alpha = 0
-   board:setFillColor(0)
-   buyMenu.board = board
-   
+	viewManager.buildEffectButton(
+	game.hud,
+	"assets/images/hud/back.png",
+	51, 
+	0.18*aspectRatio,
+	display.contentWidth*0.1, 
+	display.contentHeight*0.1, 
+	function() 
+		router.openAppHome()
+	end
+	)
+
+	---------------------------------------------------------------
+
+	local top = display.newRect(buyMenu, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+	top:setFillColor(0)
+
+	local bottom = display.newRect(buyMenu, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+	bottom:setFillColor(0)
+
+	local board = display.newRoundedRect(buyMenu, 0, 0, 3*display.contentWidth/4, display.contentHeight/2, 20)
+	board.x = display.contentWidth/2
+	board.y = display.contentHeight/2
+	board.alpha = 0
+	board:setFillColor(0)
+	buyMenu.board = board
+
 	transition.to( top, { time=500, y = top.contentHeight/2 })
 	transition.to( bottom, { time=500, y = display.contentHeight - top.contentHeight/2 })  
 	transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})  
 
 	self.view:insert(buyMenu)
-	
+
 end
 
 function scene:displayContent()
@@ -102,53 +107,70 @@ function scene:displayContent()
 	-----------------------------------------------------------------------------------------------
 	-- Texts
 
-	display.remove(mainText)
-	mainText = display.newText( buyMenu, T "The game is locked\n Unlock it with a dollar !", 0, 0, 170, 100, FONT, 14 )
-	mainText:setTextColor( 255 )	
-	mainText.x = buyMenu.board.x - 40
-	mainText.y = buyMenu.board.y/2 + 60
+	buyMenu.indieText = display.newMultiLineText  
+	{
+		text = T "I'm an Indie Game Developer.\n Give me the chance to build the sequel : \n \n Unlock the game with only 1 coin !",
+		width = display.contentWidth*0.85,  
+		left = display.contentWidth*0.5,
+		font = FONT, 
+		fontSize = 38,
+		color = {200,200,200},
+		align = "center"
+	}
 
-	display.remove(lockImage)
-	lockImage = display.newImage(buyMenu, "assets/images/hud/lock.png")
-	lockImage:scale(0.40,0.40)
-	lockImage.x = buyMenu.board.x - buyMenu.board.contentWidth/2 + 30
-	lockImage.y = buyMenu.board.y/2 + 30
-	utils.onTouch(lockImage, buy)
+	buyMenu.indieText:setReferencePoint(display.TopCenterReferencePoint)
+	buyMenu.indieText.x = display.contentWidth*0.5
+	buyMenu.indieText.y = display.contentHeight*0.27
+	buyMenu:insert(buyMenu.indieText)       
 
-	display.remove(statusText)
-	statusText = display.newText( buyMenu, "", 0, 0, FONT, 22 )
+	buyMenu.lockImage = display.newImage(buyMenu, "assets/images/hud/lock.png")
+	buyMenu.lockImage.x = display.contentWidth*0.18
+	buyMenu.lockImage.y = display.contentHeight*0.35
+	utils.onTouch(buyMenu.lockImage, buy)
+
+	statusText = display.newText( buyMenu, "", 0, 0, FONT, 42 )
 	statusText:setTextColor( 255 )	
-	
-	display.remove(buyButton)
-	display.remove(textBuyButton)
-	buyButton, textBuyButton = viewManager.buildEffectButton(game.hud, T "Buy", 26, 0.36,  buyMenu.board.x - buyMenu.board.contentWidth/2 + 55, 	display.contentHeight*0.61, function() buy() end)
 
-	display.remove(restoreButton)
-	display.remove(textRestoreButton)
-	restoreButton, textRestoreButton = viewManager.buildEffectButton(game.hud, T "Restore", 20, 0.36,  buyMenu.board.x + buyMenu.board.contentWidth/2 - 55, 	display.contentHeight*0.61, function() restore() end)
+	buyMenu.buyButton = viewManager.buildEffectButton(	
+	game.hud, 
+	T "Buy", 
+	46, 
+	0.72,  
+	display.contentWidth*0.4, 
+	display.contentHeight*0.62, 
+	function() buy() end
+	)
+
+	buyMenu.restoreButton 	= viewManager.buildEffectButton(
+	game.hud,
+	T "Restore",
+	40, 
+	0.72,
+	display.contentWidth*0.6, 
+	display.contentHeight*0.62,
+	function() restore() end
+	)
 
 end
 
 ------------------------------------------
 
 function buy()
-	display.remove(lockImage)
-	display.remove(mainText)
-	display.remove(buyButton)
-	display.remove(textBuyButton)
-	display.remove(restoreButton)
-	display.remove(textRestoreButton)
-	display.remove(coffeeImage)
-	display.remove(secondText)
-	
+	display.remove(buyMenu.lockImage)
+	display.remove(buyMenu.indieText)
+	display.remove(buyMenu.restoreButton)
+	display.remove(buyMenu.restoreButton.text)
+	display.remove(buyMenu.buyButton)
+	display.remove(buyMenu.buyButton.text)
+
 	store.purchase( { "com.uralys.behindthewind.1.0" } )
-	
+
 	refreshStatus("Waiting for store...")
 
 	-----------------------------
 	-- DEV only : simulator
-	
-	if(system.getInfo("environment") == "simulator") then
+
+	if(SIMULATOR) then
 		gameBought()
 	end
 end
@@ -156,22 +178,20 @@ end
 ------------------------------------------
 
 function restore()
-	display.remove(lockImage)
-	display.remove(mainText)
-	display.remove(buyButton)
-	display.remove(textBuyButton)
-	display.remove(restoreButton)
-	display.remove(textRestoreButton)
-	display.remove(coffeeImage)
-	display.remove(secondText)
-	
+	display.remove(buyMenu.lockImage)
+	display.remove(buyMenu.indieText)
+	display.remove(buyMenu.restoreButton)
+	display.remove(buyMenu.restoreButton.text)
+	display.remove(buyMenu.buyButton)
+	display.remove(buyMenu.buyButton.text)
+
 	store.restore(  )
-	
+
 	refreshStatus("Trying to restore...")
 
 	-----------------------------
 	-- DEV only : simulator
-	
+
 	if(system.getInfo("environment") == "simulator") then
 		gameBought()
 	end
@@ -181,7 +201,7 @@ end
 
 function gameBought()
 	GLOBALS.savedData.fullGame = true
-   utils.saveTable(GLOBALS.savedData, "savedData.json")
+	utils.saveTable(GLOBALS.savedData, "savedData.json")
 	refreshStatus("Thank you !")
 	timer.performWithDelay(1500, router.openAppHome)
 end
@@ -190,10 +210,10 @@ end
 
 function refreshStatus(message)
 	if(statusText) then
-   	statusText.text = message
-   	statusText.x = buyMenu.board.x
-   	statusText.y = buyMenu.board.y
-   end
+		statusText.text = message
+		statusText.x = buyMenu.board.x
+		statusText.y = buyMenu.board.y
+	end
 end
 
 ------------------------------------------
