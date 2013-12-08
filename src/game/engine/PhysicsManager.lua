@@ -26,7 +26,7 @@ function start( )
 	
 	physics.setGravity( 0, GRAVITY )
 	physics.setScale( 40 )
-	physics.setDrawMode( "hybrid" )
+--	physics.setDrawMode( "hybrid" )
 --	physics.setDrawMode( "debug" )
 	
 	trajectory = display.newGroup()
@@ -290,40 +290,40 @@ function rockCollision( event )
    end
 end
 
-
-function grabCollision( event )
-	
-	if(event.other ~= character.sprite 
-	and character.state ~= character.OUT
-	and not event.other.isSensor
-	and not event.other.isGrab
-	and not event.other.isRock
-	and not event.other.isBadRock
-	and not event.other.isEnemy
-	and not event.other.trigger
-	and not event.other.isAttach
-	and event.target == character.rock) then
-
-		if ( event.phase == "ended" ) then
-			local ground = event.other
-			local x,y = event.target.x, event.target.y
-			
-			timer.performWithDelay(30, function()
-				
-				buildRopeTo(x,y,ground)
-			
-				timer.performWithDelay(250, function()
-					if(#character.ropes == 2) then
-						detachPreviousRope()	
-					end
-   			end)
-			end)
-
-   		deleteRock(event.target)
-		end
-
-	end
-end
+--
+--function grabCollision( event )
+--	
+--	if(event.other ~= character.sprite 
+--	and character.state ~= character.OUT
+--	and not event.other.isSensor
+--	and not event.other.isGrab
+--	and not event.other.isRock
+--	and not event.other.isBadRock
+--	and not event.other.isEnemy
+--	and not event.other.trigger
+--	and not event.other.isAttach
+--	and event.target == character.rock) then
+--
+--		if ( event.phase == "ended" ) then
+--			local ground = event.other
+--			local x,y = event.target.x, event.target.y
+--			
+--			timer.performWithDelay(30, function()
+--				
+--				buildRopeTo(x,y,ground)
+--			
+--				timer.performWithDelay(250, function()
+--					if(#character.ropes == 2) then
+--						detachPreviousRope()	
+--					end
+--   			end)
+--			end)
+--
+--   		deleteRock(event.target)
+--		end
+--
+--	end
+--end
 
 ---------------------------------------------------------------------------
 

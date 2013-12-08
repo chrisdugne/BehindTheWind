@@ -22,7 +22,7 @@ DEV				= 1
 
 CHAPTERS = {
 	{title="Chapter1 : Mist", 				name = "Mist", 			nbLevels = 6},
-	{title="Chapter2 : Moonshine", 		name = "Moonshine",		nbLevels = 12},
+	{title="Chapter2 : Moonshine", 		name = "Moonshine",		nbLevels = 8},
 	{title="Chapter3 : Magic", 			name = "Magic",			nbLevels = 1},
 --	{title="Chapter4 : Mystery", 		nbLevels = 1},
 }

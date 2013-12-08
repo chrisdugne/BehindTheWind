@@ -104,9 +104,16 @@ function ScoreManager:displayEnergies()
 	local points = self.score.energiesCaught * self.score.energiesCaught
 	
 	energyPoints.currentDisplay = 0
-	utils.displayCounter(points, energyPoints, display.CenterRightReferencePoint, display.contentWidth*0.72, function()
+	
+	if(self.score.energiesCaught > 0) then
+   	utils.displayCounter(points, energyPoints, display.CenterRightReferencePoint, display.contentWidth*0.72, function()
+   		self:displayRing()
+   	end)
+   else
+   	energyPoints.text = 0
 		self:displayRing()
-	end)
+	end
+   	
 end
 
 function ScoreManager:displayRing()

@@ -62,10 +62,11 @@ function scene:refreshScene()
 	
 	-----------------------------------------------------
 	
+	print(not DEV)
+	
 	self:createChapterContent(1, display.contentWidth*0.37, display.contentHeight*0.25, false)
-	self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame)
---	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame)
-	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, false)
+	self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, (not DEV) and (not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame))
+	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, (not DEV) and (not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame))
 	
 end
 
