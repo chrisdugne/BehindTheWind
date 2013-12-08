@@ -25,8 +25,6 @@ LEVEL_HUGE_SOBER 		= 14
 
 IVY 						= 15
 IVY_MINI 				= 16
-IVY_STRETCH 			= 17
-IVY_STRETCH_MINI 		= 18
 
 ---------------
 -- LEVEL MISC
@@ -50,8 +48,6 @@ plantsSheetConfig 		= require("src.game.graphics.Plants")
 levelHugeSheetConfig 	= require("src.game.graphics.LevelHuge")
 ivySheetConfig 			= require("src.game.graphics.Ivy")
 ivyMiniSheetConfig 		= require("src.game.graphics.IvyMini")
-ivyStretchSheetConfig 	= require("src.game.graphics.IvyStretch")
-ivyStretchMiniSheetConfig = require("src.game.graphics.IvyStretchMini")
 
 tilesImageSheet 			= graphics.newImageSheet( "assets/images/game/tiles.png"					, tilesSheetConfig.sheet )
 tilesGreyImageSheet 		= graphics.newImageSheet( "assets/images/game/tiles.grey.png"			, tilesSheetConfig.sheet )
@@ -69,8 +65,6 @@ levelHugeGreyImageSheet = graphics.newImageSheet( "assets/images/game/LevelHuge-
 levelHugeSoberImageSheet= graphics.newImageSheet( "assets/images/game/LevelHuge-sober.png"	, levelHugeSheetConfig.sheet )
 ivyImageSheet				= graphics.newImageSheet( "assets/images/game/Ivy.png"					, ivySheetConfig.sheet )
 ivyMiniImageSheet			= graphics.newImageSheet( "assets/images/game/IvyMini.png"				, ivyMiniSheetConfig.sheet )
-ivyStretchImageSheet		= graphics.newImageSheet( "assets/images/game/IvyStretch.png"			, ivyStretchSheetConfig.sheet )
-ivyStretchMiniImageSheet= graphics.newImageSheet( "assets/images/game/IvyStretchMini.png"		, ivyStretchMiniSheetConfig.sheet )
 
 -------------------------------------
 
@@ -91,8 +85,6 @@ sheetConfigs[LEVEL_HUGE_GREY] 		= levelHugeSheetConfig
 sheetConfigs[LEVEL_HUGE_SOBER] 		= levelHugeSheetConfig
 sheetConfigs[IVY] 						= ivySheetConfig
 sheetConfigs[IVY_MINI] 					= ivyMiniSheetConfig
-sheetConfigs[IVY_STRETCH] 				= ivyStretchSheetConfig
-sheetConfigs[IVY_STRETCH_MINI] 		= ivyStretchMiniSheetConfig
 
 imageSheets = {}
 imageSheets[TILES] 						= tilesImageSheet
@@ -111,8 +103,6 @@ imageSheets[LEVEL_HUGE_GREY] 			= levelHugeGreyImageSheet
 imageSheets[LEVEL_HUGE_SOBER] 		= levelHugeSoberImageSheet
 imageSheets[IVY] 							= ivyImageSheet
 imageSheets[IVY_MINI] 					= ivyMiniImageSheet
-imageSheets[IVY_STRETCH] 				= ivyStretchImageSheet
-imageSheets[IVY_STRETCH_MINI] 		= ivyStretchMiniImageSheet
 
 level = {}
 
@@ -176,11 +166,10 @@ function designLevel()
 		end
 		
 		if(requireBody) then
-			if((tiles[i].sheet == LEVEL_HUGE_CLASSIC or tiles[i].sheet == LEVEL_HUGE_SOBER or tiles[i].sheet == LEVEL_HUGE_GREY or tiles[i].sheet == LEVEL_HUGE_GREEN  )) then
-				print("-->",tiles[i].num)
-			end
-		
-			if((tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32) and tiles[i].sheet == TILES) then
+			if((tiles[i].num == 29 or tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32 
+			or tiles[i].num == 65 or tiles[i].num == 66 or tiles[i].num == 67 or tiles[i].num == 68
+			or tiles[i].num == 83 or tiles[i].num == 84 or tiles[i].num == 85 or tiles[i].num == 86
+			or tiles[i].num == 101 or tiles[i].num == 102 or tiles[i].num == 103 or tiles[i].num == 104) and isRealTile(tile)) then
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = smallShape } )
          	tile.isFixedRotation = true
 			else
@@ -241,7 +230,6 @@ function designLevel()
 		-- 
 		
 		if(isRealTile(tile)) then
-			print("------->",tile.num)
 			if(tile.num == 4) then
 				tile.grabbable = true
 			end

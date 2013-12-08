@@ -14,15 +14,26 @@ function initBack(chapter)
 		initBackMenu()
 	end
 
-	-- chapter1
-	if(chapter >= 1) then
+	if(chapter == 1) then
 		initBackChapter1()
+	end
+
+	if(chapter == 2) then
+		initBackChapter2()
+	end
+
+	if(chapter == 3) then
+		initBackChapter3()
 	end
 	
 end
 
-
 function initBackChapter1()
+	
+	if(game.bg.mist1) then 
+		transition.cancel(game.bg.mist1)
+		transition.cancel(game.bg.mist2)
+	end
 	
 	game.bg.mist1 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	game.bg.mist1.x = display.contentWidth/2  
@@ -34,34 +45,36 @@ function initBackChapter1()
 	game.bg.mist2.y = display.contentHeight/2
 	game.bg.mist2.alpha = 0.27 
 	
-	moveMists()
 	
 	game.bg.moon = display.newImageRect( game.bg, "assets/images/moon.png", 640, 640)  
 	game.bg.moon.x = 200
 	game.bg.moon.y = display.contentHeight-200
 	
-	moveMoon()
-	
 	game.bg.grass = display.newImageRect( game.bg, "assets/images/grass.blur.png", 1024, 1024)  
 	game.bg.grass.x = display.contentWidth/2  
 	game.bg.grass.y = display.contentHeight*0.8
 	
-	moveGrass()
 	
 	game.bg.back = display.newImageRect( game.bg, "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	game.bg.back.x = display.viewableContentWidth/2  
 	game.bg.back.y = display.viewableContentHeight/2
 	
---   local eye = eye:new()
---   eye:initBackgroundEye(300,300)
---   eye.sprite.rotation = -20
---   eye.sprite:toBack()
+	timer.performWithDelay(100, function()
+   	moveMists()
+   	moveMoon()
+   	moveGrass()
+	end)
     
 	putBackgroundToBack(1)  
 end
 
 
-function initBackMenu()
+function initBackChapter2()
+	
+	if(game.bg.mist1) then 
+		transition.cancel(game.bg.mist1)
+		transition.cancel(game.bg.mist2)
+	end
 	
 	game.bg.mist1 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
 	game.bg.mist1.x = display.contentWidth/2  
@@ -73,37 +86,140 @@ function initBackMenu()
 	game.bg.mist2.y = display.contentHeight/2
 	game.bg.mist2.alpha = 0.27 
 	
-	moveMists()
+	
+	game.bg.moon = display.newImageRect( game.bg, "assets/images/moon.2.png", 640, 640)  
+	game.bg.moon.x = display.contentWidth-150
+	game.bg.moon.y = display.contentHeight*0.3
+	
+	game.bg.grass = display.newImageRect( game.bg, "assets/images/grass.blur.png", 1024, 1024)  
+	game.bg.grass.x = display.contentWidth/2  
+	game.bg.grass.y = display.contentHeight*0.8
+	
+	game.bg.back = display.newImageRect( game.bg, "assets/images/blur.2.jpg", display.contentWidth, display.contentHeight)  
+	game.bg.back.x = display.viewableContentWidth/2  
+	game.bg.back.y = display.viewableContentHeight/2
+	
+   local eye = eye:new()
+   eye:initBackgroundEye(display.contentWidth*0.2, display.contentHeight*0.25)
+   
+   game.bg.eye = eye.sprite
+   game.bg.eye.rotation = -60
+   game.bg.eye:toBack()
+   game.bg:insert(game.bg.eye)
+
+	timer.performWithDelay(100, function()
+   	moveEye()
+   	moveMists()
+   	moveMoonBack()
+   	moveGrass()
+	end)
+    
+	putBackgroundToBack(2)  
+end
+
+function initBackChapter3()
+	
+	if(game.bg.mist1) then 
+		transition.cancel(game.bg.mist1)
+		transition.cancel(game.bg.mist2)
+	end
+	
+	game.bg.mist1 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist1.x = display.contentWidth/2  
+	game.bg.mist1.y = display.contentHeight/2
+	game.bg.mist1.alpha = 0.27
+
+	game.bg.mist2 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist2.x = display.contentWidth/2  - display.contentWidth
+	game.bg.mist2.y = display.contentHeight/2
+	game.bg.mist2.alpha = 0.27 
+	
+	
+	game.bg.asteroid = display.newImageRect( game.bg, "assets/images/moon.3.png", 440, 440)  
+	game.bg.asteroid.x = display.contentWidth-150
+	game.bg.asteroid.y = display.contentHeight*0.3
+	
+	game.bg.asteroid2 = display.newImageRect( game.bg, "assets/images/moon.4.png", 310, 310)  
+	game.bg.asteroid2.x = 50
+	game.bg.asteroid2.y = display.contentHeight*0.6
+	
+	game.bg.grass = display.newImageRect( game.bg, "assets/images/grass.blur.png", 1024, 1024)  
+	game.bg.grass.x = display.contentWidth/2  
+	game.bg.grass.y = display.contentHeight*0.8
+	
+	game.bg.back = display.newImageRect( game.bg, "assets/images/blur.3.jpg", display.contentWidth, display.contentHeight)  
+	game.bg.back.x = display.viewableContentWidth/2  
+	game.bg.back.y = display.viewableContentHeight/2
+
+	timer.performWithDelay(100, function()
+   	moveMists()
+   	moveAsteroid()
+   	moveAsteroid2()
+   	moveGrass()
+	end)
+    
+	putBackgroundToBack(3)  
+end
+
+
+function initBackMenu()
+	
+	if(game.bg.mist1) then 
+		transition.cancel(game.bg.mist1)
+		transition.cancel(game.bg.mist2)
+	end
+	
+	game.bg.mist1 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist1.x = display.contentWidth/2  
+	game.bg.mist1.y = display.contentHeight/2
+	game.bg.mist1.alpha = 0.27
+
+	game.bg.mist2 = display.newImageRect( game.bg, "assets/images/mist1.png", display.contentWidth, display.contentHeight)  
+	game.bg.mist2.x = display.contentWidth/2  - display.contentWidth
+	game.bg.mist2.y = display.contentHeight/2
+	game.bg.mist2.alpha = 0.27 
 	
 	game.bg.moon = display.newImageRect( game.bg, "assets/images/moon.png", 640, 640)  
 	game.bg.moon.x = display.contentWidth-300  
 	game.bg.moon.y = display.contentHeight/2-260 
-
-	moveMoonBack()
 	
 	game.bg.back = display.newImageRect( game.bg, "assets/images/blur.jpg", display.contentWidth, display.contentHeight)  
 	game.bg.back.x = display.viewableContentWidth/2  
 	game.bg.back.y = display.viewableContentHeight/2
+	
+	timer.performWithDelay(100, function()
+   	moveMists()
+   	moveMoon()
+	end)
 	
 	putBackgroundToBack(0)  
 end
 
 --------------------------------------------------------------------
 
-function putBackgroundToBack(level)
+function putBackgroundToBack(chapter)
 
-	if(level == 0) then
+	if(chapter == 0) then
    	game.bg.mist1:toBack()
    	game.bg.mist2:toBack()
    	game.bg.moon:toBack()
    	game.bg.back:toBack()
    end
 
-	if(level >= 1) then
+	if(chapter == 1 or chapter == 2) then
    	game.bg.mist1:toBack()
    	game.bg.mist2:toBack()
    	game.bg.grass:toBack()
    	game.bg.moon:toBack()
+   	game.bg.back:toBack()
+   end
+
+	if(chapter == 3) then
+   	game.bg.mist1:toBack()
+   	game.bg.mist2:toBack()
+   	game.bg.grass:toBack()
+   	game.bg.asteroid:toBack()
+   	game.bg.asteroid2:toBack()
    	game.bg.back:toBack()
    end
    
@@ -121,6 +237,12 @@ end
 ---------------------------------------------------------------------------------	
 
 function moveMists()
+
+	if(game.bg.mist1) then 
+		transition.cancel(game.bg.mist1)
+		transition.cancel(game.bg.mist2)
+	end
+	
 	transition.to( game.bg.mist2, { time=30000, x=game.bg.mist2.x+display.contentWidth})
 	transition.to( game.bg.mist1, { time=30000, x=game.bg.mist1.x+display.contentWidth })
 end
@@ -134,11 +256,39 @@ end
 ---------------------------------------------------------------------------------	
 
 function moveMoonBack()
-	transition.to( game.bg.moon, { time=170000, x=0, y =display.contentHeight,onComplete = function() moveMoon() end })
+	transition.to( game.bg.moon, { time=170000, x=0, y =display.contentHeight, rotation=0, onComplete = function() moveMoon() end })
 end
 
 function moveMoon()
-	transition.to( game.bg.moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight*0.3, onComplete = function() moveMoonBack() end })
+	transition.to( game.bg.moon, { time=150000, x=display.contentWidth-150 , y=display.contentHeight*0.3, rotation=20, onComplete = function() moveMoonBack() end })
+end
+
+---------------------------------------------------------------------------------	
+
+function moveAsteroidBack()
+	transition.to( game.bg.asteroid, { time=170000, x=display.contentWidth-150, y=display.contentHeight*0.3, rotation=0, onComplete = function() moveAsteroid() end })
+end
+
+function moveAsteroid()
+	transition.to( game.bg.asteroid, { time=180000, x=0 , y=display.contentHeight, rotation=400, onComplete = function() moveAsteroidBack() end })
+end
+
+function moveAsteroid2Back()
+	transition.to( game.bg.asteroid2, { time=160000, x=50, y =display.contentHeight*0.6, rotation=0, onComplete = function() moveAsteroid2() end })
+end
+
+function moveAsteroid2()
+	transition.to( game.bg.asteroid2, { time=150000, x=display.contentWidth*0.7 , y=display.contentHeight*0.1, rotation=400, onComplete = function() moveAsteroid2Back() end })
+end
+
+---------------------------------------------------------------------------------	
+
+function moveEyeBack()
+	transition.to( game.bg.eye, { time=150000, x=display.contentWidth*0.2, y=display.contentHeight*0.3, rotation = -60, onComplete = function() moveEye() end })
+end
+
+function moveEye()
+	transition.to( game.bg.eye, { time=150000, x=display.contentWidth*0.25 , y=display.contentHeight, rotation = -140, onComplete = function() moveEyeBack() end })
 end
 
 ---------------------------------------------------------------------------------	

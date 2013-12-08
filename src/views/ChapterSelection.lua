@@ -25,7 +25,11 @@ function scene:refreshScene()
 
 	game.level = 0
 	game.scene = self.view
+	
+	---------------------------------------------------------------
 
+	viewManager.initBack(0)
+	
 	---------------------------------------------------------------
 	
 	viewManager.buildEffectButton(
@@ -60,7 +64,8 @@ function scene:refreshScene()
 	
 	self:createChapterContent(1, display.contentWidth*0.37, display.contentHeight*0.25, false)
 	self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame)
-	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame)
+--	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame)
+	self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, false)
 	
 end
 
@@ -263,6 +268,7 @@ end
 
 function openChapter( chapter )
 	game.chapter = chapter
+	viewManager.initBack(chapter)
 	router.openLevelSelection()
 end
 

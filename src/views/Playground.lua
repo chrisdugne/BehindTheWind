@@ -31,7 +31,6 @@ function scene:enterScene( event )
 	-- surement un pb corona quils contournent en enterScene 2 fois...
 
 	transition.to( game.hud, { time=600, alpha=1 })  
-	viewManager.initBack(game.chapter)
 
 	if(not game.state or game.state == game.STOPPED) then
    	game:start()
