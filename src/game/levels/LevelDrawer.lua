@@ -109,7 +109,9 @@ level = {}
 -------------------------------------
 
 local MOTION_SPEED = 60
-local smallShape = {  -17,-17, 17,-17, 17,0, -17,0}
+local smallShape 				= {  -17,-17, 17,-17, 17,0, -17,0}
+local rightTriangleShape 	= {  -17,-17, 17,17, -17,17}
+local leftTriangleShape 	= {  -17,-17, 17,-17, 17,0, -17,0}
 
 -------------------------------------
 
@@ -143,6 +145,8 @@ function designLevel()
 		--------------------
 
    	local tile 			= drawTile( game.camera, tiles[i].sheet, tiles[i].num, tiles[i].x, tiles[i].y )
+		tile.num 			= tiles[i].num
+		tile.sheet 			= tiles[i].sheet
 		tile.group 			= tiles[i].group
 		tile.movable 		= tiles[i].movable
 		tile.draggable 	= tiles[i].draggable
@@ -166,11 +170,14 @@ function designLevel()
 		end
 		
 		if(requireBody) then
-			if((tiles[i].num == 29 or tiles[i].num == 30 or tiles[i].num == 31 or tiles[i].num == 32 
-			or tiles[i].num == 65 or tiles[i].num == 66 or tiles[i].num == 67 or tiles[i].num == 68
-			or tiles[i].num == 83 or tiles[i].num == 84 or tiles[i].num == 85 or tiles[i].num == 86
-			or tiles[i].num == 101 or tiles[i].num == 102 or tiles[i].num == 103 or tiles[i].num == 104) and isRealTile(tile)) then
+			if(isSmallShape(tile)) then
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = smallShape } )
+         	tile.isFixedRotation = true
+			elseif(isRightTriangleShape(tile)) then
+      		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = rightTriangleShape } )
+         	tile.isFixedRotation = true
+			elseif(isLeftTriangleShape(tile)) then
+      		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0, shape = leftTriangleShape } )
          	tile.isFixedRotation = true
 			else
       		physics.addBody( tile, type, { density="450", friction=0.3, bounce=0 } )
@@ -396,6 +403,33 @@ function isRealTile(tile)
 	or  tile.sheet == TILES_GREEN
 	or  tile.sheet == TILES_GREY
 	or  tile.sheet == TILES_DARK
+end
+
+-------------------------------------
+
+function isSmallShape(tile)
+	return (tile.num == 29 or tile.num == 30 or tile.num == 31 or tile.num == 32 
+	or tile.num == 65 or tile.num == 66 or tile.num == 67 or tile.num == 68
+	or tile.num == 83 or tile.num == 84 or tile.num == 85 or tile.num == 86
+	or tile.num == 101 or tile.num == 102 or tile.num == 103 or tile.num == 104)  and isRealTile(tile)
+end
+
+-------------------------------------
+
+function isRightTriangleShape(tile)
+	return (tile.num == 35
+	or tile.num == 71
+	or tile.num == 89
+	or tile.num == 57) and isRealTile(tile)
+end
+
+-------------------------------------
+
+function isLeftTriangleShape(tile)
+	return (tile.num == 33
+	or tile.num == 69
+	or tile.num == 87
+	or tile.num == 56) and isRealTile(tile)
 end
 
 -------------------------------------

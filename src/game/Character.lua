@@ -17,10 +17,11 @@ local HANGING_FORCE = 100
 NOT_MOVING 	= 0
 GOING_LEFT 	= 1
 GOING_RIGHT = 2
+
 OUT		 	= 100
 
 -------------------------------------
-
+-- sprite display state
 state = NOT_MOVING
 
 -------------------------------------
@@ -39,6 +40,7 @@ timeLastThrow	= 0
 
 jumping 	= false 
 hanging 	= false 
+rolling 	= false 
 
 throwFire = false 
 throwGrab = false
@@ -81,6 +83,7 @@ function exit(completeExit)
 	 
 	sprite:setLinearVelocity(0,0)
 	transition.to( sprite, { time=100, alpha=0, onComplete=completeExit})
+	
 end
 
 -------------------------------------
@@ -157,6 +160,7 @@ function resetState()
    
    jumping 	= false 
    hanging 	= false 
+   rolling 	= false 
    
    previousVy = 0
    nbFramesToKeep = 0
@@ -380,10 +384,10 @@ function collide( event )
 	local vx, vy = event.target:getLinearVelocity()
 	
 	if(tileTop > characterBottom and event.other.isFloor and vy > -200) then
---		print("touch floor")
 		floor = event.other
 		collideOnLeft, collideOnRight = nil, nil
 		jumping = false
+   	character.movesLocked = false
 		move()
 	elseif(tileBottom < characterTop and event.other.isFloor) then
 --		print("touch top")
@@ -393,18 +397,28 @@ function collide( event )
 --		print("touch side ? ", characterLeft, characterRight, tileLeft, tileRight, " right :  " .. tostring(characterLeft < tileLeft and tileLeft < characterRight) .. " |  left : " .. tostring(characterLeft < tileRight and tileRight < characterRight) .. " | vx = " .. vx)
 		if(characterLeft < tileLeft and tileLeft < characterRight ) then
 --			print("collideOnRight")
+      	character.movesLocked = false
 			collideOnRight = event.other
 		elseif(characterLeft < tileRight and tileRight < characterRight) then
 --			print("collideOnLeft")
+      	character.movesLocked = false
 			collideOnLeft = event.other
 		else
 			collideOnLeft = nil
 			collideOnRight = nil
 		end
+		
+		if(levelDrawer.isRightTriangleShape(event.other) or levelDrawer.isLeftTriangleShape(event.other)) then
+			sprite.isFixedRotation = false
+   		character.movesLocked = true
+   		print("set rolling")
+			rolling = true
+		end
 
 	end
 	
 	if((jumping or hanging) and vy > -200) then
+		print("set NOT_MOVING")
 		state = NOT_MOVING
 		
 		if(floor) then
@@ -443,6 +457,7 @@ end
 function setHanging(value)
 	hanging = value
 	if(hanging) then
+		stopRolling()
 		timeLeavingFloor  = system.getTimer()
 		nbFramesToKeep = 20 -- could be locked while checking OUT and waiting for grab : reset ok here : 20 frames : time to climb up while still OUT
 		
@@ -464,7 +479,7 @@ end
 function move()
 	
 	if(state == OUT or movesLocked) then return end
-	 
+ 
 	if(not hanging) then
 		if(touchController.rightTouch) then
 			goRight()
@@ -478,7 +493,7 @@ function move()
 			sprite:applyForce( -HANGING_FORCE, 0, sprite.x, sprite.y )
 		end
 	end
-
+	
 	if(touchController.rightTouch or touchController.leftTouch) then
    	if(floor) then
    		jump()
@@ -524,9 +539,17 @@ function goLeft()
 	local floorVx, floorVy = 0,0
 	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 	
+	local newVx = 0
+	if(rolling) then
+		newVx = vx + floorVx
+	else
+		newVx = -CHARACTER_SPEED + floorVx
+	end
+	
+	sprite:setLinearVelocity( newVx, vy )
+
 	state = GOING_LEFT	
 	lookLeft()
-	sprite:setLinearVelocity( -CHARACTER_SPEED+floorVx, vy )
 end
 
 function goRight()
@@ -535,27 +558,60 @@ function goRight()
 	local floorVx, floorVy = 0,0
 	if(floor) then floorVx, floorVy = floor:getLinearVelocity() end
 
+	local newVx = 0
+	if(rolling) then
+		print("ROLLING")
+		newVx = vx + floorVx
+	else
+		print("not rolling")
+		newVx = CHARACTER_SPEED + floorVx
+	end
+	
+	sprite:setLinearVelocity( newVx, vy )
+
 	state = GOING_RIGHT
 	lookRight()
-	sprite:setLinearVelocity( CHARACTER_SPEED+floorVx, vy )
 end
 
 function jump()
 	if(jumping or (not hanging and not floor)) then return end
+	local vx, vy = sprite:getLinearVelocity()
+	local rollingVx = 0
+	
+	if(not sprite.isFixedRotation) then	
+   	stopRolling()
+   	rollingVx = -abs(vx)
+   end
+	
 	timeLeavingFloor = system.getTimer()
 	leavingFloor 	= floor
 	jumping 			= true
 	
-	local vx, vy = sprite:getLinearVelocity()
-	print(math.rad(floor.rotation))
+	
+	print(math.rad(floor.rotation), vx, vy)
 	vx = vx * math.cos(math.rad(floor.rotation))
-	vy = JUMP_SPEED * math.cos(math.rad(floor.rotation))
+	vy = (JUMP_SPEED + rollingVx) * math.cos(math.rad(floor.rotation))
 
 	floor = nil
 	collideOnLeft = nil
 	collideOnRight = nil
 	
 	sprite:setLinearVelocity( vx, vy )
+end
+
+-------------------------------------
+
+function stopRolling()
+
+	print("stop rolling")
+	rolling = false
+	
+	sprite.isFixedRotation = true
+	timer.performWithDelay(30, function()
+		-- timer to avoid : ERROR: Cannot rotate an object before collision is resolved. 
+		sprite.rotation = 0
+		sprite.angularVelocity = 0
+	end)
 end
 
 -------------------------------------
