@@ -213,33 +213,47 @@ function designLevel()
 			groups[tile.group][#groups[tile.group] + 1] = tile
    	end
 
-		--------------------
-		-- Triggers
 		
-		if(tile.trigger) then
-			
-      	if(not level.triggers[tile.trigger]) then
-      		level.triggers[tile.trigger] = {
-      			remaining = 0,
-      			lockX = tile.x,
-      			lockY = tile.y,
-      		}
-      	end
-   
-			level.triggers[tile.trigger].remaining = level.triggers[tile.trigger].remaining + 1
-			effectsManager.drawTrigger(tile.x, tile.y, tile.trigger)
-			display.remove(tile)
-		end
+		--------------------
+		-- init Triggers
+
+		if(tile.trigger and not level.triggers[tile.trigger]) then
+			level.triggers[tile.trigger] = {
+				remaining = 0,
+				lockX = tile.x,
+				lockY = tile.y,
+			}
+		end		
 		
 		--------------------
 		--
 		-- Grabbable
 		-- 
-		
+
 		if(isRealTile(tile)) then
 			if(tile.num == 4) then
-				tile.grabbable = true
+				
+				tile.mayBeGrabbable = true
+				
+				if(tile.trigger) then 
+					print("grabbable tile to trigger !")
+					addTriggerStarter(tile.trigger, function()
+   					print("trigger start : grabbable ON")
+      				tile.grabbable = true
+					end)
+				else
+   				tile.grabbable = true
+   			end
 			end
+		end
+		
+		--------------------
+		-- Triggers
+		
+		if(tile.trigger and not tile.mayBeGrabbable) then
+			level.triggers[tile.trigger].remaining = level.triggers[tile.trigger].remaining + 1
+			effectsManager.drawTrigger(tile.x, tile.y, tile.trigger)
+			display.remove(tile)
 		end
 		
 		--------------------
@@ -326,14 +340,7 @@ function designLevel()
 			local startMotion = function() timer.performWithDelay(1, function () addGroupMotion(groups[k], groupMotion) end) end
 			
 			if(groupMotion.trigger) then
-			
-   			if(level.triggers[groupMotion.trigger].start) then
-   				level.triggers[groupMotion.trigger].start[#level.triggers[groupMotion.trigger].start+1] = startMotion
-   			else
-   				level.triggers[groupMotion.trigger].start = {}
-   				level.triggers[groupMotion.trigger].start[1] = startMotion 
-   			end
-   			
+				addTriggerStarter(groupMotion.trigger, startMotion)
 			else
    			 startMotion()
 			end
@@ -474,6 +481,17 @@ function drawTile(view, sheet, num, x, y)
 	tile.sheet 		= sheet
 	
 	return tile
+end
+
+---------------------------------------------------------------------
+
+function addTriggerStarter(trigger, starter)
+	if(level.triggers[trigger].start) then
+		level.triggers[trigger].start[#level.triggers[trigger].start+1] = starter
+	else
+		level.triggers[trigger].start = {}
+		level.triggers[trigger].start[1] = starter 
+	end
 end
 
 ---------------------------------------------------------------------

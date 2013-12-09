@@ -8,6 +8,11 @@ Buttons :
  ATTENTION
  
  -> NE PAS faire un groupe movable ET draggable
+ -> trigger sur un tile : c'est le trigger a activer = pas une tile
+ 	SAUF si elle est aussi Grabbable ( = Grabbable apres trigger)
+ 
+ dans le cas grababble + movable apres trigger, le trigger va etre enlevé de la tile => le remettre a la mano
+ 	
  -> BG et FG ne s'appliquent que sur des groupes 
  -> trigger ne peut s'appliquer que sur un tile seul (= trigger) 
  	ou sur un group motion/draggable (= action to trigger)
