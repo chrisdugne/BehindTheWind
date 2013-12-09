@@ -212,10 +212,10 @@ function spawn()
 	
 	resetState()
 	stop()
-   setThrowing()
-   
-   throwFire = false
-	throwGrab = false
+-- setThrowing()
+-- throwFire = false
+--	throwGrab = false
+	stopRolling()
 	
 	-- replace the character on the spawn point
    sprite.x = levelDrawer.level.spawnX
@@ -396,11 +396,11 @@ function collide( event )
 		-- less is a "bounce" due to collision : to ignore !
 --		print("touch side ? ", characterLeft, characterRight, tileLeft, tileRight, " right :  " .. tostring(characterLeft < tileLeft and tileLeft < characterRight) .. " |  left : " .. tostring(characterLeft < tileRight and tileRight < characterRight) .. " | vx = " .. vx)
 		if(characterLeft < tileLeft and tileLeft < characterRight ) then
---			print("collideOnRight")
+   		print("collideOnRight")
       	character.movesLocked = false
 			collideOnRight = event.other
 		elseif(characterLeft < tileRight and tileRight < characterRight) then
---			print("collideOnLeft")
+   		print("collideOnLeft")
       	character.movesLocked = false
 			collideOnLeft = event.other
 		else

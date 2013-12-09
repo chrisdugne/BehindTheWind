@@ -399,17 +399,17 @@ function drawEnergy(x, y, type)
 		}
 	}
 	
-	local energy = display.newImage("assets/images/game/energy.body.png")
+	local energy = display.newCircle( x, y, 4 )
 	energy.type = type 
 	energy.light = light
-	energy.x = x
-	energy.y = y
 	energy.isSensor = true
+	energy.alpha = 0
 	
    physics.addBody( energy, "kinematic", { 
    	density = 0, 
    	friction = 0, 
    	bounce = 0,
+   	radius = 4
    })
    
    game.camera:insert(energy)

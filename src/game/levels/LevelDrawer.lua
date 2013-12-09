@@ -110,8 +110,8 @@ level = {}
 
 local MOTION_SPEED = 60
 local smallShape 				= {  -17,-17, 17,-17, 17,0, -17,0}
-local rightTriangleShape 	= {  -17,-17, 17,17, -17,17}
-local leftTriangleShape 	= {  -17,-17, 17,-17, 17,0, -17,0}
+local rightTriangleShape 	= {  -17,-17, 17,17, -17,17 }
+local leftTriangleShape 	= {  17,-17, 17,17, -17,17 }
 
 -------------------------------------
 
