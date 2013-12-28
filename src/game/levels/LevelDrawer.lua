@@ -425,7 +425,7 @@ function mayBeGrabbable(tile)
 		return tile.num == 4
 	end
 	
-	if(isHugeTile(tile)) then
+	if(tile.sheet == LEVEL_HUGE_GREEN) then
 		return tile.num == 3
 	end
 end

@@ -281,53 +281,51 @@ end
 	
 function Game:startIntro()
 	
-	self.intro = display.newGroup()
-	self.intro.board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth, display.contentHeight, 0)
-   self.intro.board.x = display.contentWidth/2
-   self.intro.board.y = display.contentHeight/2
-   self.intro.board.alpha = 0.6
-   self.intro.board:setFillColor(0)
+	game.hud.intro = display.newGroup()
+	game.hud.intro.board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth, display.contentHeight, 0)
+   game.hud.intro.board.x = display.contentWidth/2
+   game.hud.intro.board.y = display.contentHeight/2
+   game.hud.intro.board.alpha = 0.6
+   game.hud.intro.board:setFillColor(0)
    
-	transition.to( self.intro.board, { time=10000, alpha=0, onComplete= function() self:spawn() end})  
+	transition.to( game.hud.intro.board, { time=10000, alpha=0, onComplete= function() self:spawn() end})  
 
-	self.introTimer1 = timer.performWithDelay(500, function()
+	game.hud.introTimer1 = timer.performWithDelay(500, function()
    	viewManager.displayIntroText("Uralys presents", display.contentWidth*0.2, display.contentHeight*0.2, true)
 	end)
 
-	self.introTimer2 = timer.performWithDelay(5500, function()
+	game.hud.introTimer2 = timer.performWithDelay(5500, function()
    	viewManager.displayIntroText("Music by Velvet Coffee", display.contentWidth*0.7, display.contentHeight*0.43, true)
 	end)
 
-	self.introTimer3 = timer.performWithDelay(10000, function()
+	game.hud.introTimer3 = timer.performWithDelay(10000, function()
    	transition.to( self.camera, { time=1000, alpha=1 })
 	end)
 
-	self.introTimer4 = timer.performWithDelay(11000, function()
-		utils.destroyFromDisplay(self.intro)
+	game.hud.introTimer4 = timer.performWithDelay(11000, function()
+		utils.destroyFromDisplay(game.hud.intro)
    	viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
-	end)
+	end);
 	
-	
-	viewManager.buildSimpleButton(
-		self.intro,
-		"assets/images/hud/play.png", 
-		12, 
-		0.12*aspectRatio,
-		display.contentWidth*0.95, 	
-		display.contentHeight*0.95, 	
+	viewManager.buildSimpleButton( game.hud.intro, "assets/images/hud/play.png", 
+		0, 
+		0.24*aspectRatio,
+		display.contentWidth*0.9, 	
+		display.contentHeight*0.85, 	
 		function()
-			transition.cancel(self.intro.board)
-			self.intro.board.alpha = 0
-			timer.cancel(self.introTimer1)
-			timer.cancel(self.introTimer2)
-			timer.cancel(self.introTimer3)
-			timer.cancel(self.introTimer4)
-			transition.to( self.camera, { time=1000, alpha=1 })
-			self:spawn()
+			transition.cancel(game.hud.intro.board)
+			game.hud.intro.board.alpha = 0
+			timer.cancel(game.hud.introTimer1)
+			timer.cancel(game.hud.introTimer2)
+			timer.cancel(game.hud.introTimer3)
+			timer.cancel(game.hud.introTimer4)
+			transition.to( game.camera, { time=1000, alpha=1 })
+			game:spawn()
 			viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
-			utils.destroyFromDisplay(self.intro)
+			utils.destroyFromDisplay(game.hud.intro)
 		end
-	)
+	);
+	
 end
 
 ------------------------------------------

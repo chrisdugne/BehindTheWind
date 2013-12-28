@@ -29,7 +29,6 @@ FIRE_BUTTON_Y 				= display.contentHeight*0.88
 GRAB_BUTTON_X 				= display.contentWidth*0.93
 GRAB_BUTTON_Y 				= display.contentHeight*0.67
 
-
 -----------------------------------------------------------------------------------------
 
 function start()
@@ -246,6 +245,18 @@ end
 
 -----------------------------------------------------------------------------------------
 
+function hideMoveButtons()
+	game.hud.leftButton.alpha 	= 0
+	game.hud.rightButton.alpha	= 0
+end
+
+function showMoveButtons()
+	game.hud.leftButton.alpha 	= 0.6
+	game.hud.rightButton.alpha = 0.6
+end
+
+-----------------------------------------------------------------------------------------
+
 function placeFireSmallButton(event)
 	local direction = vector2D:new(hud.FIRE_BUTTON_X - event.x, hud.FIRE_BUTTON_Y - event.y )
 	if(direction:magnitude() > game.hud.throwSwipeMax) then
@@ -401,7 +412,8 @@ end
 function showDropButton()
 	display.remove(game.hud.dropButton)
 	game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/button.drop.png" )
-	game.hud.dropButton.x = display.contentWidth - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
+--	game.hud.dropButton.x = display.contentWidth - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
+	game.hud.dropButton.x = game.hud.dropButton.contentWidth*0.5 + display.contentWidth*0.035
 	game.hud.dropButton.y = display.contentHeight - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
 	game.hud.dropButton.alpha = 0.8
 

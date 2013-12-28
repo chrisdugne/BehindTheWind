@@ -62,7 +62,7 @@ function scene:displayContent()
 	if(not GLOBALS.savedData.fullGame) then
 		viewManager.buildEffectButton(game.hud, T "Full version", 26, 0.72, display.contentWidth*0.77, 	display.contentHeight*0.38, 	router.openBuy)
 	else
-		thanksText = display.newText(game.hud, "Thank you for purchasing the full version !", 0, 0, 70, 100, FONT, 12 )
+		thanksText = display.newText(game.hud, "Thank you for purchasing the full version !", 0, 0, 200, 200, FONT, 30 )
 		thanksText.x = display.contentWidth*0.75
 		thanksText.y = display.contentHeight*0.4
 	end

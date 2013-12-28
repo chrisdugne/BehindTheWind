@@ -12,7 +12,10 @@ local FRICTION 		= 1
 local BOUNCE 			= 0.15
 local RADIUS 			= 16
 
-local HANGING_FORCE = 100
+local HANGING_FORCE = 3
+
+local ROPE_BONUS_SPEED_X = 1.45
+local ROPE_BONUS_SPEED_Y = 1.65
 
 NOT_MOVING 	= 0
 GOING_LEFT 	= 1
@@ -121,17 +124,17 @@ function init()
    sprite.alpha = 0
    
    ---------------------------
-   
-   sprite:addEventListener( "touch", function(event)
-   
-		if(#ropes == 0) then return false end 
-
-		if(event.phase == "began") then
-			physicsManager.detachAllRopes() 
-		end 
-
-		return true 
-	end)
+--   
+--   sprite:addEventListener( "touch", function(event)
+--   
+--		if(#ropes == 0) then return false end 
+--
+--		if(event.phase == "began") then
+--			physicsManager.detachAllRopes() 
+--		end 
+--
+--		return true 
+--	end)
 	
    ---------------------------
    -- reset
@@ -387,7 +390,7 @@ function collide( event )
 		floor = event.other
 		collideOnLeft, collideOnRight = nil, nil
 		jumping = false
-   	character.movesLocked = false
+   	movesLocked = false
 		move()
 	elseif(tileBottom < characterTop and event.other.isFloor) then
 --		print("touch top")
@@ -396,12 +399,10 @@ function collide( event )
 		-- less is a "bounce" due to collision : to ignore !
 --		print("touch side ? ", characterLeft, characterRight, tileLeft, tileRight, " right :  " .. tostring(characterLeft < tileLeft and tileLeft < characterRight) .. " |  left : " .. tostring(characterLeft < tileRight and tileRight < characterRight) .. " | vx = " .. vx)
 		if(characterLeft < tileLeft and tileLeft < characterRight ) then
-   		print("collideOnRight")
-      	character.movesLocked = false
+      	movesLocked = false
 			collideOnRight = event.other
 		elseif(characterLeft < tileRight and tileRight < characterRight) then
-   		print("collideOnLeft")
-      	character.movesLocked = false
+      	movesLocked = false
 			collideOnLeft = event.other
 		else
 			collideOnLeft = nil
@@ -410,15 +411,13 @@ function collide( event )
 		
 		if(levelDrawer.isRightTriangleShape(event.other) or levelDrawer.isLeftTriangleShape(event.other)) then
 			sprite.isFixedRotation = false
-   		character.movesLocked = true
-   		print("set rolling")
+   		movesLocked = true
 			rolling = true
 		end
 
 	end
 	
 	if((jumping or hanging) and vy > -200) then
-		print("set NOT_MOVING")
 		state = NOT_MOVING
 		
 		if(floor) then
@@ -457,6 +456,7 @@ end
 function setHanging(value)
 	hanging = value
 	if(hanging) then
+		hud.hideMoveButtons()
 		stopRolling()
 		timeLeavingFloor  = system.getTimer()
 		nbFramesToKeep = 20 -- could be locked while checking OUT and waiting for grab : reset ok here : 20 frames : time to climb up while still OUT
@@ -471,6 +471,8 @@ function setHanging(value)
          	end
          end
 		end)
+	else
+		hud.showMoveButtons()
 	end
 end
 
@@ -487,11 +489,17 @@ function move()
 			goLeft()
 		end
 	else
-		if(touchController.rightTouch) then
-			sprite:applyForce( HANGING_FORCE, 0, sprite.x, sprite.y )
-		elseif(touchController.leftTouch) then
-			sprite:applyForce( -HANGING_FORCE, 0, sprite.x, sprite.y )
-		end
+--		local vx, vy = sprite:getLinearVelocity()
+--		
+--		if(touchController.rightTouch) then
+--			sprite:applyForce( vx*HANGING_FORCE, vy*HANGING_FORCE, sprite.x, sprite.y )
+--			movesLocked = true
+--			timer.performWithDelay(500, function() character.movesLocked = false end)
+--		elseif(touchController.leftTouch) then
+--			sprite:applyForce( vx*(-HANGING_FORCE), vy*HANGING_FORCE, sprite.x, sprite.y )
+--			movesLocked = true
+--			timer.performWithDelay(500, function() character.movesLocked = false end)
+--		end
 	end
 	
 	if(touchController.rightTouch or touchController.leftTouch) then
@@ -581,6 +589,7 @@ function jump()
 	if(not sprite.isFixedRotation) then	
    	stopRolling()
    	rollingVx = -abs(vx)
+   	movesLocked = true
    end
 	
 	timeLeavingFloor = system.getTimer()
@@ -596,7 +605,22 @@ function jump()
 	collideOnLeft = nil
 	collideOnRight = nil
 	
+	print("setting : ", vx, vy)
 	sprite:setLinearVelocity( vx, vy )
+end
+
+-------------------------------------
+
+function detachAllRopes()
+	setHanging(false)
+	ropes = {}
+	
+	if(state ~= OUT) then
+   	movesLocked = true
+   	
+   	local vx, vy = sprite:getLinearVelocity()
+   	sprite:setLinearVelocity( vx*ROPE_BONUS_SPEED_X, vy*ROPE_BONUS_SPEED_Y )
+   end
 end
 
 -------------------------------------

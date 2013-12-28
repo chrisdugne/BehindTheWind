@@ -904,12 +904,12 @@ function drawBeam(attach)
 			positionType="alongLine",
 			perEmit=1,
 			emissionNum=0,
-			emitDelay=10,
+			emitDelay=1,
    		fadeInTime=20,
-   		startAlpha=0.6,
-   		endAlpha=0.3,
+   		startAlpha=1,
+   		endAlpha=0.1,
 			physics={
-				xDamping = 32,
+				xDamping = 64,
 				yDamping = 15,
 				gravityY=0.06,
 			}

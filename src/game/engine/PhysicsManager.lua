@@ -494,11 +494,10 @@ function detachAllRopes()
    	utils.destroyFromDisplay(rope.startAnchor)
    	utils.destroyFromDisplay(rope.joint)
 	end
-		
-	character.setHanging(false)
+
 	Runtime:removeEventListener( "enterFrame", refreshRopeCoordinates )
+	character.detachAllRopes()
 	
-	character.ropes = {}
 end
 
 ---------------------------------------------------------------------------

@@ -17,6 +17,7 @@ Buttons :
  -> trigger ne peut s'appliquer que sur un tile seul (= trigger) 
  	ou sur un group motion/draggable (= action to trigger)
  	=> faire un groupe des grands tiles avant de les set en triggers
+ 	+ dans les groupDragLines mettre la propertie trigger avec le num du trigger (exemple level 1.6)
  	
  -> draggable groups : groupDragLines
  	Cest juste un tool pour voir a peu pres les coordonnées : il faut set les x,y a la mano pour faire des moves verticaux ou horizontaux !!
