@@ -615,7 +615,7 @@ function detachAllRopes()
 	setHanging(false)
 	ropes = {}
 	
-	if(state ~= OUT) then
+	if(state ~= OUT and not floor) then
    	movesLocked = true
    	
    	local vx, vy = sprite:getLinearVelocity()
