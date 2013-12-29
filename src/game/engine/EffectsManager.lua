@@ -399,7 +399,7 @@ function drawEnergy(x, y, type)
 		}
 	}
 	
-	local energy = display.newCircle( x, y, 4 )
+	local energy = display.newCircle( x, y, 8 )
 	energy.type = type 
 	energy.light = light
 	energy.isSensor = true
@@ -409,7 +409,7 @@ function drawEnergy(x, y, type)
    	density = 0, 
    	friction = 0, 
    	bounce = 0,
-   	radius = 4
+   	radius = 8
    })
    
    game.camera:insert(energy)

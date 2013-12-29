@@ -282,50 +282,53 @@ end
 function Game:startIntro()
 	
 	game.hud.intro = display.newGroup()
-	game.hud.intro.board = display.newRoundedRect(self.hud, 0, 0, display.contentWidth, display.contentHeight, 0)
+	game.hud.intro.board = display.newRoundedRect(game.hud, 0, 0, display.contentWidth, display.contentHeight, 0)
    game.hud.intro.board.x = display.contentWidth/2
    game.hud.intro.board.y = display.contentHeight/2
    game.hud.intro.board.alpha = 0.6
    game.hud.intro.board:setFillColor(0)
-   
-	transition.to( game.hud.intro.board, { time=10000, alpha=0, onComplete= function() self:spawn() end})  
-
-	game.hud.introTimer1 = timer.performWithDelay(500, function()
+	
+	self.hud.introTimer1 = timer.performWithDelay(500, function()
    	viewManager.displayIntroText("Uralys presents", display.contentWidth*0.2, display.contentHeight*0.2, true)
 	end)
 
-	game.hud.introTimer2 = timer.performWithDelay(5500, function()
+	self.hud.introTimer2 = timer.performWithDelay(5500, function()
    	viewManager.displayIntroText("Music by Velvet Coffee", display.contentWidth*0.7, display.contentHeight*0.43, true)
 	end)
 
-	game.hud.introTimer3 = timer.performWithDelay(10000, function()
+	self.hud.introTimer3 = timer.performWithDelay(10000, function()
    	transition.to( self.camera, { time=1000, alpha=1 })
 	end)
 
-	game.hud.introTimer4 = timer.performWithDelay(11000, function()
-		utils.destroyFromDisplay(game.hud.intro)
+	self.hud.introTimer4 = timer.performWithDelay(11000, function()
+		utils.destroyFromDisplay(self.hud.intro)
    	viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
 	end);
+
+	transition.to( self.hud.intro.board, { time=10000, alpha=0, onComplete= function() self:spawn() end})  
 	
-	viewManager.buildSimpleButton( game.hud.intro, "assets/images/hud/play.png", 
-		0, 
-		0.24*aspectRatio,
-		display.contentWidth*0.9, 	
-		display.contentHeight*0.85, 	
-		function()
-			transition.cancel(game.hud.intro.board)
-			game.hud.intro.board.alpha = 0
-			timer.cancel(game.hud.introTimer1)
-			timer.cancel(game.hud.introTimer2)
-			timer.cancel(game.hud.introTimer3)
-			timer.cancel(game.hud.introTimer4)
-			transition.to( game.camera, { time=1000, alpha=1 })
-			game:spawn()
-			viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
-			utils.destroyFromDisplay(game.hud.intro)
-		end
-	);
-	
+	timer.performWithDelay(1000, function()
+   	viewManager.buildSimpleButton( self.hud.intro, "Skip", 
+   		20, 
+   		0.18*aspectRatio,
+   		display.contentWidth*0.9, 	
+   		display.contentHeight*0.9, 
+   		function() self:exitIntro() end
+   	);
+	end)
+end
+
+function Game:exitIntro()
+	transition.cancel(game.hud.intro.board)
+	game.hud.intro.board.alpha = 0
+	timer.cancel(game.hud.introTimer1)
+	timer.cancel(game.hud.introTimer2)
+	timer.cancel(game.hud.introTimer3)
+	timer.cancel(game.hud.introTimer4)
+	transition.to( game.camera, { time=1000, alpha=1 })
+	game:spawn()
+	viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
+	utils.destroyFromDisplay(game.hud.intro)
 end
 
 ------------------------------------------
