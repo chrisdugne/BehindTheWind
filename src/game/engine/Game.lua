@@ -162,7 +162,6 @@ function Game:stop()
    	ringsCaught 			= self.ringsCaught,
 	}
 	
-	
 	local min,sec,ms = utils.getMinSecMillis(math.floor(game.elapsedTime))
 	score.time = min .. "'" .. sec .. "''" .. ms  
 
@@ -173,6 +172,7 @@ function Game:stop()
 	-- timeMax 		= sec
 	-- elapsedTime = millis
 	score.timePoints = CHAPTERS[game.chapter].levels[game.level].properties.timeMax*10 - math.floor(game.elapsedTime/100)
+	if(score.timePoints < 0) then score.timePoints = 0 end
 	score.points = (score.timePoints + score.energiesCaught * score.energiesCaught) * score.piecesBonus * score.ringsBonus
 	
 	scoreManager.score = score

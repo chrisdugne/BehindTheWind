@@ -141,6 +141,29 @@ function buildButtons()
 	end)
 
 	-----------------------------------------------------------------
+	-- drop button
+	-- 
+
+	game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/button.drop.png" )
+--	game.hud.dropButton.x = display.contentWidth - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
+	game.hud.dropButton.x = game.hud.dropButton.contentWidth*0.5 + display.contentWidth*0.035
+	game.hud.dropButton.y = display.contentHeight - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
+	game.hud.dropButton.alpha = 0
+
+	game.hud.dropButton:addEventListener( "touch", function(event)
+
+		if(character.throwFire) then return false end
+		if(character.throwGrab) then return false end
+		if(event.id == touchController.moveTouchFingerId) then return false end
+
+		if(event.phase == "began") then
+			physicsManager.detachAllRopes() 
+		end 
+
+		return true 
+	end)
+	
+	-----------------------------------------------------------------
 	-- Throw buttons
 --	-- 
 --
@@ -253,6 +276,16 @@ end
 function showMoveButtons()
 	game.hud.leftButton.alpha 	= 0.6
 	game.hud.rightButton.alpha = 0.6
+end
+
+-----------------------------------------------------------------------------------------
+
+function hideDropButton()
+	game.hud.dropButton.alpha	= 0
+end
+
+function showDropButton()
+	game.hud.dropButton.alpha	= 0.8
 end
 
 -----------------------------------------------------------------------------------------
@@ -406,34 +439,3 @@ end
 --		-- else : destroyed earlier
 --	end
 --end
-
------------------------------------------------------------------------------------------
-
-function showDropButton()
-	display.remove(game.hud.dropButton)
-	game.hud.dropButton = display.newImage( game.hud, "assets/images/hud/button.drop.png" )
---	game.hud.dropButton.x = display.contentWidth - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
-	game.hud.dropButton.x = game.hud.dropButton.contentWidth*0.5 + display.contentWidth*0.035
-	game.hud.dropButton.y = display.contentHeight - game.hud.dropButton.contentWidth*0.5 - display.contentWidth*0.035
-	game.hud.dropButton.alpha = 0.8
-
-	game.hud.dropButton:addEventListener( "touch", function(event)
-
-		if(character.throwFire) then return false end
-		if(character.throwGrab) then return false end
-		if(event.id == touchController.moveTouchFingerId) then return false end
-
-		if(event.phase == "began") then
-			physicsManager.detachAllRopes() 
-			hideDropButton()
-		end 
-
-		return true 
-	end)
-end
-
-function hideDropButton()
-	if(game.state == game.RUNNING) then
-		utils.destroyFromDisplay(game.hud.dropButton)
-	end
-end

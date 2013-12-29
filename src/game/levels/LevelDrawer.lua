@@ -234,10 +234,17 @@ function designLevel()
 			tile.mayBeGrabbable = true
 
 			if(tile.trigger) then 
-				print("grabbable tile to trigger !")
+
+				tile.icons = {}
+         	tile.icons["lock"] = display.newImage(game.camera, "assets/images/hud/lock.png")
+         	tile.icons["lock"]:scale(0.2,0.2)
+         	tile.icons["lock"].x = tile.x
+         	tile.icons["lock"].y = tile.y
+         	tile.icons["lock"].alpha = 1
+
 				addTriggerStarter(tile.trigger, function()
-					print("trigger start : grabbable ON")
 					tile.grabbable = true
+            	display.remove(tile.icons["lock"])
 				end)
 			else
 				tile.grabbable = true
@@ -332,12 +339,32 @@ function designLevel()
 		-- k est parfois le num en string dans le json groupMotions (gd num de groupe a priori)
 		if(type(k) == "string") then k = tonumber(k) end
 		
+		-- attention @leveldesigner ! pour choisir celle du milieu, il faut que le nbre de tiles dans un groupe draggable soit impair
+		local tileWithIcon = groups[k][(#groups[k] + 1)/2]
+   	if(not tileWithIcon.icons) then tileWithIcon.icons = {} end
+		
 		if(groupMotion) then
 			-- corona crash sans le performWithDelay ?
-			local startMotion = function() timer.performWithDelay(1, function () addGroupMotion(groups[k], groupMotion) end) end
+			local startMotion = function() timer.performWithDelay(1, function ()
+			
+				if(tileWithIcon.icons["lock"]) then
+					display.remove(tileWithIcon.icons["lock"]) 
+				end 
+				 
+				addGroupMotion(groups[k], groupMotion) 
+			end) end
 			
 			if(groupMotion.trigger) then
 				addTriggerStarter(groupMotion.trigger, startMotion)
+      		
+      		-- test car un grababble movable avec trigger aurait 2 locks : bug lors du remove
+      		if(not tileWithIcon.icons["lock"]) then
+            	tileWithIcon.icons["lock"] = display.newImage(game.camera, "assets/images/hud/lock.png")
+            	tileWithIcon.icons["lock"]:scale(0.2,0.2)
+            	tileWithIcon.icons["lock"].x = tileWithIcon.x
+            	tileWithIcon.icons["lock"].y = tileWithIcon.y
+            	tileWithIcon.icons["lock"].alpha = 1
+            end
 			else
    			 startMotion()
 			end
@@ -379,15 +406,22 @@ function designLevel()
          	tileWithIcon.icons["updown"].alpha = 0.4
       	end
       	
-			local enableDrag = function() addGroupDraggable(groups[k], groupDragLine) end
+			local enableDrag = function() 
+				addGroupDraggable(groups[k], groupDragLine)
+				if(tileWithIcon.icons["lock"]) then
+					display.remove(tileWithIcon.icons["lock"]) 
+				end 
+			end
 			
 			if(groupDragLine.trigger) then
-   			if(level.triggers[groupDragLine.trigger].start) then
-   				level.triggers[groupDragLine.trigger].start[#level.triggers[groupDragLine.trigger].start+1] = enableDrag
-   			else
-   				level.triggers[groupDragLine.trigger].start = {}
-   				level.triggers[groupDragLine.trigger].start[1] = enableDrag 
-   			end
+			
+         	tileWithIcon.icons["lock"] = display.newImage(game.camera, "assets/images/hud/lock.png")
+         	tileWithIcon.icons["lock"]:scale(0.2,0.2)
+         	tileWithIcon.icons["lock"].x = tileWithIcon.x
+         	tileWithIcon.icons["lock"].y = tileWithIcon.y
+         	tileWithIcon.icons["lock"].alpha = 1
+      	
+				addTriggerStarter(groupDragLine.trigger, enableDrag)
 			else
    			 enableDrag()
 			end

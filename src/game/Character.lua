@@ -454,8 +454,13 @@ function setGrabbing()
 end
 
 function setHanging(value)
+	local wasHanging = hanging
 	hanging = value
-	if(hanging) then
+	
+	print("character.setHanging", hanging, wasHanging)
+	
+	if(hanging and not wasHanging) then
+		hud.showDropButton()
 		hud.hideMoveButtons()
 		stopRolling()
 		timeLeavingFloor  = system.getTimer()
@@ -471,8 +476,12 @@ function setHanging(value)
          	end
          end
 		end)
-	else
+	
+	elseif(not hanging and wasHanging) then
+		print("showMoveButtons.hideDropButton")
 		hud.showMoveButtons()
+		hud.hideDropButton()
+	
 	end
 end
 
@@ -612,6 +621,7 @@ end
 -------------------------------------
 
 function detachAllRopes()
+	print("character.detachAllRopes")
 	setHanging(false)
 	ropes = {}
 	
