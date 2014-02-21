@@ -13,15 +13,15 @@ local channelMusic
 -----------------------------------------------------------------------------------------
 
 function playMusic()
---	audio.fadeOut({ channel=channelIntro, time=800 } )
-	channelMusic = audio.play( main, {
---		fadeIn = 1500,
-		loops=-1,
-	})
+--    audio.fadeOut({ channel=channelIntro, time=800 } )
+    channelMusic = audio.play( main, {
+--        fadeIn = 1500,
+        loops=-1,
+    })
 end
 
 function playIntro()
-	channelIntro = audio.play( intro, {
-		loops=-1,
-	})
+    channelIntro = audio.play( intro, {
+        loops=-1,
+    })
 end

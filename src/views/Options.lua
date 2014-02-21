@@ -10,7 +10,7 @@ local scene = storyboard.newScene()
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--         unless storyboard.removeScene() is called.
 -- 
 -----------------------------------------------------------------------------------------
 
@@ -35,75 +35,75 @@ function scene:refreshScene()
    board:setFillColor(0)
    game.hud.board = board
    
-	transition.to( top, { time=500, y = top.contentHeight/2 })
-	transition.to( bottom, { time=500, y = display.contentHeight - top.contentHeight/2 })  
-	transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})
-	
-	---------------------------------------------------------------
+    transition.to( top, { time=500, y = top.contentHeight/2 })
+    transition.to( bottom, { time=500, y = display.contentHeight - top.contentHeight/2 })  
+    transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})
+    
+    ---------------------------------------------------------------
 
-	viewManager.buildEffectButton(
-	game.hud,
-	"assets/images/hud/back.png",
-	51, 
-	0.18*aspectRatio,
-	display.contentWidth*0.1, 
-	display.contentHeight*0.1, 
-	function() 
-		router.openAppHome()
-	end
-	)
-	  
+    viewManager.buildEffectButton(
+    game.hud,
+    "assets/images/hud/back.png",
+    51, 
+    0.18*aspectRatio,
+    display.contentWidth*0.1, 
+    display.contentHeight*0.1, 
+    function() 
+        router.openAppHome()
+    end
+    )
+      
 end
 
 function scene:displayContent()
 
-	-----------------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
 
-	if(not GLOBALS.savedData.fullGame) then
-		viewManager.buildEffectButton(game.hud, T "Full version", 26, 0.72, display.contentWidth*0.77, 	display.contentHeight*0.38, 	router.openBuy)
-	else
-		thanksText = display.newText(game.hud, "Thank you for purchasing the full version !", 0, 0, 200, 200, FONT, 30 )
-		thanksText.x = display.contentWidth*0.75
-		thanksText.y = display.contentHeight*0.4
-	end
-	viewManager.buildEffectButton(game.hud, "Reset", 	38, 0.72, display.contentWidth*0.77, 	display.contentHeight*0.61, function()	self:reset() end)
-	
-	-----------------------------------------------------------------------------------------------
+    if(not GLOBALS.savedData.fullGame) then
+        viewManager.buildEffectButton(game.hud, T "Full version", 26, 0.72, display.contentWidth*0.77,     display.contentHeight*0.38,     router.openBuy)
+    else
+        thanksText = display.newText(game.hud, "Thank you for purchasing the full version !", 0, 0, 200, 200, FONT, 30 )
+        thanksText.x = display.contentWidth*0.75
+        thanksText.y = display.contentHeight*0.4
+    end
+    viewManager.buildEffectButton(game.hud, "Reset",     38, 0.72, display.contentWidth*0.77,     display.contentHeight*0.61, function()    self:reset() end)
+    
+    -----------------------------------------------------------------------------------------------
 
-	uralysText = display.newText(game.hud, "Created by ", 0, 0, FONT, 26 )
-	uralysText.x = display.contentWidth*0.25
-	uralysText.y = display.contentHeight*0.3
+    uralysText = display.newText(game.hud, "Created by ", 0, 0, FONT, 26 )
+    uralysText.x = display.contentWidth*0.25
+    uralysText.y = display.contentHeight*0.3
 
-	uralysImage = display.newImage(game.hud, "assets/images/others/logo.png")
-	uralysImage.x = display.contentWidth*0.35
-	uralysImage.y = display.contentHeight*0.3
-	
-	utils.onTouch(uralysImage,  function(event) system.openURL( "http://www.uralys.com" ) end)
+    uralysImage = display.newImage(game.hud, "assets/images/others/logo.png")
+    uralysImage.x = display.contentWidth*0.35
+    uralysImage.y = display.contentHeight*0.3
+    
+    utils.onTouch(uralysImage,  function(event) system.openURL( "http://www.uralys.com" ) end)
 
-	-----------------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------
 
-	coronaImage = display.newImage(game.hud, "assets/images/others/corona.png")
-	coronaImage:scale(0.6,0.6)
-	coronaImage.x = display.contentWidth*0.3
-	coronaImage.y = display.contentHeight*0.47
-	utils.onTouch(coronaImage,  function(event) system.openURL( "http://www.coronalabs.com" ) end)
+    coronaImage = display.newImage(game.hud, "assets/images/others/corona.png")
+    coronaImage:scale(0.6,0.6)
+    coronaImage.x = display.contentWidth*0.3
+    coronaImage.y = display.contentHeight*0.47
+    utils.onTouch(coronaImage,  function(event) system.openURL( "http://www.coronalabs.com" ) end)
 
-	cbeffectsImage = display.newImage(game.hud, "assets/images/others/cbeffects.png")
-	cbeffectsImage:scale(0.4,0.4)
-	cbeffectsImage.x = display.contentWidth*0.5
-	cbeffectsImage.y = display.contentHeight*0.47
-	utils.onTouch(cbeffectsImage,  function(event) system.openURL( "http://gymbyl.com" ) end)
+    cbeffectsImage = display.newImage(game.hud, "assets/images/others/cbeffects.png")
+    cbeffectsImage:scale(0.4,0.4)
+    cbeffectsImage.x = display.contentWidth*0.5
+    cbeffectsImage.y = display.contentHeight*0.47
+    utils.onTouch(cbeffectsImage,  function(event) system.openURL( "http://gymbyl.com" ) end)
 
-	velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 26 )
-	velvetText.x = display.contentWidth*0.3
-	velvetText.y = display.contentHeight*0.65
-	utils.onTouch(velvetText,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
+    velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 26 )
+    velvetText.x = display.contentWidth*0.3
+    velvetText.y = display.contentHeight*0.65
+    utils.onTouch(velvetText,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
 
-	playImage = display.newImage(game.hud, "assets/images/hud/play.png")
-	playImage:scale(0.5,0.5)
-	playImage.x = display.contentWidth*0.43
-	playImage.y = display.contentHeight*0.65
-	utils.onTouch(playImage,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
+    playImage = display.newImage(game.hud, "assets/images/hud/play.png")
+    playImage:scale(0.5,0.5)
+    playImage.x = display.contentWidth*0.43
+    playImage.y = display.contentHeight*0.65
+    utils.onTouch(playImage,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
 end
 
 ------------------------------------------
@@ -116,7 +116,7 @@ function scene:confirmReset( event )
     if "clicked" == event.action then
         local i = event.index
         if 1 == i then
-         	initGameData()
+             initGameData()
             router.openAppHome()
         end
     end
@@ -127,7 +127,7 @@ end
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-	self:refreshScene();
+    self:refreshScene();
 end
 
 -- Called when scene is about to move offscreen:

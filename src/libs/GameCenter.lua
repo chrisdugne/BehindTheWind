@@ -11,30 +11,30 @@ local gameCenterOpened = false
 ---------------------------------------------------------------------
 
 function init()
-	if(not loggedIntoGC) then
-		gameNetwork.init( "gamecenter", initCallback )
-	end
+    if(not loggedIntoGC) then
+        gameNetwork.init( "gamecenter", initCallback )
+    end
 end
 
 -- called after the "init" request has completed
 function initCallback( event )
-	if event.data then
-		loggedIntoGC = true
-	else
-		loggedIntoGC = false
-	end
+    if event.data then
+        loggedIntoGC = true
+    else
+        loggedIntoGC = false
+    end
 end
 
 ---------------------------------------------------------------------
 
 function showLeaderBoards()
-	if(gameCenterOpened) then return end
-	gameCenterOpened = true
-	gameNetwork.show( "leaderboards", { listener=onGameNetworkPopupDismissed } )
+    if(gameCenterOpened) then return end
+    gameCenterOpened = true
+    gameNetwork.show( "leaderboards", { listener=onGameNetworkPopupDismissed } )
 end
 
 function onGameNetworkPopupDismissed(event)
-	gameCenterOpened = false
+    gameCenterOpened = false
 end
 
 ---------------------------------------------------------------------
@@ -43,11 +43,11 @@ end
  
 function postAchievement(type)
 
-	gameNetwork.request( "unlockAchievement", { achievement = {
-			identifier="type",
-		},
-		listener=requestCallback
-	})
+    gameNetwork.request( "unlockAchievement", { achievement = {
+            identifier="type",
+        },
+        listener=requestCallback
+    })
 end
 
 ---------------------------------------------------------------------
@@ -61,11 +61,11 @@ end
 -- kamikaze.extreme
 
 function postScore(board, value)
-	gameNetwork.request( "setHighScore",
-	{
-		localPlayerScore = { category=board, value=value },
-		listener=requestCallback
-	}) 
+    gameNetwork.request( "setHighScore",
+    {
+        localPlayerScore = { category=board, value=value },
+        listener=requestCallback
+    }) 
 end
 
 function requestCallback( event )

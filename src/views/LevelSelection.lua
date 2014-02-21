@@ -11,112 +11,112 @@ local levels
 -- BEGINNING OF YOUR IMPLEMENTATION
 -- 
 -- NOTE: Code outside of listener functions (below) will only be executed once,
---		 unless storyboard.removeScene() is called.
+--         unless storyboard.removeScene() is called.
 -- 
 -----------------------------------------------------------------------------------------
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
-	levels = display.newGroup()
+    levels = display.newGroup()
 end
 
 -----------------------------------------------------------------------------------------
 
 function scene:refreshScene()
-	utils.emptyGroup(levels)
+    utils.emptyGroup(levels)
 
-	game.level = 0
-	game.scene = self.view
+    game.level = 0
+    game.scene = self.view
 
-	-----------------------------------------------------
+    -----------------------------------------------------
 
-	viewManager.buildEffectButton(
-		game.hud,
-		"assets/images/hud/back.png",
-		51, 
-		0.18*aspectRatio,
-		display.contentWidth*0.1, 
-		display.contentHeight*0.1, 
-		function() 
-			router.openChapterSelection()
-		end
-	)
-		
-	-----------------------------------------------------
-	
-	effectsManager.atmosphere(display.contentWidth*0.7, 110, 1.36)
-	effectsManager.atmosphere(display.contentWidth*0.9, 110, 1.12)
+    viewManager.buildEffectButton(
+        game.hud,
+        "assets/images/hud/back.png",
+        51, 
+        0.18*aspectRatio,
+        display.contentWidth*0.1, 
+        display.contentHeight*0.1, 
+        function() 
+            router.openChapterSelection()
+        end
+    )
+        
+    -----------------------------------------------------
+    
+    effectsManager.atmosphere(display.contentWidth*0.7, 110, 1.36)
+    effectsManager.atmosphere(display.contentWidth*0.9, 110, 1.12)
 
    game.hud.chaptertitle = display.newText( {
-		parent 	= game.hud,
-		text 		= CHAPTERS[game.chapter].title,     
-		x 			= display.contentWidth*0.69,
-		y 			= display.contentHeight*0.07,
-		width 	= display.contentWidth*0.5,            --required for multiline and alignment
-		font 		= FONT,   
-		fontSize = 55,
-		align 	= "right"
-	} )
-	
-	-----------------------------------------------------
-	
-	local marginLeft = display.contentWidth*0.08 
-	local marginTop, heightRatio
-	 
-	local n = CHAPTERS[game.chapter].nbLevels
-	local nbPerLine = 4
-	
-	if(n < 9) then
-		marginTop 	= 50
-		heightRatio = 0.3
-	else
-		marginTop 	= 95
-		heightRatio = 0.28
-	end
+        parent     = game.hud,
+        text         = CHAPTERS[game.chapter].title,     
+        x             = display.contentWidth*0.69,
+        y             = display.contentHeight*0.07,
+        width     = display.contentWidth*0.5,            --required for multiline and alignment
+        font         = FONT,   
+        fontSize = 55,
+        align     = "right"
+    } )
+    
+    -----------------------------------------------------
+    
+    local marginLeft = display.contentWidth*0.08 
+    local marginTop, heightRatio
+     
+    local n = CHAPTERS[game.chapter].nbLevels
+    local nbPerLine = 4
+    
+    if(n < 9) then
+        marginTop     = 50
+        heightRatio = 0.3
+    else
+        marginTop     = 95
+        heightRatio = 0.28
+    end
 
    for level = 1, n do
-   	local i = (level-1)%nbPerLine
-   	local j = math.floor((level-1)/nbPerLine) + 1
-   	
-		local x = marginLeft +  i * display.contentWidth  * 0.21
-		local y = j * display.contentHeight * heightRatio - marginTop
-		
-   	local locked
-   	
-   	if(level > 1) then
-			locked = not GLOBALS.savedData.chapters[game.chapter].levels[level - 1].complete
-		end
-	
-		self:createLevelContent(level, x, y, locked)
-	
+       local i = (level-1)%nbPerLine
+       local j = math.floor((level-1)/nbPerLine) + 1
+       
+        local x = marginLeft +  i * display.contentWidth  * 0.21
+        local y = j * display.contentHeight * heightRatio - marginTop
+        
+       local locked
+       
+       if(level > 1) then
+            locked = not GLOBALS.savedData.chapters[game.chapter].levels[level - 1].complete
+        end
+    
+        self:createLevelContent(level, x, y, locked)
+    
    end
-	
-	self.view:insert(levels)
+    
+    self.view:insert(levels)
 end
 
 -----------------------------------------------------------------------------------------
 
 function scene:createLevelContent(level, x, y, locked)
-	
-	------------------
-	
-	local widget = display.newGroup()
-	widget.x = x
-	widget.y = y
-	widget.alpha = 0
-	game.hud:insert(widget)
-	
-	if(not locked) then
-   	utils.onTouch(widget, function() 
-   		game:openLevel(level) 
-   	end)
+    
+    ------------------
+    
+    local widget = display.newGroup()
+    widget.x = x
+    widget.y = y
+    widget.alpha = 0
+    game.hud:insert(widget)
+    
+    if(not locked) then
+       utils.onTouch(widget, function() 
+           game:openLevel(level) 
+       end)
    end
-   	
-	------------------
-	
-	local score = GLOBALS.savedData.chapters[game.chapter].levels[level].score
-	
-	------------------
+       
+    ------------------
+    
+    local score = GLOBALS.savedData.chapters[game.chapter].levels[level].score
+    
+    ------------------
 
    local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.206, 200, 10)
    box.x = widget.contentWidth/2
@@ -128,125 +128,125 @@ function scene:createLevelContent(level, x, y, locked)
       box.alpha = 0.4
    end
 
-	------------------
+    ------------------
 
-	local energies = display.newImage( widget, "assets/images/hud/energy.png")
-	energies.x = 25
-	energies.y = 40
-	energies:scale(0.5,0.5)
-	
-	local energiesToCatch = #CHAPTERS[game.chapter].levels[level].energies
-	
-	
+    local energies = display.newImage( widget, "assets/images/hud/energy.png")
+    energies.x = 25
+    energies.y = 40
+    energies:scale(0.5,0.5)
+    
+    local energiesToCatch = #CHAPTERS[game.chapter].levels[level].energies
+    
+    
    local energiesText = display.newText( {
-		parent = widget,
-		text = score.energiesCaught .. "/" .. energiesToCatch,     
-		x = 100,
-		y = 38,
-		width = 100,            --required for multiline and alignment
-		height = 40,           --required for multiline and alignment
-		font = FONT,   
-		fontSize = 24,
-		align = "left"
-	} )
+        parent = widget,
+        text = score.energiesCaught .. "/" .. energiesToCatch,     
+        x = 100,
+        y = 38,
+        width = 100,            --required for multiline and alignment
+        height = 40,           --required for multiline and alignment
+        font = FONT,   
+        fontSize = 24,
+        align = "left"
+    } )
 
-	------------------
+    ------------------
 
-	local piece = display.newSprite( widget, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
-	piece.x 			= 25
-	piece.y 			= 80
-	if(score.piecesCaught > 0) then
-		piece:play()
-	else
-   	piece.alpha = 0.2
-	end
-	
-	------------------
+    local piece = display.newSprite( widget, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+    piece.x             = 25
+    piece.y             = 80
+    if(score.piecesCaught > 0) then
+        piece:play()
+    else
+       piece.alpha = 0.2
+    end
+    
+    ------------------
 
-	local ring = display.newSprite( widget, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
-	ring.x 		= 25
-	ring.y 		= 120
-	if(score.ringsCaught > 0) then
-		ring:play()
-	else
-   	ring.alpha = 0.2
-	end
+    local ring = display.newSprite( widget, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
+    ring.x         = 25
+    ring.y         = 120
+    if(score.ringsCaught > 0) then
+        ring:play()
+    else
+       ring.alpha = 0.2
+    end
 
-	------------------
+    ------------------
 
-	if(score.points > 0) then
+    if(score.points > 0) then
 
       local pointsText = display.newText( {
-			parent = widget,
-			text = score.points .. " pts",     
-			x = 140,
-			y = 150,
-			width = 200,            --required for multiline and alignment
-			height = 40,           --required for multiline and alignment
-			font = FONT,   
-			fontSize = 25,
-			align = "right"
-		} )
+            parent = widget,
+            text = score.points .. " pts",     
+            x = 140,
+            y = 150,
+            width = 200,            --required for multiline and alignment
+            height = 40,           --required for multiline and alignment
+            font = FONT,   
+            fontSize = 25,
+            align = "right"
+        } )
    
       local timeText = display.newText({
-			parent = widget,
-			text = score.time,     
-			x = 140,
-			y = 185,
-			width = 200,            --required for multiline and alignment
-			height = 40,           --required for multiline and alignment
-			font = FONT,   
-			fontSize = 22,
-			align = "right"
-		})
+            parent = widget,
+            text = score.time,     
+            x = 140,
+            y = 185,
+            width = 200,            --required for multiline and alignment
+            height = 40,           --required for multiline and alignment
+            font = FONT,   
+            fontSize = 22,
+            align = "right"
+        })
    end
 
-	------------------
-	
-	local percent = math.floor(100* ((0.5)*(score.energiesCaught/energiesToCatch) + (0.25)*(score.ringsCaught) + (0.25)*(score.piecesCaught)))
+    ------------------
+    
+    local percent = math.floor(100* ((0.5)*(score.energiesCaught/energiesToCatch) + (0.25)*(score.ringsCaught) + (0.25)*(score.piecesCaught)))
 
    local percentText = display.newText( {
-		parent = widget,
-		text = percent .. " %",     
-		x = 90,
-		y = 175,
-		width = 150,            --required for multiline and alignment
-		height = 40,           --required for multiline and alignment
-		font = FONT,   
-		fontSize = 30,
-		align = "left"
-	} )
-	
-	------------------
-	
-	viewManager.buildEffectButton(
-		game.hud,
-		level,
-		51, 
-		0.32*aspectRatio,
-		x+display.contentWidth*0.152, 
-		y+70, 
-		function() 
-			game:openLevel(level) 
-		end, 
-		locked
-	)
-	
-	--------------------------
-	
-	if(locked) then
-   	transition.to( widget, { time=500, alpha=0.4 })
+        parent = widget,
+        text = percent .. " %",     
+        x = 90,
+        y = 175,
+        width = 150,            --required for multiline and alignment
+        height = 40,           --required for multiline and alignment
+        font = FONT,   
+        fontSize = 30,
+        align = "left"
+    } )
+    
+    ------------------
+    
+    viewManager.buildEffectButton(
+        game.hud,
+        level,
+        51, 
+        0.32*aspectRatio,
+        x+display.contentWidth*0.152, 
+        y+70, 
+        function() 
+            game:openLevel(level) 
+        end, 
+        locked
+    )
+    
+    --------------------------
+    
+    if(locked) then
+       transition.to( widget, { time=500, alpha=0.4 })
    else
-   	transition.to( widget, { time=500, alpha=1 })
-	end
-	
+       transition.to( widget, { time=500, alpha=1 })
+    end
+    
 end
 
 ------------------------------------------
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
-	self:refreshScene();
+    self:refreshScene();
 end
 
 -- Called when scene is about to move offscreen:

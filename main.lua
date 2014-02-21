@@ -4,47 +4,47 @@
 --
 -----------------------------------------------------------------------------------------
 
-APP_NAME 			= "Behind The Wind"
-APP_VERSION 		= "1.4.3"
+APP_NAME             = "Behind The Wind"
+APP_VERSION         = "1.4.3"
 
 -----------------------------------------------------------------------------------------
 
-IOS 					= system.getInfo( "platformName" )  == "iPhone OS"
-ANDROID 				= system.getInfo( "platformName" )  == "Android"
-SIMULATOR 			= system.getInfo( "environment" )  	== "simulator"
+IOS                     = system.getInfo( "platformName" )  == "iPhone OS"
+ANDROID                 = system.getInfo( "platformName" )  == "Android"
+SIMULATOR             = system.getInfo( "environment" )      == "simulator"
 
 -----------------------------------------------------------------------------------------
 
-DEV				= 1
---EDITOR 			= 1
+DEV                = 1
+--EDITOR             = 1
 
 -----------------------------------------------------------------------------------------
 
 CHAPTERS = {
-	{title="Chapter1 : Mist", 				name = "Mist", 			nbLevels = 6},
-	{title="Chapter2 : Moonshine", 		name = "Moonshine",		nbLevels = 8},
-	{title="Chapter3 : Magic", 			name = "Magic",			nbLevels = 1},
---	{title="Chapter4 : Mystery", 		nbLevels = 1},
+    {title="Chapter1 : Mist",                 name = "Mist",             nbLevels = 6},
+    {title="Chapter2 : Moonshine",         name = "Moonshine",        nbLevels = 8},
+    {title="Chapter3 : Magic",             name = "Magic",            nbLevels = 1},
+--    {title="Chapter4 : Mystery",         nbLevels = 1},
 }
 
 -----------------------------------------------------------------------------------------
 
-SMALL_ENERGY 		= 1
-MEDIUM_ENERGY 		= 2
-BIG_ENERGY 			= 3
+SMALL_ENERGY         = 1
+MEDIUM_ENERGY        = 2
+BIG_ENERGY           = 3
 
 -----------------------------------------------------------------------------------------
 --- Camera focus
 
-CHARACTER 			= 1
-ROCK 					= 2
+CHARACTER            = 1
+ROCK                 = 2
 
 -----------------------------------------------------------------------------------------
 
 if ANDROID then
-   FONT = "Macondo-Regular"
+    FONT = "Macondo-Regular"    
 else
-	FONT = "Macondo"
+    FONT = "Macondo"
 end
 
 -----------------------------------------------------------------------------------------
@@ -53,34 +53,34 @@ system.activate( "multitouch" )
 
 -----------------------------------------------------------------------------------------
 --- Corona's libraries
-json 					= require "json"
-storyboard 			= require "storyboard"
-store	 				= require "store"
+json                   = require "json"
+storyboard             = require "storyboard"
+store                  = require "store"
 
 ---- Additional libs
-xml 					= require "src.libs.Xml"
-utils 				= require "src.libs.Utils"
-vector2D				= require "src.libs.Vector2D"
-gameCenter			= require "src.libs.GameCenter"
+xml                   = require "src.libs.Xml"
+utils                 = require "src.libs.Utils"
+vector2D              = require "src.libs.Vector2D"
+gameCenter            = require "src.libs.GameCenter"
 
 require "src.libs.multiLines"
 
 ---- Game libs
-character			= require "src.game.Character"
-enemy					= require "src.game.Enemy"
-eye					= require "src.game.Eye"
-hud					= require "src.game.HUD"
-tutorials			= require "src.game.tutorials.Tutorials"
+character            = require "src.game.Character"
+enemy                = require "src.game.Enemy"
+eye                  = require "src.game.Eye"
+hud                  = require "src.game.HUD"
+tutorials            = require "src.game.tutorials.Tutorials"
 
-Game					= require "src.game.engine.Game"
-ScoreManager		= require "src.game.engine.ScoreManager"
+Game                    = require "src.game.engine.Game"
+ScoreManager        = require "src.game.engine.ScoreManager"
 
-touchController 	= require "src.game.engine.TouchController"
-physicsManager		= require "src.game.engine.PhysicsManager"
-effectsManager		= require "src.game.engine.EffectsManager"
-musicManager		= require "src.game.engine.MusicManager"
+touchController     = require "src.game.engine.TouchController"
+physicsManager        = require "src.game.engine.PhysicsManager"
+effectsManager        = require "src.game.engine.EffectsManager"
+musicManager        = require "src.game.engine.MusicManager"
 
-levelDrawer 		= require "src.game.levels.LevelDrawer"
+levelDrawer         = require "src.game.levels.LevelDrawer"
 
 -----------------------------------------------------------------------------------------
 
@@ -89,13 +89,13 @@ print(system.getInfo("model"), display.pixelWidth, display.pixelHeight, aspectRa
 
 -----------------------------------------------------------------------------------------
 
-abs 		= math.abs
-random 	= math.random
+abs        = math.abs
+random     = math.random
 
 -----------------------------------------------------------------------------------------
 
-game 				= Game:new()
-scoreManager 	= ScoreManager:new()
+game                 = Game:new()
+scoreManager     = ScoreManager:new()
 
 -----------------------------------------------------------------------------------------
 -- Translations
@@ -104,15 +104,15 @@ local translations = require("assets.Translations")
 local LANG =  userDefinedLanguage or system.getPreference("ui", "language")
 
 function T(enText)
-	return translations[enText][LANG] or enText
+    return translations[enText][LANG] or enText
 end
 
 -----------------------------------------------------------------------------------------
 ---- Server access Managers
 
 ---- App Tools
-router 			= require "src.tools.Router"
-viewManager		= require "src.tools.ViewManager"
+router             = require "src.tools.Router"
+viewManager        = require "src.tools.ViewManager"
 
 -----------------------------------------------------------------------------------------
 
@@ -122,59 +122,59 @@ FB_APP_ID = "644960942204092"
 ---- App globals
 
 GLOBALS = {
-	savedData 		= utils.loadUserData("savedData.json"),
-	levelEditor 	= utils.loadFile("levelEditor/levelEditor.json"),
+    savedData         = utils.loadUserData("savedData.json"),
+    levelEditor     = utils.loadFile("levelEditor/levelEditor.json"),
 }
 
 for i=1,#CHAPTERS do
-   
-   CHAPTERS[i].levels = {}
-   
-   for j=1,CHAPTERS[i].nbLevels do
-      CHAPTERS[i].levels[j] = utils.loadFile("src/game/levels/chapter".. i .. "/level".. i .. j ..".json")
-   end
-   
+
+    CHAPTERS[i].levels = {}
+
+    for j=1,CHAPTERS[i].nbLevels do
+        CHAPTERS[i].levels[j] = utils.loadFile("src/game/levels/chapter".. i .. "/level".. i .. j ..".json")
+    end
+
 end
 
 -----------------------------------------------------------------------------------------
 
 function initGameData()
 
-	GLOBALS.savedData = {
-		user = "New player",
-		fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
-		requireTutorial = true,
-		fireEnable = false,
-		grabEnable = false,
-		chapters = {} 
-	}
+    GLOBALS.savedData = {
+        user = "New player",
+        fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
+        requireTutorial = true,
+        fireEnable = false,
+        grabEnable = false,
+        chapters = {} 
+    }
 
-   for i=1,#CHAPTERS do
+    for i=1,#CHAPTERS do
 
-      GLOBALS.savedData.chapters[i] = {
-         levels 	= {},
-         complete = false
-      }
-      
-      for j=1,CHAPTERS[i].nbLevels do
-         GLOBALS.savedData.chapters[i].levels[j] = {
-         	complete = false,
-         	score 	= {
-            	energiesCaught 		= 0,
-            	piecesCaught 			= 0,
-            	ringsCaught 			= 0,
-            	time						= "",
-            	points					= 0
-         	}
-         }
-      end
-   end
+        GLOBALS.savedData.chapters[i] = {
+            levels     = {},
+            complete = false
+        }
 
-	utils.saveTable(GLOBALS.savedData, "savedData.json")
+        for j=1,CHAPTERS[i].nbLevels do
+            GLOBALS.savedData.chapters[i].levels[j] = {
+                complete = false,
+                score     = {
+                    energiesCaught         = 0,
+                    piecesCaught             = 0,
+                    ringsCaught             = 0,
+                    time                        = "",
+                    points                    = 0
+                }
+            }
+        end
+    end
+
+    utils.saveTable(GLOBALS.savedData, "savedData.json")
 end
 
 if(not GLOBALS.savedData) then
-	initGameData()
+    initGameData()
 end
 
 
@@ -193,39 +193,39 @@ if(DEV) then
 ---
 --   display.remove(memText)
 --   memText = display.newText( "0", 0, 0, FONT, 25 )
---   memText:setTextColor( 255 )	
+--   memText:setTextColor( 255 )    
 --   memText:setReferencePoint( display.CenterReferencePoint )
 --   memText.x = display.contentWidth - memText.contentWidth/2 - 10
 --   memText.y = display.contentHeight - 20
 --   
 --   Runtime:addEventListener( "enterFrame", function()
---   	local running 			= effectsManager.nbRunning
---   	local total 			= #effectsManager.effects
---   	
---   	refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
+--       local running             = effectsManager.nbRunning
+--       local total             = #effectsManager.effects
+--       
+--       refreshMemText(running .. "/" .. total .. " - " .. math.floor(collectgarbage("count")))
 --   end )
-    
+
 else
-	musicManager.playMusic()
+    musicManager.playMusic()
 end
 
 ------------------------------------------
 
 if(EDITOR) then
-   router.openLevelEditor()
+    router.openLevelEditor()
 else
-   router.openAppHome()
+    router.openAppHome()
 end
 
 -----------------------------------------------------------------------------------------
 -- MEMORY counters (DEV)
 --
 --function refreshMemText(text)
---	if(memText.contentWidth) then
---		memText.text = character.grabs ..  "    " .. text
---		memText.size = 25
---		memText.x 	= display.contentWidth - memText.contentWidth/2 - 10
---	end
+--    if(memText.contentWidth) then
+--        memText.text = character.grabs ..  "    " .. text
+--        memText.size = 25
+--        memText.x     = display.contentWidth - memText.contentWidth/2 - 10
+--    end
 --end
 
 -----------------------------------------------------------------------------------------
@@ -237,45 +237,45 @@ display.setStatusBar( display.HiddenStatusBar )
 
 local function onKeyEvent( event )
 
-   local phase = event.phase
-   local keyName = event.keyName
-   print( event.phase, event.keyName )
+    local phase = event.phase
+    local keyName = event.keyName
+    print( event.phase, event.keyName )
 
-   if ( "back" == keyName and phase == "up" ) then
-      if ( storyboard.currentScene == "splash" ) then
-         native.requestExit()
-      else
-         if ( storyboard.isOverlay ) then
-            storyboard.hideOverlay()
-         else
-            local lastScene = storyboard.returnTo
-            print( "previous scene", lastScene )
-            if ( lastScene ) then
-               storyboard.gotoScene( lastScene, { effect="crossFade", time=500 } )
+    if ( "back" == keyName and phase == "up" ) then
+        if ( storyboard.currentScene == "splash" ) then
+            native.requestExit()
+        else
+            if ( storyboard.isOverlay ) then
+                storyboard.hideOverlay()
             else
-               native.requestExit()
+                local lastScene = storyboard.returnTo
+                print( "previous scene", lastScene )
+                if ( lastScene ) then
+                    storyboard.gotoScene( lastScene, { effect="crossFade", time=500 } )
+                else
+                    native.requestExit()
+                end
             end
-         end
-      end
-   end
+        end
+    end
 
-   if ( keyName == "volumeUp" and phase == "down" ) then
-      local masterVolume = audio.getVolume()
-      print( "volume:", masterVolume )
-      if ( masterVolume < 1.0 ) then
-         masterVolume = masterVolume + 0.1
-         audio.setVolume( masterVolume )
-      end
-   elseif ( keyName == "volumeDown" and phase == "down" ) then
-      local masterVolume = audio.getVolume()
-      print( "volume:", masterVolume )
-      if ( masterVolume > 0.0 ) then
-         masterVolume = masterVolume - 0.1
-         audio.setVolume( masterVolume )
-      end
-   end
+    if ( keyName == "volumeUp" and phase == "down" ) then
+        local masterVolume = audio.getVolume()
+        print( "volume:", masterVolume )
+        if ( masterVolume < 1.0 ) then
+            masterVolume = masterVolume + 0.1
+            audio.setVolume( masterVolume )
+        end
+    elseif ( keyName == "volumeDown" and phase == "down" ) then
+        local masterVolume = audio.getVolume()
+        print( "volume:", masterVolume )
+        if ( masterVolume > 0.0 ) then
+            masterVolume = masterVolume - 0.1
+            audio.setVolume( masterVolume )
+        end
+    end
 
-   return true  --SEE NOTE BELOW
+    return true  --SEE NOTE BELOW
 end
 
 --add the key callback
