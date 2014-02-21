@@ -855,7 +855,7 @@ function scene:addToGroup(tile)
     
     tile.group = currentGroup
     tile.iconGroup = display.newText( editor, tile.group, tile.x- tile.width/3, tile.y- tile.height/2, FONT, 22 )
-    tile.iconGroup:setTextColor(200, 200, 200)
+    tile.iconGroup:setFillColor(200, 200, 200)
     
     tile.isInGroup = true
     
@@ -1227,7 +1227,7 @@ function scene:drawIcon(tile, property, value)
 
     if(value) then
        tile.icons[property] = display.newText( editor, value, tile.x - 20*num, tile.y- tile.height/2 -20, FONT, 17 )
-       tile.icons[property]:setTextColor(215, 0, 0)
+       tile.icons[property]:setFillColor(215, 0, 0)
     else
         tile.icons[property]= levelDrawer.drawTile( editor, levelDrawer.TILES_CLASSIC, image, tile.x - 15*num , tile.y - 20 )
         tile.icons[property]:scale(0.4,0.4)

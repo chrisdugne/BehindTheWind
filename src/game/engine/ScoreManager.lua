@@ -22,10 +22,14 @@ function ScoreManager:displayScore()
 
     local top = display.newRect(game.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
     top.alpha = 0
+    top.x = display.contentWidth/2
+    top.y = display.contentHeight/2
     top:setFillColor(0)
 
     local bottom = display.newRect(game.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
     bottom.alpha = 0
+    bottom.x = display.contentWidth/2
+    bottom.y = display.contentHeight/2
     bottom:setFillColor(0)
 
     local board = display.newRoundedRect(game.hud, 0, 0, display.contentWidth/2, display.contentHeight/2, 20)
@@ -56,14 +60,14 @@ function ScoreManager:displayTime()
     timeIcon.y          = display.contentHeight*0.32
 
     local timeText  = display.newText( game.hud, self.score.time, 0, 0, FONT, 25 )
-    timeText:setTextColor( 255 )    
+    timeText:setFillColor( 255 )    
     timeText.anchorX    = 0
     timeText.anchorY    = 0.5
     timeText.x          = display.contentWidth*0.34
     timeText.y          = display.contentHeight*0.32
 
     local timePoints    = display.newText( game.hud, "", 0, 0, FONT, 38 )
-    timePoints:setTextColor( 255 )    
+    timePoints:setFillColor( 255 )    
     timePoints.anchorX  = 1
     timePoints.anchorY  = 0.5    
     timePoints.x        = display.contentWidth*0.72
@@ -86,7 +90,7 @@ function ScoreManager:displayEnergies()
     local text = self.score.energiesCaught .. " / " .. #CHAPTERS[game.chapter].levels[game.level].energies
 
     local energiesCaughtText = display.newText( game.hud, text, 0, 0, FONT, 25 )
-    energiesCaughtText:setTextColor( 255 )    
+    energiesCaughtText:setFillColor( 255 )    
     energiesCaughtText.anchorX    = 0
     energiesCaughtText.anchorY    = 0.5
     energiesCaughtText.x = display.contentWidth*0.34
@@ -94,12 +98,12 @@ function ScoreManager:displayEnergies()
 
 
     local plus = display.newText( game.hud, "+", 0, 0, FONT, 38 )
-    plus:setTextColor( 255 )    
+    plus:setFillColor( 255 )    
     plus.x = display.contentWidth*0.62
     plus.y = display.contentHeight*0.39
 
     local energyPoints = display.newText( game.hud, "", 0, 0, FONT, 38 )
-    energyPoints:setTextColor( 255 )    
+    energyPoints:setFillColor( 255 )    
     energyPoints.anchorX    = 1
     energyPoints.anchorY    = 0.5
     energyPoints.x = display.contentWidth*0.72
@@ -129,7 +133,7 @@ function ScoreManager:displayRing()
         ring:play()
 
         local ringsBonus = display.newText( game.hud, "x " .. self.score.ringsBonus, 0, 0, FONT, 38 )
-        ringsBonus:setTextColor( 255 )    
+        ringsBonus:setFillColor( 255 )    
         ringsBonus.anchorX    = 1
         ringsBonus.anchorY    = 0.5
         ringsBonus.x = display.contentWidth*0.72
@@ -151,7 +155,7 @@ function ScoreManager:displayPiece()
         piece:play()
 
         local piecesBonus = display.newText( game.hud, "x " .. self.score.piecesBonus, 0, 0, FONT, 38 )
-        piecesBonus:setTextColor( 255 )    
+        piecesBonus:setFillColor( 255 )    
         piecesBonus.anchorX    = 1
         piecesBonus.anchorY    = 0.5
         piecesBonus.x = display.contentWidth*0.72
@@ -183,7 +187,7 @@ function ScoreManager:displayTotal()
         local scoreText = display.newText( game.hud, "", 0, 0, FONT, 45 )
         scoreText.anchorX    = 1
         scoreText.anchorY    = 0.5
-        scoreText:setTextColor( 255 )    
+        scoreText:setFillColor( 255 )    
         scoreText.x = display.contentWidth*0.72
         scoreText.y = display.contentHeight*0.66
 

@@ -130,7 +130,7 @@ function scene:displayContent()
     utils.onTouch(buyMenu.lockImage, buy)
 
     statusText = display.newText( buyMenu, "", 0, 0, FONT, 42 )
-    statusText:setTextColor( 255 )    
+    statusText:setFillColor( 255 )    
 
     buyMenu.buyButton = viewManager.buildEffectButton(    
         game.hud, 

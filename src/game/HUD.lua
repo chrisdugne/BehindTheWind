@@ -39,7 +39,7 @@ function start()
     game.hud.energy:scale(0.5,0.5)
 
     game.hud.energiesCaught = display.newText( game.hud, "0", 0, 0, FONT, 25 )
-    game.hud.energiesCaught:setTextColor( 255 )    
+    game.hud.energiesCaught:setFillColor( 255 )    
     game.hud.energiesCaught.x = ENERGY_TEXT_LEFT
     game.hud.energiesCaught.y = ENERGY_TEXT_TOP
 

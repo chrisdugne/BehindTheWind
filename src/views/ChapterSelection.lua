@@ -55,7 +55,7 @@ function scene:refreshScene()
     effectsManager.atmosphere(display.contentWidth*0.8, 120, 0.9)
 
     game.hud.subtitle = display.newText( game.hud, "...there is Magic" , 0, 0, FONT, 25 )
-    game.hud.subtitle:setTextColor( 255 )    
+    game.hud.subtitle:setFillColor( 255 )    
     game.hud.subtitle.x = display.contentWidth*0.86
     game.hud.subtitle.y = display.contentHeight*0.16
     
@@ -90,6 +90,8 @@ function scene:createChapterContent(chapter, x, y, locked)
     ------------------
 
    local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.33, 200, 10)
+   box.x = widget.contentWidth/2
+   box.y = widget.contentHeight/2
    box.alpha = 0.3
    box:setFillColor(0)
    

@@ -128,7 +128,7 @@ function throw( x1,y1, x2,y2 )
     
     ----------------------------------------
     
-    local color = {{255,5,5},{215,35,35},{155,175,35}}
+    local color = {{255/255,5/255,5/255},{215/255,35/255,35/255},{155/255,175/255,35/255}}
     effectsManager.setFire(rock, color)
 
     ----------------------------------------
@@ -210,7 +210,7 @@ function eyeThrow( enemy )
     rock:addEventListener( "collision", enemyRockCollision )
     rock.isBadRock = true
     
-    local color = {{5,255,5},{35,215,35},{175,155,35}}
+    local color = {{5/255,255/255,5/255},{35/255,215/255,35/255},{175/255,155/255,35/255}}
     effectsManager.setFire(rock, color)
 
     timer.performWithDelay(4500, function()
@@ -235,7 +235,7 @@ function enemyThrow( enemy )
     rock:addEventListener( "collision", enemyRockCollision )
     rock.isBadRock = true
     
-    local color = {{5,255,5},{35,215,35},{175,155,35}}
+    local color = {{5/255,255/255,5/255},{35/255,215/255,35/255},{175/255,155/255,35/255}}
     effectsManager.setFire(rock, color)
 
     timer.performWithDelay(4500, function()

@@ -312,7 +312,7 @@ function displayIntroText(text, x, y)
     end
 
     local introText = display.newText( game.hud, text, 0, 0, FONT, 35 )
-    introText:setTextColor( 255 )    
+    introText:setFillColor( 255 )    
     introText.x = x
     introText.y = y
     introText.alpha = 0
@@ -329,7 +329,7 @@ function displayIntroTitle(text, x, y)
     end
 
     local introText = display.newText( game.hud, text, 0, 0, FONT, 75 )
-    introText:setTextColor( 255 )    
+    introText:setFillColor( 255 )    
     introText.x = x
     introText.y = y
     introText.alpha = 0
@@ -387,7 +387,7 @@ function buildButton(parent, titleOrIcon, titleSize, scale, x, y, action, isLock
        icon:toFront()
     else
        local text = display.newText( titleOrIcon, 0, 0, FONT, titleSize )
-       text:setTextColor( 255 )    
+       text:setFillColor( 255 )    
        text.x = x
        text.y = y
        text.alpha = 0

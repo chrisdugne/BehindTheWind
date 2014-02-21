@@ -61,17 +61,17 @@ function scene:displayContent()
     -- Texts
 
     local title = display.newText( scoreMenu, type, 0, 0, FONT, 25 )
-    title:setTextColor( 255 )    
+    title:setFillColor( 255 )    
     title.x = scoreMenu.board.x + 10 - scoreMenu.board.contentWidth/2 + title.contentWidth/2
     title.y = scoreMenu.board.y - scoreMenu.board.contentHeight/2 + title.contentHeight/2
 
     local level = display.newText( scoreMenu, level, 0, 0, FONT, 21 )
-    level:setTextColor( 255 )    
+    level:setFillColor( 255 )    
     level.x = scoreMenu.board.x - 10 + scoreMenu.board.contentWidth/2 - level.contentWidth/2
     level.y = scoreMenu.board.y + 5 - scoreMenu.board.contentHeight/2 + level.contentHeight/2
 
     local time = display.newText( scoreMenu, value, 0, 0, FONT, 20 )
-    time:setTextColor( 255 )    
+    time:setFillColor( 255 )    
     time.x = scoreMenu.board.x
     time.y = scoreMenu.board.y - scoreMenu.board.contentHeight/3 + time.contentHeight/2
     

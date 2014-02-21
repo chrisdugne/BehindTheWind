@@ -53,32 +53,32 @@ system.activate( "multitouch" )
 
 -----------------------------------------------------------------------------------------
 --- Corona's libraries
-json                   = require "json"
-storyboard             = require "storyboard"
-store                  = require "store"
+json                    = require "json"
+storyboard              = require "storyboard"
+store                   = require "store"
 
 ---- Additional libs
-xml                   = require "src.libs.Xml"
-utils                 = require "src.libs.Utils"
-vector2D              = require "src.libs.Vector2D"
-gameCenter            = require "src.libs.GameCenter"
+xml                     = require "src.libs.Xml"
+utils                   = require "src.libs.Utils"
+vector2D                = require "src.libs.Vector2D"
+gameCenter              = require "src.libs.GameCenter"
 
 ---- Game libs
-character            = require "src.game.Character"
-enemy                = require "src.game.Enemy"
-eye                  = require "src.game.Eye"
-hud                  = require "src.game.HUD"
-tutorials            = require "src.game.tutorials.Tutorials"
+character               = require "src.game.Character"
+enemy                   = require "src.game.Enemy"
+eye                     = require "src.game.Eye"
+hud                     = require "src.game.HUD"
+tutorials               = require "src.game.tutorials.Tutorials"
 
 Game                    = require "src.game.engine.Game"
-ScoreManager        = require "src.game.engine.ScoreManager"
+ScoreManager            = require "src.game.engine.ScoreManager"
 
-touchController     = require "src.game.engine.TouchController"
-physicsManager        = require "src.game.engine.PhysicsManager"
-effectsManager        = require "src.game.engine.EffectsManager"
-musicManager        = require "src.game.engine.MusicManager"
+touchController         = require "src.game.engine.TouchController"
+physicsManager          = require "src.game.engine.PhysicsManager"
+effectsManager          = require "src.game.engine.EffectsManager"
+musicManager            = require "src.game.engine.MusicManager"
 
-levelDrawer         = require "src.game.levels.LevelDrawer"
+levelDrawer             = require "src.game.levels.LevelDrawer"
 
 -----------------------------------------------------------------------------------------
 
@@ -191,7 +191,7 @@ if(DEV) then
 ---
 --   display.remove(memText)
 --   memText = display.newText( "0", 0, 0, FONT, 25 )
---   memText:setTextColor( 255 )    
+--   memText:setFillColor( 255 )    
 --   memText:setReferencePoint( display.CenterReferencePoint )
 --   memText.x = display.contentWidth - memText.contentWidth/2 - 10
 --   memText.y = display.contentHeight - 20

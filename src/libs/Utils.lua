@@ -393,6 +393,38 @@ function displayCounter(numToReach, writer, anchorX, anchorY, x, next, nextMilli
 end
 
 ----------------------------------------------------------------
+
+function drawPercentageBar(parent, percentage, x, y, width, height, border)
+
+    local border = border or height/10
+    
+    local back = display.newRoundedRect(parent, x, y, width, height, 0)
+    back:setFillColor(18/255, 29/255, 50/255)
+    parent:insert(back)
+        
+    
+    local gradientCenter = {
+        type="gradient",
+        color1={ 13/255, 25/255, 45/255 }, color2={ 25/255, 39/255, 64/255 }, direction="down"
+    }
+    
+    local center = display.newRoundedRect(parent, x , y, width-2*border, height-2*border, 0)
+    center:setFillColor(gradientCenter)
+    parent:insert(center)
+        
+    
+    local gradientFill = {
+        type="gradient",
+        color1={ 9/255, 228/255, 9/255 }, color2={ 0, 145/255, 0 }, direction="down"
+    }
+    
+    local fill = display.newRoundedRect(parent, x - ((width-2*border) * (1-percentage))/2 , y, (width-2*border) * percentage, height-2*border, 0)
+    fill:setFillColor(gradientFill)
+    parent:insert(fill)
+    
+end
+
+----------------------------------------------------------------
 --- before opening the app, call FB API to get the likes nb
 
 function getFacebookLikes(openApp)

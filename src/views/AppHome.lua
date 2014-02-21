@@ -20,34 +20,27 @@ end
 
 -----------------------------------------------------------------------------------------
 
-function scene:refreshScene()
-    
+--function scene:refreshScene()
+--    
 --    local x         = display.contentWidth  * 0.5
 --    local y         = display.contentHeight * 0.5
 --    local width     = display.contentWidth  * 0.7
 --    local height    = display.contentHeight * 0.3
---    local border    = display.contentHeight * 0.035
 --    
---    local percentage    = 0.96
+--    local percentage    = GLOBALS.facebookLikes/100
 --    
 --    game.bg = display.newGroup()
---        
---    local back = display.newRoundedRect(game.bg, x, y, width, height, 0)
---    back:setFillColor(200/255, 200/255, 200/255)
---    game.bg:insert(back)
---        
---    local center = display.newRoundedRect(game.bg, x , y, width-2*border, height-2*border, 0)
---    center:setFillColor(20/255, 20/255, 20/255)
---    game.bg:insert(center)
---        
---    local fill = display.newRoundedRect(game.bg, x - ((width-2*border) * (1-percentage))/2 , y, (width-2*border) * percentage, height-2*border, 0)
---    fill:setFillColor(20/255, 120/255, 220/255)
---    game.bg:insert(fill)
-end
+--    
+--    utils.drawPercentageBar(game.bg, percentage, x, y, width, height)
+--
+--    utils.drawPercentageBar(game.bg, 0.75, 200, 200, 100, 20, 4)
+--    utils.drawPercentageBar(game.bg, 0.25, 200, 250, 100, 20, 4)
+--    utils.drawPercentageBar(game.bg, 0.66, 500, 200, 150, 40, 8)
+--end
 
 -----------------------------------------------------------------------------------------
 
-function scene:refreshScene_real()
+function scene:refreshScene()
 
     viewManager.initBack(0)
     
@@ -63,7 +56,7 @@ function scene:refreshScene_real()
     effectsManager.atmosphere(display.contentWidth*0.8, 120, 0.9)
 
     game.hud.subtitle = display.newText( game.hud, "...there is Magic" , 0, 0, FONT, 25 )
-    game.hud.subtitle:setTextColor( 255 )    
+    game.hud.subtitle:setFillColor( 255 )    
     game.hud.subtitle.x = display.contentWidth*0.86
     game.hud.subtitle.y = display.contentHeight*0.16
     
