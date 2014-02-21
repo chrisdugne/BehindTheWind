@@ -61,6 +61,12 @@ function scene:refreshScene()
     game.hud.subtitle.y = display.contentHeight*0.16
     
     ---------------------------------------------------------------
+    
+    if(GLOBALS.facebookLikes > 0) then
+        utils.drawPercentageBar(game.hud, GLOBALS.facebookLikes/1000, display.contentWidth * 0.85, display.contentHeight*0.935, display.contentWidth*0.2, display.contentHeight*0.05)
+    end
+    
+    ---------------------------------------------------------------
 
     viewManager.buildEffectButton(
         game.hud,

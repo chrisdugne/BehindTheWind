@@ -396,7 +396,7 @@ end
 
 function drawPercentageBar(parent, percentage, x, y, width, height, border)
 
-    local border = border or height/10
+    local border = border or height/6
     
     local back = display.newRoundedRect(parent, x, y, width, height, 0)
     back:setFillColor(18/255, 29/255, 50/255)
