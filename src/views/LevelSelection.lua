@@ -67,11 +67,11 @@ function scene:refreshScene()
     local nbPerLine = 4
     
     if(n < 9) then
-        marginTop     = 50
-        heightRatio = 0.3
+        marginTop       = 50
+        heightRatio     = 0.3
     else
-        marginTop     = 95
-        heightRatio = 0.28
+        marginTop       = 95
+        heightRatio     = 0.28
     end
 
    for level = 1, n do

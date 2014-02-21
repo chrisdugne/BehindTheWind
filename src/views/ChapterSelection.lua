@@ -58,7 +58,6 @@ function scene:refreshScene()
     game.hud.subtitle:setTextColor( 255 )    
     game.hud.subtitle.x = display.contentWidth*0.86
     game.hud.subtitle.y = display.contentHeight*0.16
-    game.hud.subtitle:setReferencePoint( display.CenterReferencePoint )
     
     -----------------------------------------------------
     

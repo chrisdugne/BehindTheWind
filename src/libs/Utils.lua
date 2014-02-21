@@ -120,11 +120,11 @@ end
 function destroyFromDisplay(object)
     if(object) then
         display.remove(object)
-       object = nil
-   end
+        object = nil
+    end
 end
-      
-      
+
+
 -----------------------------------------------------------------------------------------
 
 function string.startsWith(String,Start)
@@ -208,7 +208,7 @@ function tprint (tbl, indent)
 end
 
 -----------------------------------------------------------------------------------------
-    
+
 function postWithJSON(data, url, next)
     post(url, json.encode(data), next, "json")
 end
@@ -234,6 +234,12 @@ function post(url, data, next, type)
     params.body = data
 
     network.request( url, "POST", next, params)
+end
+
+--------------------------------------------------------
+
+function get(url, callback)
+    network.request( url, "GET", callback)
 end
 
 
@@ -312,16 +318,16 @@ end
 --------------------------------------------------------
 
 function getPointsBetween(from, to, nbPoints)
-    
+
     if(from.x > to.x) then
         local swap = from
         from = to
         to = swap
     end
-    
+
     local x1,y1 = from.x,from.y
     local x2,y2 = to.x,to.y
-    
+
     local step = math.abs(x2-x1)/nbPoints
     local points = {}
 
@@ -338,28 +344,73 @@ end
 
 --------------------------------------------------------
 
-function displayCounter(numToReach, writer, referencePoint, x, next, nextMillis)
+function networkConnection()
+    local status
+
+    local socket = require("socket")
+    local test = socket.tcp()
+    test:settimeout(2000) 
+
+    -- Note that the test does not work if we put http:// in front
+    local testResult = test:connect("www.google.com", 80)
+
+    if not(testResult == nil) then
+        status = true
+    else
+        status = false
+    end
+
+    test:close()
+    test = nil
+    return status
+end
+
+--------------------------------------------------------
+
+function displayCounter(numToReach, writer, anchorX, anchorY, x, next, nextMillis)
 
     timer.performWithDelay(5, function()
-       
-       local ratio = (4 * numToReach)/(numToReach - writer.currentDisplay)
-       local toAdd = math.floor(numToReach/ratio)
-       if(toAdd == 0) then toAdd = 1 end
-       
+
+        local ratio = (4 * numToReach)/(numToReach - writer.currentDisplay)
+        local toAdd = math.floor(numToReach/ratio)
+        if(toAdd == 0) then toAdd = 1 end
+
         writer.currentDisplay = math.round(writer.currentDisplay + toAdd)
-        
+
         if(writer.currentDisplay >= numToReach) then
             writer.currentDisplay = math.round(numToReach)    
-          next()
+            next()
         else
             nextMillis = 100/(numToReach - writer.currentDisplay)
-           displayCounter(numToReach, writer, referencePoint, x, next, nextMillis)
-       end
-        
-        writer.text = writer.currentDisplay 
-      writer:setReferencePoint( referencePoint )
-       writer.x = x
+            displayCounter(numToReach, writer, anchorX, anchorY, x, next, nextMillis)
+        end
+
+        writer.text         = writer.currentDisplay 
+        writer.x            = x
+        writer.anchorX      = anchorX
+        writer.anchorY      = anchorY
     end)
+end
+
+----------------------------------------------------------------
+--- before opening the app, call FB API to get the likes nb
+
+function getFacebookLikes(openApp)
+
+    GLOBALS.facebookLikes = -1
+    
+    if(networkConnection()) then
+    
+        utils.get("https://graph.facebook.com/uralys", function(result)
+            local uralys = json.decode(result.response)
+            GLOBALS.facebookLikes = uralys.likes
+            openApp()
+        end)    
+    
+    else
+        openApp()
+    
+    end
 end
 
 --------------------------------------------------------
@@ -379,6 +430,6 @@ end
 function distanceBetween( a, b )
     local width, height = b.x-a.x, b.y-a.y
     return (width*width + height*height)^0.5 -- math.sqrt(width*width + height*height)
-        -- nothing wrong with math.sqrt, but I believe the ^.5 is faster
+    -- nothing wrong with math.sqrt, but I believe the ^.5 is faster
 end
  

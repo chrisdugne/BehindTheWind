@@ -4,14 +4,14 @@
 --
 -----------------------------------------------------------------------------------------
 
-APP_NAME             = "Behind The Wind"
-APP_VERSION         = "1.4.3"
+APP_NAME                = "Behind The Wind"
+APP_VERSION             = "1.4.3"
 
 -----------------------------------------------------------------------------------------
 
 IOS                     = system.getInfo( "platformName" )  == "iPhone OS"
 ANDROID                 = system.getInfo( "platformName" )  == "Android"
-SIMULATOR             = system.getInfo( "environment" )      == "simulator"
+SIMULATOR               = system.getInfo( "environment" )   == "simulator"
 
 -----------------------------------------------------------------------------------------
 
@@ -63,8 +63,6 @@ utils                 = require "src.libs.Utils"
 vector2D              = require "src.libs.Vector2D"
 gameCenter            = require "src.libs.GameCenter"
 
-require "src.libs.multiLines"
-
 ---- Game libs
 character            = require "src.game.Character"
 enemy                = require "src.game.Enemy"
@@ -94,8 +92,8 @@ random     = math.random
 
 -----------------------------------------------------------------------------------------
 
-game                 = Game:new()
-scoreManager     = ScoreManager:new()
+game                = Game:new()
+scoreManager        = ScoreManager:new()
 
 -----------------------------------------------------------------------------------------
 -- Translations
@@ -214,7 +212,9 @@ end
 if(EDITOR) then
     router.openLevelEditor()
 else
-    router.openAppHome()
+    utils.getFacebookLikes(function()
+        router.openAppHome()
+    end)  
 end
 
 -----------------------------------------------------------------------------------------

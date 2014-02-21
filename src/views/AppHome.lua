@@ -21,8 +21,34 @@ end
 -----------------------------------------------------------------------------------------
 
 function scene:refreshScene()
+    
+--    local x         = display.contentWidth  * 0.5
+--    local y         = display.contentHeight * 0.5
+--    local width     = display.contentWidth  * 0.7
+--    local height    = display.contentHeight * 0.3
+--    local border    = display.contentHeight * 0.035
+--    
+--    local percentage    = 0.96
+--    
+--    game.bg = display.newGroup()
+--        
+--    local back = display.newRoundedRect(game.bg, x, y, width, height, 0)
+--    back:setFillColor(200/255, 200/255, 200/255)
+--    game.bg:insert(back)
+--        
+--    local center = display.newRoundedRect(game.bg, x , y, width-2*border, height-2*border, 0)
+--    center:setFillColor(20/255, 20/255, 20/255)
+--    game.bg:insert(center)
+--        
+--    local fill = display.newRoundedRect(game.bg, x - ((width-2*border) * (1-percentage))/2 , y, (width-2*border) * percentage, height-2*border, 0)
+--    fill:setFillColor(20/255, 120/255, 220/255)
+--    game.bg:insert(fill)
+end
 
-    return
+-----------------------------------------------------------------------------------------
+
+function scene:refreshScene_real()
+
     viewManager.initBack(0)
     
     ---------------------------------------------------------------
@@ -40,7 +66,6 @@ function scene:refreshScene()
     game.hud.subtitle:setTextColor( 255 )    
     game.hud.subtitle.x = display.contentWidth*0.86
     game.hud.subtitle.y = display.contentHeight*0.16
-    game.hud.subtitle:setReferencePoint( display.CenterReferencePoint )
     
     ---------------------------------------------------------------
 

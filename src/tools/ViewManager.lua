@@ -316,7 +316,6 @@ function displayIntroText(text, x, y)
     introText.x = x
     introText.y = y
     introText.alpha = 0
-    introText:setReferencePoint( display.CenterReferencePoint )
     
     transition.to( introText, { time=2600, alpha=1, x = x +40, onComplete=function()
         transition.to( introText, { time=2600, alpha=0,  x = x + 80 })
@@ -334,7 +333,6 @@ function displayIntroTitle(text, x, y)
     introText.x = x
     introText.y = y
     introText.alpha = 0
-    introText:setReferencePoint( display.CenterReferencePoint )
     
     transition.to( introText, { time=1600, alpha=1, onComplete=function()
         transition.to( introText, { time=3200, alpha=0 })

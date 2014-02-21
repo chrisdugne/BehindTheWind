@@ -118,7 +118,8 @@ function scene:displayContent()
         align = "center"
     }
 
-    buyMenu.indieText:setReferencePoint(display.TopCenterReferencePoint)
+    buyMenu.indieText.anchorX = 0.5    
+    buyMenu.indieText.anchorY = 0    
     buyMenu.indieText.x = display.contentWidth*0.5
     buyMenu.indieText.y = display.contentHeight*0.27
     buyMenu:insert(buyMenu.indieText)       
