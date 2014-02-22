@@ -390,11 +390,11 @@ function drawEnergy(x, y, type)
             y = y,
             perEmit=1,
             emissionNum=0,
-            emitDelay=150,
-            fadeInTime=350,
-            scale=0.15,
+            inTime = 450,
+            outTime = 550,
+            scale=0.07,
             physics={
-                gravityY=0.03,
+                gravityY=0.05,
             }
         }
     }
@@ -474,7 +474,7 @@ end
 function drawFollow( )
     local follow = CBE.VentGroup{
         {
-            preset="wisps",
+            preset="smallwisps",
             title="light",
             color={{105/255,135/255,182/255}},
             perEmit=1,
@@ -483,7 +483,8 @@ function drawFollow( )
             fadeInTime=520,
             scale=0.3,
             physics={
-                gravityX=0.83,
+                xDamping = 1.09,
+                gravityX=0,
                 gravityY=0.04,
             },
             x = character.sprite.x,
@@ -917,7 +918,7 @@ function simpleBeam(body)
         {
             preset="wisps",
             title="light", -- The pop that appears when a mortar shot explodes
-            color={{255/255,155/255,115/255}},
+            color={{55/255,55/255,115/255}},
             perEmit=1,
             emissionNum=0,
             emitDelay=30,

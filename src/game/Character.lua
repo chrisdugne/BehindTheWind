@@ -180,7 +180,7 @@ function die()
     local explosion = {
         x = sprite.x,
         y = sprite.y,
-        color = {{12,12,212},{111,111,251}},
+        color = {{12/255,12/255,212/255},{111/255,111/255,251/255}},
         scale = 1.5,
         fadeInTime = 1900
     }

@@ -22,10 +22,10 @@ end
 
 function scene:refreshScene()
 
-   local top = display.newRect(game.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+   local top = display.newRect(game.hud, display.contentWidth*0.5, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
    top:setFillColor(0)
    
-   local bottom = display.newRect(game.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+   local bottom = display.newRect(game.hud, display.contentWidth*0.5, display.contentHeight, display.contentWidth, display.contentHeight/5)
    bottom:setFillColor(0)
 
    local board = display.newRoundedRect(game.hud, 0, 0, display.contentWidth*0.75, display.contentHeight/2, 20)

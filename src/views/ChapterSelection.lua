@@ -25,32 +25,32 @@ function scene:refreshScene()
 
     game.level = 0
     game.scene = self.view
-    
+
     ---------------------------------------------------------------
 
     viewManager.initBack(0)
-    
+
     ---------------------------------------------------------------
-    
+
     viewManager.buildEffectButton(
-        game.hud,
-        "assets/images/hud/back.png",
-        51, 
-        0.18*aspectRatio,
-        display.contentWidth*0.1, 
-        display.contentHeight*0.1, 
-        function() 
-            router.openAppHome()
-        end
+    game.hud,
+    "assets/images/hud/back.png",
+    51, 
+    0.18*aspectRatio,
+    display.contentWidth*0.1, 
+    display.contentHeight*0.1, 
+    function() 
+        router.openAppHome()
+    end
     )
-    
+
     ---------------------------------------------------------------
-    
+
     game.hud.title = display.newImage( game.hud, "assets/images/hud/title.png" )
     game.hud.title.x = display.contentWidth*0.7
     game.hud.title.y = display.contentHeight*0.1
     game.hud.title:scale(0.38,0.38)
-    
+
     effectsManager.atmosphere(display.contentWidth*0.7 - game.hud.title.contentWidth/2 + 20, 115, 0.76)
     effectsManager.atmosphere(display.contentWidth*0.8, 120, 0.9)
 
@@ -58,66 +58,52 @@ function scene:refreshScene()
     game.hud.subtitle:setFillColor( 255 )    
     game.hud.subtitle.x = display.contentWidth*0.86
     game.hud.subtitle.y = display.contentHeight*0.16
-    
+
     -----------------------------------------------------
-    
-    print(not DEV)
-    
-    self:createChapterContent(1, display.contentWidth*0.37, display.contentHeight*0.25, false)
-    self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, (not DEV) and (not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame))
-    self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, (not DEV) and (not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame))
-    
+
+    self:createChapterContent(1, display.contentWidth*0.33, display.contentHeight*0.3, false)
+    self:createFacebookChapter(2, display.contentWidth*0.33, display.contentHeight*0.6, 37)
+
+    --    self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, (not DEV) and (not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame))
+    --    self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, (not DEV) and (not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame))
+
 end
 
 -----------------------------------------------------------------------------------------
 
-function scene:createChapterContent(chapter, x, y, locked)
+function scene:createFacebookChapter(chapter, x, y, requiredLikes)
 
     ------------------
-    
+
     local widget = display.newGroup()
     game.hud:insert(widget)
     widget.x = x
     widget.y = y
+    widget.contentWidth = display.contentWidth*0.33
+    widget.contentHeight = display.contentHeight*0.27
     widget.alpha = 0
-    
+
     if(not locked) then
-       utils.onTouch(widget, function() 
-           openChapter(chapter) 
-       end)
-   end
-       
-    ------------------
-
-   local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.33, 200, 10)
-   box.x = widget.contentWidth/2
-   box.y = widget.contentHeight/2
-   box.alpha = 0.3
-   box:setFillColor(0)
-   
-   if(not locked) then
-      box.alpha = 0.4
-   end
-   
-
-    ------------------
-    
-    viewManager.buildEffectButton(
-        game.hud,
-        chapter,
-        51, 
-        0.67,
-        x+display.contentWidth*0.2, 
-        y+display.contentHeight*0.12, 
-        function() 
+        utils.onTouch(widget, function() 
             openChapter(chapter) 
-        end, 
-        locked
-    )
-    
+        end)
+    end
+
     ------------------
 
-   local chapterTitle = display.newText( {
+    local box = display.newRoundedRect(widget, 0, 0, widget.contentWidth, widget.contentHeight, 10)
+    box.x = widget.contentWidth/2
+    box.y = widget.contentHeight/2
+    box.alpha = 0.3
+    box:setFillColor(0)
+
+    if(not locked) then
+        box.alpha = 0.4
+    end
+
+    ------------------
+
+    local chapterTitle = display.newText( {
         parent = widget,
         text = CHAPTERS[chapter].title,     
         x = display.contentWidth*0.16,
@@ -130,20 +116,105 @@ function scene:createChapterContent(chapter, x, y, locked)
     
     ------------------
 
+    local fb = display.newImage( widget, "assets/images/others/facebook.png")  
+    fb.x = widget.contentWidth * 0.13
+    fb.y = widget.contentHeight* 0.5
+    
+    ---------------------------------------------------------------
+    
+    if(GLOBALS.facebookLikes > 0) then
+        utils.drawPercentageBar(
+            widget, 
+            GLOBALS.facebookLikes/requiredLikes, 
+            widget.contentWidth * 0.6,
+            widget.contentHeight* 0.5,
+            widget.contentWidth * 0.65, 
+            display.contentHeight*0.1
+        )
+    end
+    
+    ------------------
+
+    transition.to( widget, { time=500, alpha=1 })
+
+    widget:toFront()
+end
+
+-----------------------------------------------------------------------------------------
+
+function scene:createChapterContent(chapter, x, y, locked)
+
+    ------------------
+
+    local widget = display.newGroup()
+    game.hud:insert(widget)
+    widget.x = x
+    widget.y = y
+    widget.alpha = 0
+
+    if(not locked) then
+        utils.onTouch(widget, function() 
+            openChapter(chapter) 
+        end)
+    end
+
+    ------------------
+
+    local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.33, 200, 10)
+    box.x = widget.contentWidth/2
+    box.y = widget.contentHeight/2
+    box.alpha = 0.3
+    box:setFillColor(0)
+
+    if(not locked) then
+        box.alpha = 0.4
+    end
+
+
+    ------------------
+
+    viewManager.buildEffectButton(
+    game.hud,
+    chapter,
+    51, 
+    0.67,
+    x+display.contentWidth*0.2, 
+    y+display.contentHeight*0.12, 
+    function() 
+        openChapter(chapter) 
+    end, 
+    locked
+    )
+
+    ------------------
+
+    local chapterTitle = display.newText( {
+        parent = widget,
+        text = CHAPTERS[chapter].title,     
+        x = display.contentWidth*0.16,
+        y = 20,
+        width = display.contentWidth*0.3,    
+        font = FONT,   
+        fontSize = 27,
+        align = "right"
+    } )
+
+    ------------------
+
     local energies = display.newImage( widget, "assets/images/hud/energy.png")
     energies.x = 25
     energies.y = display.contentHeight*0.07
     energies:scale(0.5,0.5)
-    
+
     local energiesCaught  = 0
     local energiesToCatch = 0
-    
+
     for i=1,CHAPTERS[chapter].nbLevels do
         energiesCaught     = energiesCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.energiesCaught 
         energiesToCatch = energiesToCatch + #CHAPTERS[chapter].levels[i].energies 
     end
-    
-   local energiesText = display.newText( {
+
+    local energiesText = display.newText( {
         parent = widget,
         text = energiesCaught .. "/" .. energiesToCatch,     
         x = 110,
@@ -155,24 +226,24 @@ function scene:createChapterContent(chapter, x, y, locked)
     } )
 
     ------------------
-    
+
     local piecesCaught  = 0
     local piecesToCatch = CHAPTERS[chapter].nbLevels
-    
+
     for i=1,CHAPTERS[chapter].nbLevels do
         piecesCaught     = piecesCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.piecesCaught 
     end
-    
+
     local piece = display.newSprite( widget, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
     piece.x             = 25
     piece.y             = display.contentHeight*0.11
     if(piecesCaught > 0) then
         piece:play()
     else
-       piece.alpha = 0.2
+        piece.alpha = 0.2
     end
-    
-   local piecesText = display.newText( {
+
+    local piecesText = display.newText( {
         parent = widget,
         text = piecesCaught .. "/" .. piecesToCatch,     
         x = 110,
@@ -182,26 +253,26 @@ function scene:createChapterContent(chapter, x, y, locked)
         fontSize = 28,
         align = "left"
     } )
-    
+
     ------------------
 
     local ringsCaught  = 0
     local ringsToCatch = CHAPTERS[chapter].nbLevels
-    
+
     for i=1,CHAPTERS[chapter].nbLevels do
         ringsCaught     = ringsCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.ringsCaught 
     end
-    
+
     local ring = display.newSprite( widget, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
     ring.x         = 25
     ring.y         = display.contentHeight*0.15
     if(ringsCaught > 0) then
         ring:play()
     else
-       ring.alpha = 0.2
+        ring.alpha = 0.2
     end
-    
-   local ringsText = display.newText( {
+
+    local ringsText = display.newText( {
         parent = widget,
         text = ringsCaught .. "/" .. ringsToCatch,     
         x = 110,
@@ -211,20 +282,20 @@ function scene:createChapterContent(chapter, x, y, locked)
         fontSize = 28,
         align = "left"
     } )
-    
+
 
     ------------------
-    
+
     local points = 0
-    
+
     for i=1,CHAPTERS[chapter].nbLevels do
         points     = points + GLOBALS.savedData.chapters[chapter].levels[i].score.points 
     end
-    
-    
+
+
     if(points > 0) then
 
-      local pointsText = display.newText( {
+        local pointsText = display.newText( {
             parent = widget,
             text = points .. " pts",     
             x = display.contentWidth*0.23,
@@ -235,14 +306,14 @@ function scene:createChapterContent(chapter, x, y, locked)
             fontSize = 24,
             align = "right"
         } )
-   
-   end
+
+    end
 
     ------------------
-    
+
     local percent = math.floor(100* ((0.5)*(energiesCaught/energiesToCatch) + (0.25)*(ringsCaught/ringsToCatch) + (0.25)*(piecesCaught/piecesToCatch)))
 
-   local percentText = display.newText( {
+    local percentText = display.newText( {
         parent = widget,
         text = percent .. " %",     
         x = display.contentWidth*0.105,
@@ -253,15 +324,15 @@ function scene:createChapterContent(chapter, x, y, locked)
         fontSize = 35,
         align = "right"
     } )
-    
+
     ------------------
-    
+
     if(locked) then
-       transition.to( widget, { time=500, alpha=0.4 })
-   else
-       transition.to( widget, { time=500, alpha=1 })
+        transition.to( widget, { time=500, alpha=0.4 })
+    else
+        transition.to( widget, { time=500, alpha=1 })
     end
-    
+
     widget:toFront()
 end
 

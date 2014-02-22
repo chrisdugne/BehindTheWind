@@ -68,23 +68,23 @@ function scene:refreshScene()
     ---------------------------------------------------------------
 
     viewManager.buildEffectButton(
-    game.hud,
-    "assets/images/hud/back.png",
-    51, 
-    0.18*aspectRatio,
-    display.contentWidth*0.1, 
-    display.contentHeight*0.1, 
-    function() 
-        router.openAppHome()
-    end
+        game.hud,
+        "assets/images/hud/back.png",
+        51, 
+        0.18*aspectRatio,
+        display.contentWidth*0.1, 
+        display.contentHeight*0.1, 
+        function() 
+            router.openAppHome()
+        end
     )
 
     ---------------------------------------------------------------
 
-    local top = display.newRect(buyMenu, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+    local top = display.newRect(buyMenu, display.contentWidth*0.5, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
     top:setFillColor(0)
 
-    local bottom = display.newRect(buyMenu, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+    local bottom = display.newRect(buyMenu, display.contentWidth*0.5, display.contentHeight, display.contentWidth, display.contentHeight/5)
     bottom:setFillColor(0)
 
     local board = display.newRoundedRect(buyMenu, 0, 0, 3*display.contentWidth/4, display.contentHeight/2, 20)
@@ -107,7 +107,7 @@ function scene:displayContent()
     -----------------------------------------------------------------------------------------------
     -- Texts
 
-    buyMenu.indieText = display.newMultiLineText  
+    buyMenu.indieText = display.newText  
     {
         text = T "I'm an Indie Game Developer.\n Give me the chance to build the sequel : \n \n Unlock the game with only 1 coin !",
         width = display.contentWidth*0.85,  

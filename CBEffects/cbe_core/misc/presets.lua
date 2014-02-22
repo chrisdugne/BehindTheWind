@@ -61,12 +61,63 @@ presets.vents = {
     -- Wisps
     ------------------------------------------------------------------------------
 
-    wisps                  = {
+    wisps = {
         title = "wisps", 
         positionType = "inRadius", 
         x = screen.centerX, 
         y = screen.height - (screen.height / 7), 
         build = function() local s = math_random(20, 180) return display_newImageRect("CBEffects/textures/glow.png", s, s) end, 
+        color={{1, 1, 0}, {0, 1, 0}}, 
+        cycleColor = false, 
+        curColor = 1, 
+        emitDelay = 30, 
+        perEmit = 1, 
+        emissionNum = 0, 
+        alpha = 1, 
+        startAlpha = 0, 
+        endAlpha = 0, 
+        onCreation = function()end, 
+        onDeath = function()end, 
+        propertyTable = {blendMode = "add"}, 
+        fadeInTime = 2500, 
+        rectLeft = 0, 
+        rectTop = 0, 
+        rectWidth = screen.width, 
+        rectHeight = screen.height, 
+        onUpdate = function(particle,  vent)particle:applyForce((vent.x * 0.01) - (particle.x * 0.01),  0)end,
+        physics = {
+            xDamping = 0,
+            yDamping = 0,
+            velocity = 1.5, 
+            angularVelocity = 0, 
+            angularDamping = 0, 
+            velFunction = function() return 0, 0 end, 
+            autoAngle = true, 
+            angles={{30, 150}}, 
+            preCalculate = true, 
+            sizeX = 0, 
+            sizeY = 0, 
+            minX = 0.1,
+            minY = 0.1, 
+            maxX = 100, 
+            maxY = 100, 
+            gravityX = 0, 
+            gravityY=-0.02
+        }, 
+        rotateTowardVel = false, 
+        towardVelOffset = 0
+    },
+
+    ------------------------------------------------------------------------------
+    -- smallWisps = wisps : build change only : size
+    ------------------------------------------------------------------------------
+
+    smallwisps = {
+        title = "smallwisps", 
+        positionType = "inRadius", 
+        x = screen.centerX, 
+        y = screen.height - (screen.height / 7), 
+        build = function() local s = math_random(50, 80) return display_newImageRect("CBEffects/textures/glow.png", s, s) end, 
         color={{1, 1, 0}, {0, 1, 0}}, 
         cycleColor = false, 
         curColor = 1, 
@@ -119,10 +170,11 @@ presets.vents = {
         build = function() local s = math_random(10, 20) return display_newImageRect("CBEffects/textures/glow.png", s, s) end, 
         x = 0, y = 0,
         emitDelay = 10,
-        perEmit = 2,
-        inTime = 150,
-        outTime = 240,
-        startAlpha = 0,
+        perEmit = 1,
+        inTime = 250,
+        outTime = 320,
+        startAlpha = 1,
+        propertyTable = {blendMode = "add"}, 
         physics = {
             xDamping = -1,
             yDamping = -1,
@@ -139,8 +191,8 @@ presets.vents = {
             minY = 0.1, 
             maxX = 10, 
             maxY = 10, 
-            gravityX = -0.11, 
-            gravityY=0.085
+            gravityX = -0.1, 
+            gravityY=0.075
         }
     },
 

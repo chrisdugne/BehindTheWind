@@ -20,16 +20,12 @@ end
 
 function ScoreManager:displayScore()
 
-    local top = display.newRect(game.hud, 0, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
+    local top = display.newRect(game.hud, display.contentWidth/2, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
     top.alpha = 0
-    top.x = display.contentWidth/2
-    top.y = display.contentHeight/2
     top:setFillColor(0)
 
-    local bottom = display.newRect(game.hud, 0, display.contentHeight, display.contentWidth, display.contentHeight/5)
+    local bottom = display.newRect(game.hud, display.contentWidth/2, display.contentHeight, display.contentWidth, display.contentHeight/5)
     bottom.alpha = 0
-    bottom.x = display.contentWidth/2
-    bottom.y = display.contentHeight/2
     bottom:setFillColor(0)
 
     local board = display.newRoundedRect(game.hud, 0, 0, display.contentWidth/2, display.contentHeight/2, 20)
@@ -175,7 +171,7 @@ function ScoreManager:displayTotal()
     game.hud.subheaderAnim              = display.newSprite( game.hud, lineSheet, lineAnimConfig:newSequence() )
     game.hud.subheaderAnim.anchorX      = 1
     game.hud.subheaderAnim.anchorY      = 0.5
-    game.hud.subheaderAnim.x            = display.contentWidth*0.7
+    game.hud.subheaderAnim.x            = display.contentWidth*0.725
     game.hud.subheaderAnim.y            = display.contentHeight*0.59
     game.hud.subheaderAnim:scale(1.7,1)
 

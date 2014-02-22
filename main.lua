@@ -15,13 +15,15 @@ SIMULATOR               = system.getInfo( "environment" )   == "simulator"
 
 -----------------------------------------------------------------------------------------
 
-DEV                = 1
+--DEV                = 1
 --EDITOR             = 1
 
 -----------------------------------------------------------------------------------------
 
+OPEN_CHAPTERS = 1
+
 CHAPTERS = {
-    {title="Chapter1 : Mist",                 name = "Mist",             nbLevels = 6},
+    {title="Chapter1 : Mist",              name = "Mist",             nbLevels = 6},
     {title="Chapter2 : Moonshine",         name = "Moonshine",        nbLevels = 8},
     {title="Chapter3 : Magic",             name = "Magic",            nbLevels = 1},
 --    {title="Chapter4 : Mystery",         nbLevels = 1},
@@ -120,7 +122,7 @@ FB_APP_ID = "644960942204092"
 ---- App globals
 
 GLOBALS = {
-    savedData         = utils.loadUserData("savedData.json"),
+    savedData       = utils.loadUserData("savedData.json"),
     levelEditor     = utils.loadFile("levelEditor/levelEditor.json"),
 }
 
@@ -213,7 +215,13 @@ if(EDITOR) then
     router.openLevelEditor()
 else
     utils.getFacebookLikes(function()
-        router.openAppHome()
+        if(GLOBALS.savedData.requireTutorial) then
+            game.chapter    = 1
+            game.level      = 1
+            router.openPlayground()
+        else
+            router.openAppHome()
+        end
     end)  
 end
 
