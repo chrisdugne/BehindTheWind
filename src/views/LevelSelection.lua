@@ -107,8 +107,9 @@ function scene:createLevelContent(level, x, y, locked)
     game.hud:insert(widget)
     
     if(not locked) then
-       utils.onTouch(widget, function() 
-           game:openLevel(level) 
+       utils.onTouch(widget, function()
+            musicManager:playGrab() 
+            game:openLevel(level) 
        end)
    end
        

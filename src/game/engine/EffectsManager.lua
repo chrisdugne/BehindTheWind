@@ -305,7 +305,9 @@ function reachExitEffect(x,y)
     light.static = true
     registerNewEffect(light)    
     game.camera:insert(light:get("light").content)
-
+    
+    musicManager:playExit()
+    
     character.exit(function()
         game:stop()
     end)
@@ -463,6 +465,8 @@ function touchEnergy( energy, event )
 
                 ---------------------------------------------------------
 
+                musicManager:playEnergy()
+                
                 timer.performWithDelay(200, function() drawFollow() end)
                 timer.performWithDelay(600, function() drawFollow() end)
                 timer.performWithDelay(1000, function() drawFollow() end)
@@ -598,6 +602,10 @@ function touchPiece( event )
             if(not piece.caught) then
 
                 ---------------------------------------------------------
+                
+                musicManager:playRing()
+                
+                ---------------------------------------------------------
 
                 piece.caught = true
 
@@ -721,7 +729,8 @@ function preCollideTrigger( event )
             if(not event.target.light.beingDestroyed) then
                 destroyEffect(event.target.light)
             end
-
+            
+            musicManager:playTrigger()
             levelDrawer.hitTrigger(event.target.trigger)
         end
     end

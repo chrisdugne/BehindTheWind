@@ -9,12 +9,12 @@ physics.start()
 
 -------------------------------------
 
-local THROW_FORCE     = 11
-local GRAVITY             = 16
+local THROW_FORCE       = 11
+local GRAVITY           = 16
 
-local ROPE_LENGTH     = 100
-local ROPE_FREQUENCY = 1.9
-local ROPE_DAMPING     = 2.4
+local ROPE_LENGTH       = 100
+local ROPE_FREQUENCY    = 1.9
+local ROPE_DAMPING      = 2.4
 
 -------------------------------------
 
@@ -419,6 +419,10 @@ function buildRopeTo(x,y,ground)
     --------------------------
 
     if(not x or not y or not ground) then return end
+    
+    --------------------------
+
+    musicManager:playGrab()
     
     --------------------------
 

@@ -379,6 +379,7 @@ end
 ------------------------------------------
 
 function openChapter( chapter )
+    musicManager:playGrab()
     game.chapter = chapter
     viewManager.initBack(chapter)
     router.openLevelSelection()
