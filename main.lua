@@ -23,7 +23,7 @@ SIMULATOR               = system.getInfo( "environment" )   == "simulator"
 OPEN_CHAPTERS = 1
 
 CHAPTERS = {
-    {title="Chapter1 : Mist",              name = "Mist",             nbLevels = 6},
+    {title="Chapter1 : Mist",              name = "Mist",             nbLevels = 8},
     {title="Chapter2 : Moonshine",         name = "Moonshine",        nbLevels = 8},
     {title="Chapter3 : Magic",             name = "Magic",            nbLevels = 1},
 --    {title="Chapter4 : Mystery",         nbLevels = 1},
@@ -161,10 +161,10 @@ function initGameData()
                 complete = false,
                 score     = {
                     energiesCaught         = 0,
-                    piecesCaught             = 0,
-                    ringsCaught             = 0,
-                    time                        = "",
-                    points                    = 0
+                    piecesCaught           = 0,
+                    ringsCaught            = 0,
+                    time                   = "",
+                    points                 = 0
                 }
             }
         end

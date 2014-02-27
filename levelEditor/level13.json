@@ -9,66 +9,35 @@
     },
     "tiles":[
         {
-            "y":316.875,
-            "num":16,
+            "y":116.875,
+            "num":9,
+            "background":true,
+            "x":548.59997558594,
+            "sheet":5
+        },
+        {
+            "y":312.5,
+            "num":4,
             "movable":false,
-            "x":159.67500305176,
-            "group":16,
+            "x":665.92492675781,
+            "group":17,
             "background":true,
             "sheet":10
         },
         {
             "y":317.5,
-            "num":12,
+            "num":16,
             "movable":false,
-            "x":143.125,
-            "group":16,
+            "x":684.87493896484,
+            "group":17,
             "background":true,
             "sheet":10
-        },
-        {
-            "y":316.25,
-            "num":4,
-            "movable":false,
-            "x":149.44999694824,
-            "group":16,
-            "background":true,
-            "sheet":10
-        },
-        {
-            "y":117.29528808594,
-            "num":9,
-            "background":true,
-            "x":532.49676513672,
-            "sheet":5
-        },
-        {
-            "y":211.25,
-            "num":12,
-            "foreground":false,
-            "background":true,
-            "x":192.97497558594,
-            "sheet":2
-        },
-        {
-            "y":88.125,
-            "num":7,
-            "background":true,
-            "x":613.59997558594,
-            "sheet":2
-        },
-        {
-            "y":85,
-            "num":15,
-            "background":true,
-            "x":1196.8250732422,
-            "sheet":2
         },
         {
             "y":316.875,
             "num":16,
             "movable":false,
-            "x":636.72497558594,
+            "x":669.44995117188,
             "group":17,
             "background":true,
             "sheet":10
@@ -86,35 +55,66 @@
             "y":316.875,
             "num":16,
             "movable":false,
-            "x":669.44995117188,
+            "x":636.72497558594,
             "group":17,
+            "background":true,
+            "sheet":10
+        },
+        {
+            "y":85,
+            "num":15,
+            "background":true,
+            "x":1196.8250732422,
+            "sheet":2
+        },
+        {
+            "y":88.125,
+            "num":7,
+            "background":true,
+            "x":613.59997558594,
+            "sheet":2
+        },
+        {
+            "y":211.25,
+            "num":12,
+            "foreground":false,
+            "background":true,
+            "x":192.97497558594,
+            "sheet":2
+        },
+        {
+            "y":117.29528808594,
+            "num":9,
+            "background":true,
+            "x":532.49676513672,
+            "sheet":5
+        },
+        {
+            "y":316.25,
+            "num":4,
+            "movable":false,
+            "x":149.44999694824,
+            "group":16,
             "background":true,
             "sheet":10
         },
         {
             "y":317.5,
+            "num":12,
+            "movable":false,
+            "x":143.125,
+            "group":16,
+            "background":true,
+            "sheet":10
+        },
+        {
+            "y":316.875,
             "num":16,
             "movable":false,
-            "x":684.87493896484,
-            "group":17,
+            "x":159.67500305176,
+            "group":16,
             "background":true,
             "sheet":10
-        },
-        {
-            "y":312.5,
-            "num":4,
-            "movable":false,
-            "x":665.92492675781,
-            "group":17,
-            "background":true,
-            "sheet":10
-        },
-        {
-            "y":116.875,
-            "num":9,
-            "background":true,
-            "x":548.59997558594,
-            "sheet":5
         },
         {
             "y":359.5,
@@ -397,20 +397,10 @@
             "y":19.75,
             "num":4,
             "x":398.47497558594,
-            "destructible":false,
-            "trigger":1,
-            "sheet":1
-        },
-        {
-            "y":97.75,
-            "num":3,
-            "x":645.22497558594,
-            "destructible":false,
-            "trigger":1,
             "sheet":1
         }
     ],
-    "lastTrigger":1,
+    "lastTrigger":0,
     "lastGroup":18,
     "properties":{
         "nbPieces":1,

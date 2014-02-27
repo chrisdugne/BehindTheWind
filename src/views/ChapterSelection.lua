@@ -210,20 +210,19 @@ function scene:createChapterContent(chapter, x, y, locked)
         box.alpha = 0.4
     end
 
-
     ------------------
 
     viewManager.buildEffectButton(
-    game.hud,
-    chapter,
-    51, 
-    0.67,
-    x+display.contentWidth*0.2, 
-    y+display.contentHeight*0.12, 
-    function() 
-        openChapter(chapter) 
-    end, 
-    locked
+        game.hud,
+        chapter,
+        51, 
+        0.67,
+        x+display.contentWidth*0.2, 
+        y+display.contentHeight*0.12, 
+        function() 
+            openChapter(chapter) 
+        end, 
+        locked
     )
 
     ------------------
@@ -231,13 +230,15 @@ function scene:createChapterContent(chapter, x, y, locked)
     local chapterTitle = display.newText( {
         parent = widget,
         text = CHAPTERS[chapter].title,     
-        x = display.contentWidth*0.16,
-        y = 20,
+        x = widget.contentWidth*0.94,
+        y = widget.contentHeight*0.1,
         width = display.contentWidth*0.3,    
         font = FONT,   
         fontSize = 27,
         align = "right"
     } )
+    
+    chapterTitle.anchorX = 1
 
     ------------------
 
@@ -259,7 +260,6 @@ function scene:createChapterContent(chapter, x, y, locked)
         text = energiesCaught .. "/" .. energiesToCatch,     
         x = 110,
         y = display.contentHeight*0.068,
-        width = 100,    
         font = FONT,   
         fontSize = 28,
         align = "left"
@@ -276,7 +276,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
     local piece = display.newSprite( widget, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
     piece.x             = 25
-    piece.y             = display.contentHeight*0.11
+    piece.y             = display.contentHeight*0.13
     if(piecesCaught > 0) then
         piece:play()
     else
@@ -287,7 +287,7 @@ function scene:createChapterContent(chapter, x, y, locked)
         parent = widget,
         text = piecesCaught .. "/" .. piecesToCatch,     
         x = 110,
-        y = display.contentHeight*0.108,
+        y = display.contentHeight*0.128,
         width = 100, 
         font = FONT,   
         fontSize = 28,
@@ -305,7 +305,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
     local ring = display.newSprite( widget, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
     ring.x         = 25
-    ring.y         = display.contentHeight*0.15
+    ring.y         = display.contentHeight*0.19
     if(ringsCaught > 0) then
         ring:play()
     else
@@ -316,7 +316,7 @@ function scene:createChapterContent(chapter, x, y, locked)
         parent = widget,
         text = ringsCaught .. "/" .. ringsToCatch,     
         x = 110,
-        y = display.contentHeight*0.148,
+        y = display.contentHeight*0.188,
         width = 100, 
         font = FONT,   
         fontSize = 28,
@@ -356,14 +356,13 @@ function scene:createChapterContent(chapter, x, y, locked)
     local percentText = display.newText( {
         parent = widget,
         text = percent .. " %",     
-        x = display.contentWidth*0.105,
-        y = 165,
-        width = 200,            --required for multiline and alignment
-        height = 40,           --required for multiline and alignment
+        x = widget.contentWidth*0.94,
+        y = widget.contentHeight*0.3,
         font = FONT,   
         fontSize = 35,
-        align = "right"
     } )
+    
+    percentText.anchorX = 1
 
     ------------------
 

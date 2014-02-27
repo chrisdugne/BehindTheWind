@@ -8,8 +8,8 @@ Buttons :
  ATTENTION
  
  -> NE PAS faire un groupe movable ET draggable
- -> trigger sur un tile : c'est le trigger a activer = pas une tile
- 	SAUF si elle est aussi Grabbable ( = Grabbable apres trigger)
+ -> trigger sur un tile unique : c'est le trigger a activer = pas une tile
+ 	SAUF si cette tile unique est Grabbable : dans ce cas elle est locked + Grabbable apres trigger
  
  dans le cas grababble + movable apres trigger, le trigger va etre enlevé de la tile => le remettre a la mano
  	
