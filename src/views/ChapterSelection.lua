@@ -62,7 +62,7 @@ function scene:refreshScene()
     -----------------------------------------------------
 
     self:createChapterContent(1, display.contentWidth*0.33, display.contentHeight*0.3, false)
-    self:createFacebookChapter(2, display.contentWidth*0.33, display.contentHeight*0.6, 37)
+    self:createFacebookChapter(2, display.contentWidth*0.33, display.contentHeight*0.6, 2000)
 
     --    self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, (not DEV) and (not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame))
     --    self:createChapterContent(3, display.contentWidth*0.54, display.contentHeight*0.63, (not DEV) and (not GLOBALS.savedData.chapters[2].complete or not GLOBALS.savedData.fullGame))
@@ -80,14 +80,10 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
     widget.x = x
     widget.y = y
     widget.contentWidth = display.contentWidth*0.33
-    widget.contentHeight = display.contentHeight*0.27
+    widget.contentHeight = display.contentHeight*0.3
     widget.alpha = 0
 
-    if(not locked) then
-        utils.onTouch(widget, function() 
-            openChapter(chapter) 
-        end)
-    end
+    utils.onTouch(widget,  function(event) system.openURL( "http://facebook.com/uralys" ) end)
 
     ------------------
 
@@ -112,13 +108,13 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
         font = FONT,   
         fontSize = 27,
         align = "right"
-    } )
+    })
     
     ------------------
 
     local fb = display.newImage( widget, "assets/images/others/facebook.png")  
     fb.x = widget.contentWidth * 0.13
-    fb.y = widget.contentHeight* 0.5
+    fb.y = widget.contentHeight* 0.43
     
     ---------------------------------------------------------------
     
@@ -126,11 +122,55 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
         utils.drawPercentageBar(
             widget, 
             GLOBALS.facebookLikes/requiredLikes, 
-            widget.contentWidth * 0.6,
-            widget.contentHeight* 0.5,
-            widget.contentWidth * 0.65, 
-            display.contentHeight*0.1
+            widget.contentWidth   * 0.6,
+            widget.contentHeight  * 0.43,
+            widget.contentWidth   * 0.65, 
+            display.contentHeight * 0.1
         )
+    
+        local likesText = display.newText( {
+            parent      = widget,
+            text        = GLOBALS.facebookLikes .. " / " .. requiredLikes,
+            x           = widget.contentWidth*0.4,
+            y           = widget.contentHeight*0.43,
+            font        = FONT,   
+            fontSize    = 27,
+            align       = "center"
+        })
+        
+        likesText.anchorX = 0
+    
+        local likesText = display.newText( {
+            parent      = widget,
+            text        = T "Unlock this chapter !",
+            x           = widget.contentWidth*0.5,
+            y           = widget.contentHeight*0.7,
+            font        = FONT,   
+            fontSize    = 27,
+            align       = "center"
+        })
+
+        local likesText = display.newText( {
+            parent      = widget,
+            text        = "(".. (requiredLikes - GLOBALS.facebookLikes) ..T " FB likes remaining" .. ")",
+            x           = widget.contentWidth*0.5,
+            y           = widget.contentHeight*0.86,
+            font        = FONT,   
+            fontSize    = 27,
+            align       = "center"
+        })
+    else
+    
+        local noConnectionText = display.newText( {
+            parent      = widget,
+            text        = T "Locked. Check your internet connection to see FB likes.",     
+            x           = widget.contentWidth*0.65,
+            y           = widget.contentHeight*0.55,
+            width       = widget.contentWidth*0.7,    
+            font        = FONT,   
+            fontSize    = 27,
+            align       = "center"
+        })
     end
     
     ------------------

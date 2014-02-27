@@ -20,26 +20,6 @@ end
 
 -----------------------------------------------------------------------------------------
 
---function scene:refreshScene()
---    
---    local x         = display.contentWidth  * 0.5
---    local y         = display.contentHeight * 0.5
---    local width     = display.contentWidth  * 0.7
---    local height    = display.contentHeight * 0.3
---    
---    local percentage    = GLOBALS.facebookLikes/100
---    
---    game.bg = display.newGroup()
---    
---    utils.drawPercentageBar(game.bg, percentage, x, y, width, height)
---
---    utils.drawPercentageBar(game.bg, 0.75, 200, 200, 100, 20, 4)
---    utils.drawPercentageBar(game.bg, 0.25, 200, 250, 100, 20, 4)
---    utils.drawPercentageBar(game.bg, 0.66, 500, 200, 150, 40, 8)
---end
-
------------------------------------------------------------------------------------------
-
 function scene:refreshScene()
 
     viewManager.initBack(0)
@@ -59,12 +39,6 @@ function scene:refreshScene()
     game.hud.subtitle:setFillColor( 255 )    
     game.hud.subtitle.x = display.contentWidth*0.86
     game.hud.subtitle.y = display.contentHeight*0.16
-    
-    ---------------------------------------------------------------
-    
-    if(GLOBALS.facebookLikes > 0) then
-        utils.drawPercentageBar(game.hud, GLOBALS.facebookLikes/1000, display.contentWidth * 0.85, display.contentHeight*0.935, display.contentWidth*0.2, display.contentHeight*0.05)
-    end
     
     ---------------------------------------------------------------
 
@@ -103,20 +77,20 @@ function scene:refreshScene()
     )
 
     ---------------------------------------------------------------
-    
-    if(not GLOBALS.savedData.fullGame) then    
-       viewManager.buildEffectButton(
-           game.hud,
-           "assets/images/hud/lock.png", 
-           0,
-           scale,
-           display.contentWidth * 0.15, 
-           display.contentHeight * 0.93,
-           function() 
-               router:openBuy() 
-           end
-       )
-    end
+--    
+--    if(not GLOBALS.savedData.fullGame) then    
+--       viewManager.buildEffectButton(
+--           game.hud,
+--           "assets/images/hud/lock.png", 
+--           0,
+--           scale,
+--           display.contentWidth * 0.15, 
+--           display.contentHeight * 0.93,
+--           function() 
+--               router:openBuy() 
+--           end
+--       )
+--    end
 
     ---------------------------------------------------------------
     
