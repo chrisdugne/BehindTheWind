@@ -128,7 +128,7 @@ function scene:confirmReset( event )
     if "clicked" == event.action then
         local i = event.index
         if 1 == i then
-            initGameData()
+            game:initGameData()
             router.openAppHome()
         end
     end

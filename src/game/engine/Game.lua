@@ -30,6 +30,14 @@ end
 
 -----------------------------------------------------------------------------------------
 
+function Game:init()
+    if(not GLOBALS.savedData) then
+        self:initGameData()
+    end
+end
+
+-----------------------------------------------------------------------------------------
+
 function Game:start()
 
     ---------------------
@@ -329,6 +337,55 @@ function Game:exitIntro()
     game:spawn()
     viewManager.displayIntroTitle(APP_NAME, display.contentWidth*0.26, display.contentHeight*0.27, true)
     utils.destroyFromDisplay(game.hud.intro)
+end
+
+------------------------------------------
+
+function Game:initGameData()
+    
+    --- player's first chapter free. all previous chapters may be priced
+    local firstChapterFree = 0
+    if(GLOBALS.savedData ~= nil) then 
+        firstChapterFree = GLOBALS.savedData.firstChapterFree 
+    else
+        firstChapterFree = utils.split(APP_VERSION, "|")[2]
+    end
+    
+    print("firstChapterFree : " .. firstChapterFree)
+    
+    GLOBALS.savedData = {
+        user                = "New player",
+        firstChapterFree    = firstChapterFree,
+        fullGame            = firstChapterFree == 1 or (GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame),
+        requireTutorial     = true,
+        fireEnable          = false,
+        grabEnable          = false,
+        chapters            = {} 
+    }
+
+
+    for i=1,#CHAPTERS do
+
+        GLOBALS.savedData.chapters[i] = {
+            levels     = {},
+            complete = false
+        }
+
+        for j=1,CHAPTERS[i].nbLevels do
+            GLOBALS.savedData.chapters[i].levels[j] = {
+                complete = false,
+                score     = {
+                    energiesCaught         = 0,
+                    piecesCaught           = 0,
+                    ringsCaught            = 0,
+                    time                   = "",
+                    points                 = 0
+                }
+            }
+        end
+    end
+
+    utils.saveTable(GLOBALS.savedData, "savedData.json")
 end
 
 ------------------------------------------

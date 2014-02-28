@@ -587,10 +587,8 @@ function goRight()
 
     local newVx = 0
     if(rolling) then
-        print("ROLLING")
         newVx = vx + floorVx
     else
-        print("not rolling")
         newVx = CHARACTER_SPEED + floorVx
     end
 
@@ -615,8 +613,6 @@ function jump()
     leavingFloor     = floor
     jumping             = true
 
-
-    print(math.rad(floor.rotation), vx, vy)
     vx = vx * math.cos(math.rad(floor.rotation))
     vy = (JUMP_SPEED + rollingVx) * math.cos(math.rad(floor.rotation))
 
@@ -624,14 +620,12 @@ function jump()
     collideOnLeft = nil
     collideOnRight = nil
 
-    print("setting : ", vx, vy)
     sprite:setLinearVelocity( vx, vy )
 end
 
 -------------------------------------
 
 function detachAllRopes()
-    print("character.detachAllRopes")
     setHanging(false)
     ropes = {}
 
@@ -646,8 +640,6 @@ end
 -------------------------------------
 
 function stopRolling()
-
-    print("stop rolling")
     rolling = false
 
     sprite.isFixedRotation = true

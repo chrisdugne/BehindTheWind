@@ -5,7 +5,7 @@
 -----------------------------------------------------------------------------------------
 
 APP_NAME                = "Behind The Wind"
-APP_VERSION             = "1.4.3"
+APP_VERSION             = "1.5.0|5" -- version|playable chapters
 
 -----------------------------------------------------------------------------------------
 
@@ -138,45 +138,7 @@ end
 
 -----------------------------------------------------------------------------------------
 
-function initGameData()
-
-    GLOBALS.savedData = {
-        user = "New player",
-        fullGame = GLOBALS.savedData ~= nil and GLOBALS.savedData.fullGame,
-        requireTutorial = true,
-        fireEnable = false,
-        grabEnable = false,
-        chapters = {} 
-    }
-
-    for i=1,#CHAPTERS do
-
-        GLOBALS.savedData.chapters[i] = {
-            levels     = {},
-            complete = false
-        }
-
-        for j=1,CHAPTERS[i].nbLevels do
-            GLOBALS.savedData.chapters[i].levels[j] = {
-                complete = false,
-                score     = {
-                    energiesCaught         = 0,
-                    piecesCaught           = 0,
-                    ringsCaught            = 0,
-                    time                   = "",
-                    points                 = 0
-                }
-            }
-        end
-    end
-
-    utils.saveTable(GLOBALS.savedData, "savedData.json")
-end
-
-if(not GLOBALS.savedData) then
-    initGameData()
-end
-
+game:init()
 
 -----------------------------------------------------------------------------------------
 
