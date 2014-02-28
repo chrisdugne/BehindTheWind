@@ -178,7 +178,8 @@ end
 -----------------------------------------------------------------------------------------------
 
 function eyeThrow( enemy )
-
+    
+    if(character.state == OUT) then return end
     local viewDirection = vector2D:new(enemy.direction.x,enemy.direction.y)
 
     local strength 

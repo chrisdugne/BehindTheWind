@@ -172,10 +172,17 @@ end
 -------------------------------------
 
 function die()
-
+    
+    if(state == OUT) then
+        return
+    end
+     
     exit()
     stop()
-    state = OUT 
+    state = OUT
+--    print("die")
+--    musicManager.playDie()
+    musicManager.playExit()
 
     local explosion = {
         x = sprite.x,

@@ -9,6 +9,7 @@ local trigger   = audio.loadSound("assets/music/trigger.mp3")
 local ring      = audio.loadSound("assets/music/ring.mp3")
 local exit      = audio.loadSound("assets/music/exit.mp3")
 local fall      = audio.loadSound("assets/music/fall.mp3")
+local die       = audio.loadSound("assets/music/die.mp3")
 
 local energies   = {
     audio.loadSound("assets/music/energy1.mp3"),
@@ -53,6 +54,11 @@ end
 
 function playFall()
     channelTriggers = audio.play( fall )
+    audio.setVolume( 0.6, { channel = channelTriggers } )
+end
+
+function playDie()
+    channelTriggers = audio.play( die )
     audio.setVolume( 0.6, { channel = channelTriggers } )
 end
 
