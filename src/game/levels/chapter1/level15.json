@@ -843,7 +843,7 @@
     "properties":{
         "nbPieces":1,
         "nbRings":1,
-        "timeMax":180
+        "timeMax":300
     },
     "groupDragLines":[
         
