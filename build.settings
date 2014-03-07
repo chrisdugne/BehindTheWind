@@ -11,10 +11,6 @@ settings = {
 	iphone = {
 		components = {},
 		plist = {
-			--CFBundleExecutable = "TheLightningPlanet",
-
-			--UIStatusBarHidden = false,
-			--UIPrerenderedIcon = true, -- set to false for "shine" overlay
 			UIApplicationExitsOnSuspend = false,
 			
 			FacebookAppID = "644960942204092",

@@ -13,14 +13,14 @@ function Enemy:new()
 
     local object = {
         Enemy_SPEED = 135,
-         JUMP_SPEED = -257,
+        JUMP_SPEED = -257,
         RADIUS = 16,
-        
+
         -------
-        
+
         sprite             = nil,
         timeLastThrow     = 0,
-        
+
         previousVy = 0,
         nbFramesToKeep = 0
     }
@@ -45,34 +45,34 @@ end
 
 function Enemy:init(x,y)
 
-   ---------------------------
+    ---------------------------
 
-   self.previousVy = 0
+    self.previousVy = 0
 
-   ---------------------------
-   
-   self.sprite = display.newSprite( game.camera, EnemyImageSheet, EnemySheetconfig.sequence )
-   
-   physics.addBody( self.sprite, { 
-       density = 5, 
-       friction = 1, 
-       bounce = 0.2,
-       radius = self.RADIUS
-   })
+    ---------------------------
 
-   ---------------------------
-   
-   self.sprite.isEnemy          = true
-   self.sprite.isFixedRotation = true
+    self.sprite = display.newSprite( game.camera, EnemyImageSheet, EnemySheetconfig.sequence )
+
+    physics.addBody( self.sprite, { 
+        density = 5, 
+        friction = 1, 
+        bounce = 0.2,
+        radius = self.RADIUS
+    })
+
+    ---------------------------
+
+    self.sprite.isEnemy          = true
+    self.sprite.isFixedRotation = true
     self.sprite:addEventListener( "collision", function(event) self:collide(event) end )
     self.sprite:addEventListener( "preCollision", function(event) self:preCollide(event) end )
 
     -- set coordinates to center on spawnpoint
-   self.sprite.x = x
-   self.sprite.y = y
+    self.sprite.x = x
+    self.sprite.y = y
 
-   ---------------------------
-   
+    ---------------------------
+
 end    
 
 function Enemy:destroy()
@@ -88,58 +88,58 @@ function Enemy:refresh()
     if(self.nbFramesToKeep > 0 ) then
         self.nbFramesToKeep = self.nbFramesToKeep - 1
     else
-       
-       if(self.floor ~= nil) then
-           self.sprite:setFrame(1)
-       else
-          if(self.previousVy - vy > 0 and not self.hanging) then
-              self.sprite:setFrame(6)
-          
-          elseif(vy > 230) then
-              self.sprite:setFrame(5)
-          elseif(vy > 5) then
-              self.sprite:setFrame(4)
-          elseif(vy < -220) then
-              self.sprite:setFrame(2)
-          elseif(vy < -5) then
-              self.sprite:setFrame(3)
-          else
-              self.sprite:setFrame(1)
-          end
-       end
-       
-       self.previousVy = vy
-   end
-   
-   if(self.sprite.x < character.sprite.x) then
-       self:lookRight()
-   else
-       self:lookLeft()
-   end
+
+        if(self.floor ~= nil) then
+            self.sprite:setFrame(1)
+        else
+            if(self.previousVy - vy > 0 and not self.hanging) then
+                self.sprite:setFrame(6)
+
+            elseif(vy > 230) then
+                self.sprite:setFrame(5)
+            elseif(vy > 5) then
+                self.sprite:setFrame(4)
+            elseif(vy < -220) then
+                self.sprite:setFrame(2)
+            elseif(vy < -5) then
+                self.sprite:setFrame(3)
+            else
+                self.sprite:setFrame(1)
+            end
+        end
+
+        self.previousVy = vy
+    end
+
+    if(self.sprite.x < character.sprite.x) then
+        self:lookRight()
+    else
+        self:lookLeft()
+    end
 
     local now = system.getTimer()
-   if(now - self.timeLastThrow > 5000) then
+    if(now - self.timeLastThrow > 5000) then
         self.timeLastThrow = now
-       self:throw()
-   end
+        self:throw()
+    end
 end
 
 -------------------------------------
 
 function Enemy:preCollide(event)
     if(event.contact) then
-         if(event.other.isSensor) then
+        if(event.other.isSensor) then
             event.contact.isEnabled = false
         end
-   end
+    end
 end
 
 -------------------------------------
 -- vy = -260 is is the start vy when jumping. 
 -- so vy = -200 is around the jump start
- 
+
 function Enemy:collide( event )
-    
+
     -------------------------------------------
 
     if(event.other.isRock) then return end
@@ -150,15 +150,15 @@ function Enemy:collide( event )
     local now = system.getTimer()
     if(self.leavingFloor and event.other.y == self.leavingFloor.y) then
         if(now - self.timeLeavingFloor < 70) then
-           return
+            return
         end
     end
 
     -------------------------------------------
-    
+
     local tileTop                     = event.other.y     - event.other.height/2 
     local characterBottom         = event.target.y     + self.RADIUS
-    
+
     -------------------------------------------
 
     local characterTop             = event.target.y     - self.RADIUS
@@ -169,15 +169,15 @@ function Enemy:collide( event )
     local tileRight                 = event.other.x     + event.other.width/2
 
     -------------------------------------------
-    
+
     local vx, vy = event.target:getLinearVelocity()
-    
+
     if(tileTop > characterBottom and event.other.isFloor and vy > -200) then
         self.floor = event.other
         self.jumping = false
         self:move()
     end
-    
+
 end
 
 -------------------------------------
@@ -210,10 +210,10 @@ end
 
 function Enemy:goLeft()
     local vx, vy = self.sprite:getLinearVelocity()
-    
+
     local floorVx, floorVy = 0,0
     if(self.floor) then floorVx, floorVy = self.floor:getLinearVelocity() end
-    
+
     self.state = self.GOING_LEFT    
     self:lookLeft()
     self.sprite:setLinearVelocity( -self.Enemy_SPEED+floorVx, vy )
@@ -221,7 +221,7 @@ end
 
 function Enemy:goRight()
     local vx, vy = self.sprite:getLinearVelocity()
-    
+
     local floorVx, floorVy = 0,0
     if(self.floor) then floorVx, floorVy = self.floor:getLinearVelocity() end
 
@@ -235,9 +235,9 @@ function Enemy:jump()
     self.timeLeavingFloor = system.getTimer()
     self.leavingFloor     = self.floor
     self.jumping             = true
-    
+
     self.floor = nil
-    
+
     local vx, vy = self.sprite:getLinearVelocity()
     self.sprite:setLinearVelocity( vx, self.JUMP_SPEED )
 end

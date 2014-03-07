@@ -809,8 +809,8 @@ function setFire(body, color)
             scale=0.42,
             physics={
                 divisionDamping=true,
-                xDamping = 4,
-                yDamping = 3,
+                xDamping = 0,
+                yDamping = 0,
                 gravityY=0.06,
             }
         }

@@ -23,12 +23,12 @@ local trajectory = nil
 -------------------------------------
 
 function start( )
-    
+
     physics.setGravity( 0, GRAVITY )
     physics.setScale( 40 )
---    physics.setDrawMode( "hybrid" )
---    physics.setDrawMode( "debug" )
-    
+    --    physics.setDrawMode( "hybrid" )
+    --    physics.setDrawMode( "debug" )
+
     trajectory = display.newGroup()
     game.camera:insert (trajectory)
 end
@@ -121,18 +121,18 @@ function throw( x1,y1, x2,y2 )
     rock:scale(0.1,0.1)
     physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=7 } )
     rock:setLinearVelocity(force.vx, force.vy)
-    
+
     rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
     rock:addEventListener( "collision", rockCollision )
     rock.isRock = true
-    
+
     ----------------------------------------
-    
+
     local color = {{255/255,5/255,5/255},{215/255,35/255,35/255},{155/255,175/255,35/255}}
     effectsManager.setFire(rock, color)
 
     ----------------------------------------
-    
+
     character.rock = rock
 
     timer.performWithDelay(3500, function()
@@ -140,7 +140,7 @@ function throw( x1,y1, x2,y2 )
     end)
 
     ----------------------------------------
-    
+
     effectsManager.consumeEnergy()
 
     ---------------------------------------------------------
@@ -150,25 +150,25 @@ end
 -----------------------------------------------------------------------------------------------
 
 function grab( x1,y1, x2,y2 )
-    
+
     utils.emptyGroup(trajectory)
     local force = getThrowVelocity(x1,y1,x2,y2)
-    
+
     local rock = display.newImage(game.camera, "assets/images/game/rock.png");
     rock.x = character.sprite.x
     rock.y = character.sprite.y
     rock:scale(0.1,0.1)
     physics.addBody( rock, { density=1.0, friction=1, bounce=0.12, radius=3.5 } )
     rock:setLinearVelocity(force.vx, force.vy)
-    
+
     rock:addEventListener( "preCollision", thrownFromCharacterPreCollision )
     rock:addEventListener( "collision", grabCollision )
     rock.isGrab = true
-    
+
     effectsManager.simpleBeam(rock)
 
     character.rock = rock
-    
+
     timer.performWithDelay(3000, function()
         deleteRock(rock)
     end)
@@ -178,25 +178,24 @@ end
 -----------------------------------------------------------------------------------------------
 
 function eyeThrow( enemy )
-    
+
     if(character.state == OUT) then return end
     local viewDirection = vector2D:new(enemy.direction.x,enemy.direction.y)
 
     local strength 
     local alpha
+    local direction
 
     if(enemy.sprite.y < character.sprite.y) then
-        alpha = -math.pi*0.4
-        strength = math.min(viewDirection:magnitude(), 100)
-    else
-        alpha = -math.pi*2.26
         strength = math.min(viewDirection:magnitude(), 300)
+        direction = vector2D:new(enemy.direction.x*(0.15), enemy.direction.y*(0.13))
+    else
+        alpha = -math.pi*0.3
+        strength = math.min(viewDirection:magnitude(), 300)
+        direction = vector2D:new(enemy.direction.x*(0.15), enemy.direction.y*(0.13))
+        direction:rotate(alpha)
     end
-    
-    local direction = vector2D:new(enemy.direction.x*(0.48 + 0.0004*strength),enemy.direction.y*(0.11 - 0.0003*strength))
-    
 
-    direction:rotate(alpha * abs(enemy.sprite.x - character.sprite.x)/(enemy.sprite.x - character.sprite.x) )
     local force = getThrowVelocity(enemy.sprite.x,enemy.sprite.y, enemy.sprite.x + direction.x, enemy.sprite.y + direction.y)
 
     local rock = display.newImage(game.camera, "assets/images/game/rock.png");
@@ -205,19 +204,19 @@ function eyeThrow( enemy )
     rock.alpha = 0.6
     rock:scale(0.2,0.2)
     physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=14 } )
-    rock:setLinearVelocity(force.vx, force.vy)
-    
+    rock:setLinearVelocity(viewDirection.x * 3.04, viewDirection.y * 3.04)
+
     rock:addEventListener( "preCollision", thrownFromEnemyPreCollision )
     rock:addEventListener( "collision", enemyRockCollision )
     rock.isBadRock = true
-    
-    local color = {{5/255,255/255,5/255},{35/255,215/255,35/255},{175/255,155/255,35/255}}
+
+    local color = {{5/255,255/255,5/255}, {5/255,255/255,5/255}}
     effectsManager.setFire(rock, color)
 
     timer.performWithDelay(4500, function()
         deleteRock(rock)
     end)
-    
+
 end
 
 -----------------------------------------------------------------------------------------------
@@ -231,31 +230,31 @@ function enemyThrow( enemy )
     rock:scale(0.1,0.1)
     physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=7 } )
     rock:setLinearVelocity(force.vx, force.vy)
-    
+
     rock:addEventListener( "preCollision", thrownFromEnemyPreCollision )
     rock:addEventListener( "collision", enemyRockCollision )
     rock.isBadRock = true
-    
+
     local color = {{5/255,255/255,5/255},{35/255,215/255,35/255},{175/255,155/255,35/255}}
     effectsManager.setFire(rock, color)
 
     timer.performWithDelay(4500, function()
         deleteRock(rock)
     end)
-    
+
 end
 
 -------------------------------------
 
 function thrownFromEnemyPreCollision( event )
     if(event.contact) then
-       if(event.other.isEnemy
-       or event.other.isSensor
-       or event.other.isEnemy
-       or event.other.trigger
-       or event.other.isAttach) then
-           event.contact.isEnabled = false
-       end
+        if(event.other.isEnemy
+        or event.other.isSensor
+        or event.other.isEnemy
+        or event.other.trigger
+        or event.other.isAttach) then
+            event.contact.isEnabled = false
+        end
     end
 end
 
@@ -266,7 +265,7 @@ function enemyRockCollision( event )
     and not event.other.trigger
     and not event.other.isGrab) then
         deleteRock(event.target)
-   end
+    end
 end
 
 -------------------------------------
@@ -288,7 +287,7 @@ function rockCollision( event )
     and not event.other.isAttach
     and not event.other.isGrab) then
         deleteRock(event.target)
-   end
+    end
 end
 
 --
@@ -329,24 +328,24 @@ end
 ---------------------------------------------------------------------------
 
 function deleteRock(rock)
-    
+
     local explosion = {
         x = rock.x,
         y = rock.y,
         color = rock.effect.color
     }
-    
-    local destroyedRightNow = effectsManager.destroyObjectWithEffect(rock)
-    
-    if(destroyedRightNow) then
-       if(rock.isGrab) then
-           character.grabs = character.grabs - 1 -- deprecated
-       else
-          effectsManager.explode(explosion)
-      end
-   end
 
-    
+    local destroyedRightNow = effectsManager.destroyObjectWithEffect(rock)
+
+    if(destroyedRightNow) then
+        if(rock.isGrab) then
+            character.grabs = character.grabs - 1 -- deprecated
+        else
+            effectsManager.explode(explosion)
+        end
+    end
+
+
 end
 
 ---------------------------------------------------------------------------
@@ -358,7 +357,7 @@ end
 ---------------------------------------------------------------------------
 
 function getThrowVelocity(x1,y1, x2,y2)
-    
+
     local xForce = THROW_FORCE*(x2-x1)
     local yForce = THROW_FORCE*(y2-y1)
 
@@ -370,12 +369,12 @@ function getThrowVelocity(x1,y1, x2,y2)
 end
 
 function refreshTrajectory(fingerX, fingerY, xStart, yStart)
-    
+
     local startingPosition = {
         x = character.sprite.x,
         y = character.sprite.y
     }
-    
+
     local velocity = getThrowVelocity(fingerX, fingerY, xStart, yStart)
     local startingVelocity = {
         x = velocity.vx,
@@ -392,14 +391,14 @@ function refreshTrajectory(fingerX, fingerY, xStart, yStart)
 end
 
 function getTrajectoryPoint( startingPosition, startingVelocity, n )
-   --velocity and gravity are given per second but we want time step values here
-   local t = 1/display.fps  --seconds per time step at 60fps
-   local stepVelocity = { x=t*startingVelocity.x, y=t*startingVelocity.y }
-   local stepGravity = { x=t*0, y=t*GRAVITY }
-   return {
-      x = startingPosition.x + n * stepVelocity.x + 0.5 * (n*n+n) * stepGravity.x,
-      y = startingPosition.y + n * stepVelocity.y + 0.5 * (n*n+n) * stepGravity.y
-   }
+    --velocity and gravity are given per second but we want time step values here
+    local t = 1/display.fps  --seconds per time step at 60fps
+    local stepVelocity = { x=t*startingVelocity.x, y=t*startingVelocity.y }
+    local stepGravity = { x=t*0, y=t*GRAVITY }
+    return {
+        x = startingPosition.x + n * stepVelocity.x + 0.5 * (n*n+n) * stepGravity.x,
+        y = startingPosition.y + n * stepVelocity.y + 0.5 * (n*n+n) * stepGravity.y
+    }
 end
 
 -----------------------------------------------------------------------------------------------------------------
@@ -409,22 +408,22 @@ end
 function refreshRopeCoordinates()
     for k,rope in pairs(character.ropes) do
         if(rope.attach.ground and rope.attach.ground.x) then
-          rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
-          rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
-      end
+            rope.attach.x = rope.attach.ground.x - rope.attach.offsetX 
+            rope.attach.y = rope.attach.ground.y - rope.attach.offsetY
+        end
     end
 end
 
 function buildRopeTo(x,y,ground)
-    
+
     --------------------------
 
     if(not x or not y or not ground) then return end
-    
+
     --------------------------
 
     musicManager:playGrab()
-    
+
     --------------------------
 
     local rope = {}
@@ -434,14 +433,14 @@ function buildRopeTo(x,y,ground)
 
     ground.lastBodyType = ground.bodyType
     ground.bodyType = "kinematic"
-    
+
     --------------------------
     -- attach point
 
     local attach = display.newCircle( game.camera, x, y, 9 )
     physics.addBody( attach, "static", {radius=9, density=2.0 } )
     effectsManager.lightAttach(attach)
-    
+
     attach.ground = ground
     attach.offsetX = ground.x - x
     attach.offsetY = ground.y - y
@@ -450,19 +449,19 @@ function buildRopeTo(x,y,ground)
     attach.alpha = 0
 
     rope.attach = attach
-    
+
     --------------------------
     -- joint
 
     local joint = physics.newJoint( "distance", character.sprite, attach, character.sprite.x,character.sprite.y, attach.x,attach.y )
-    
+
     joint.isSensor         = true
     joint.length             = ROPE_LENGTH
     joint.frequency         = ROPE_FREQUENCY
     joint.dampingRatio     = ROPE_DAMPING
 
     rope.joint = joint
-    
+
     --- anchor point at x,y... dont really understand why but joint doesnt "start" without this physics.addBody at x,y !        
     rope.startAnchor = display.newCircle( game.camera, character.sprite.x, character.sprite.y, 2 )
     rope.startAnchor.alpha = 0
@@ -470,38 +469,38 @@ function buildRopeTo(x,y,ground)
     physics.addBody( rope.startAnchor, "static", {radius=2, isSensor = true } )
 
     --------------------------
-    
-   rope.beam = effectsManager.drawBeam(rope.attach)
+
+    rope.beam = effectsManager.drawBeam(rope.attach)
 
     --------------------------
 
     table.insert(character.ropes, rope)
     Runtime:addEventListener( "enterFrame", refreshRopeCoordinates )
-    
+
     --------------------------
 
     character.setHanging(true)
-    
+
 end
 
 ---------------------------------------------------------------------------
 
 function detachAllRopes()
-    
+
     for i = 1,#character.ropes do
         local rope = character.ropes[i]    
-       rope.attach.ground.bodyType = rope.attach.ground.lastBodyType
-   
-       effectsManager.destroyObjectWithEffect(rope.attach)
-       effectsManager.destroyEffect(rope.beam)
-       
-       utils.destroyFromDisplay(rope.startAnchor)
-       utils.destroyFromDisplay(rope.joint)
+        rope.attach.ground.bodyType = rope.attach.ground.lastBodyType
+
+        effectsManager.destroyObjectWithEffect(rope.attach)
+        effectsManager.destroyEffect(rope.beam)
+
+        utils.destroyFromDisplay(rope.startAnchor)
+        utils.destroyFromDisplay(rope.joint)
     end
 
     Runtime:removeEventListener( "enterFrame", refreshRopeCoordinates )
     character.detachAllRopes()
-    
+
 end
 
 ---------------------------------------------------------------------------
@@ -513,12 +512,12 @@ function detachPreviousRope()
 
     effectsManager.destroyObjectWithEffect(rope.attach)
     effectsManager.destroyEffect(rope.beam)
-    
+
     utils.destroyFromDisplay(rope.startAnchor)
     utils.destroyFromDisplay(rope.joint)
-    
+
     ---------------------
-    
+
     table.remove(character.ropes, rope.num)
 
     for i=rope.num,#character.ropes do
@@ -526,48 +525,48 @@ function detachPreviousRope()
     end
 
     ---------------------
-    
+
     if(#character.ropes == 0) then    
         character.setHanging(false)
         Runtime:removeEventListener( "enterFrame", refreshRopeCoordinates )
     end
-    
+
     return true -- not to get a touchScreen !
-    
+
 end
 
 ---------------------------------------------------------------------------
 
 function drawCheckpoint(checkPoint)
-    
+
     local body = display.newImage("assets/images/game/planet.white.png")
     body.x = checkPoint.x
     body.y = checkPoint.y
     body.checkPoint = checkPoint
     body.alpha = 0
     body.isSensor = true
-    
-   physics.addBody( body, "kinematic", { 
-       density = 0, 
-       friction = 0, 
-       bounce = 0,
-       radius = 35,
-   })
-   
-   game.camera:insert(body)
+
+    physics.addBody( body, "kinematic", { 
+        density = 0, 
+        friction = 0, 
+        bounce = 0,
+        radius = 35,
+    })
+
+    game.camera:insert(body)
     body:addEventListener( "preCollision", touchCheckpoint )
 
 end
 
 function touchCheckpoint( event )
     local checkPoint = event.target.checkPoint
-    
+
     if(event.contact) then
         event.contact.isEnabled = false
-       
-       if(event.other == character.sprite) then
+
+        if(event.other == character.sprite) then
             levelDrawer.level.spawnX = checkPoint.x
             levelDrawer.level.spawnY = checkPoint.y
-      end
-   end
+        end
+    end
 end

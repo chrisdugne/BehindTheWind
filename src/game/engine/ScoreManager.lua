@@ -70,7 +70,9 @@ function ScoreManager:displayTime()
     timePoints.y        = display.contentHeight*0.32
 
     timePoints.currentDisplay = 0
+    
     utils.displayCounter(self.score.timePoints, timePoints, 1, 0.5, display.contentWidth*0.72, function()
+        musicManager:playEnergy()
         self:displayEnergies()
     end)
 end
@@ -111,6 +113,7 @@ function ScoreManager:displayEnergies()
 
     if(self.score.energiesCaught > 0) then
         utils.displayCounter(points, energyPoints, 1, 0.5, display.contentWidth*0.72, function()
+            musicManager:playEnergy()
             self:displayRing()
         end)
     else
@@ -134,6 +137,7 @@ function ScoreManager:displayRing()
         ringsBonus.anchorY    = 0.5
         ringsBonus.x = display.contentWidth*0.72
         ringsBonus.y = display.contentHeight*0.46
+        musicManager:playEnergy()
     end
 
 
@@ -156,6 +160,7 @@ function ScoreManager:displayPiece()
         piecesBonus.anchorY    = 0.5
         piecesBonus.x = display.contentWidth*0.72
         piecesBonus.y = display.contentHeight*0.53
+        musicManager:playEnergy()
     end
 
     timer.performWithDelay(150, function()
@@ -189,6 +194,7 @@ function ScoreManager:displayTotal()
 
         scoreText.currentDisplay = 0
         utils.displayCounter(self.score.points, scoreText, 1, 0.5, display.contentWidth*0.72, function()
+            musicManager:playEnergy()
             self:displayButtons()
         end)
     end)
