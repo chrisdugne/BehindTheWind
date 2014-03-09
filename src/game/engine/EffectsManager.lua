@@ -383,29 +383,31 @@ function drawEnergy(x, y, type)
 
     if(not type) then type = 1 end
 
-    local light=CBE.VentGroup{
-        {
-            title="light",
-            preset="wisps",
-            color={{65/255,65/255,62/255},{55/255,55/255,20/255}},
-            x = x,
-            y = y,
-            perEmit=1,
-            emissionNum=0,
-            inTime = 450,
-            outTime = 550,
-            scale=0.07,
-            physics={
-                gravityY=0.05,
-            }
-        }
-    }
+--    local light=CBE.VentGroup{
+--        {
+--            title="light",
+--            preset="wisps",
+--            color={{65/255,65/255,62/255},{55/255,55/255,20/255}},
+--            x = x,
+--            y = y,
+--            perEmit=1,
+--            emissionNum=0,
+--            inTime = 450,
+--            outTime = 550,
+--            scale=0.07,
+--            physics={
+--                gravityY=0.05,
+--            }
+--        }
+--    }
 
-    local energy = display.newCircle( x, y, 8 )
+    local energy = display.newImage( game.hud, "assets/images/hud/energy.png")
+    energy.x = x 
+    energy.y = y 
     energy.type = type 
-    energy.light = light
     energy.isSensor = true
-    energy.alpha = 0
+    energy:scale(0.1,0.1)
+    energy.light = {} -- remplace le ventgroup
 
     physics.addBody( energy, "kinematic", { 
         density = 0, 
@@ -418,10 +420,10 @@ function drawEnergy(x, y, type)
     energy:addEventListener( "preCollision", function(event) touchEnergy(energy, event) end )
 
 
-    light.body = energy
-    light.static = true
-    registerNewEffect(light)    
-    game.camera:insert(light:get("light").content)
+--    light.body = energy
+--    light.static = true
+--    registerNewEffect(light)    
+--    game.camera:insert(light:get("light").content)
 end
 
 function touchEnergy( energy, event )
@@ -461,7 +463,8 @@ function touchEnergy( energy, event )
 
                 ---------------------------------------------------------
 
-                destroyEffect(energy.light)
+--                destroyEffect(energy.light)
+                display.remove(energy)
 
                 ---------------------------------------------------------
 
