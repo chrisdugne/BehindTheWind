@@ -33,15 +33,20 @@ function scene:refreshScene()
     ---------------------------------------------------------------
 
     viewManager.buildEffectButton(
-    game.hud,
-    "assets/images/hud/back.png",
-    51, 
-    0.18*aspectRatio,
-    display.contentWidth*0.1, 
-    display.contentHeight*0.1, 
-    function() 
-        router.openAppHome()
-    end
+        game.hud,
+        "assets/images/hud/back.png",
+        51, 
+        0.18*aspectRatio,
+        display.contentWidth*0.1, 
+        display.contentHeight*0.1, 
+        function()
+            if(viewManager.closeWebView) then
+                viewManager.closeWebView()
+                viewManager.closeWebView = nil
+            else 
+                router.openAppHome()
+            end
+        end
     )
 
     ---------------------------------------------------------------
@@ -83,7 +88,9 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
     widget.contentHeight = display.contentHeight*0.3
     widget.alpha = 0
 
-    utils.onTouch(widget,  function(event) system.openURL( "http://facebook.com/uralys" ) end)
+    utils.onTouch(widget,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb("http://facebook.com/uralys")
+    end)
 
     ------------------
 
@@ -251,8 +258,8 @@ function scene:createChapterContent(chapter, x, y, locked)
     local energiesToCatch = 0
 
     for i=1,CHAPTERS[chapter].nbLevels do
-        energiesCaught     = energiesCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.energiesCaught 
-        energiesToCatch = energiesToCatch + #CHAPTERS[chapter].levels[i].energies 
+        energiesCaught      = energiesCaught + GLOBALS.savedData.chapters[chapter].levels[i].score.energiesCaught 
+        energiesToCatch     = energiesToCatch + #CHAPTERS[chapter].levels[i].energies 
     end
 
     local energiesText = display.newText( {

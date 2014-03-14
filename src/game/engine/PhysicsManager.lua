@@ -26,7 +26,7 @@ function start( )
 
     physics.setGravity( 0, GRAVITY )
     physics.setScale( 40 )
-    --    physics.setDrawMode( "hybrid" )
+--    physics.setDrawMode( "hybrid" )
     --    physics.setDrawMode( "debug" )
 
     trajectory = display.newGroup()
@@ -204,7 +204,7 @@ function eyeThrow( enemy )
     rock.alpha = 0.6
     rock:scale(0.2,0.2)
     physics.addBody( rock, { density=10000, friction=1, bounce=0.12, radius=14 } )
-    rock:setLinearVelocity(viewDirection.x * 3.04, viewDirection.y * 3.04)
+    rock:setLinearVelocity(viewDirection.x * 0.54, -450)
 
     rock:addEventListener( "preCollision", thrownFromEnemyPreCollision )
     rock:addEventListener( "collision", enemyRockCollision )
