@@ -246,6 +246,8 @@ end
 
 function checkCharacter(event)
 
+    if(not sprite) then return end 
+    
     local vx, vy = sprite:getLinearVelocity()
 
     --    print(sprite.x,sprite.y)
@@ -315,7 +317,6 @@ function checkCharacter(event)
             end)
         end
     end
-
 end
 
 -------------------------------------
@@ -360,17 +361,17 @@ function collide( event )
 
     -------------------------------------------
 
-    local tileTop                     = event.other.y     - event.other.height/2 
-    local characterBottom         = event.target.y     + RADIUS
+    local tileTop                       = event.other.y     - event.other.height/2 
+    local characterBottom               = event.target.y    + RADIUS
 
     -------------------------------------------
 
-    local characterTop             = event.target.y     - RADIUS
-    local characterLeft             = event.target.x     - RADIUS
-    local characterRight         = event.target.x     + RADIUS
-    local tileBottom                 = event.other.y     + event.other.height/2
-    local tileLeft                 = event.other.x     - event.other.width/2
-    local tileRight                 = event.other.x     + event.other.width/2
+    local characterTop                  = event.target.y    - RADIUS
+    local characterLeft                 = event.target.x    - RADIUS
+    local characterRight                = event.target.x    + RADIUS
+    local tileBottom                    = event.other.y     + event.other.height/2
+    local tileLeft                      = event.other.x     - event.other.width/2
+    local tileRight                     = event.other.x     + event.other.width/2
     --
     --    display.remove(line1)
     --    display.remove(line2)
@@ -403,7 +404,6 @@ function collide( event )
         movesLocked = false
         move()
     elseif(tileBottom < characterTop and event.other.isFloor) then
-    --        print("touch top")
     else
         -- vx on move is 135
         -- less is a "bounce" due to collision : to ignore !
@@ -428,6 +428,7 @@ function collide( event )
     end
 
     if((jumping or hanging) and vy > -200) then
+
         state = NOT_MOVING
 
         if(floor) then
@@ -467,8 +468,6 @@ function setHanging(value)
     local wasHanging = hanging
     hanging = value
 
-    print("character.setHanging", hanging, wasHanging)
-
     if(hanging and not wasHanging) then
         hud.showDropButton()
         hud.hideMoveButtons()
@@ -477,22 +476,19 @@ function setHanging(value)
         nbFramesToKeep = 20 -- could be locked while checking OUT and waiting for grab : reset ok here : 20 frames : time to climb up while still OUT
 
         timer.performWithDelay(100, function()
-            if(hanging) then
-                local vx, vy = sprite:getLinearVelocity()
-                if(math.abs(vy) > 1) then 
-                    floor = nil 
-                    collideOnRight    = nil
-                    collideOnLeft     = nil
-                end
-            end
+            floor = nil 
+            collideOnRight    = nil
+            collideOnLeft     = nil
         end)
+        
+        local vx, vy = sprite:getLinearVelocity()
+        sprite:setLinearVelocity( vx , -20)
 
     elseif(not hanging and wasHanging) then
-        print("showMoveButtons.hideDropButton")
         hud.showMoveButtons()
         hud.hideDropButton()
-
     end
+    
 end
 
 -------------------------------------
@@ -631,7 +627,6 @@ function detachAllRopes()
 
     if(state ~= OUT and not floor) then
         movesLocked = true
-
         local vx, vy = sprite:getLinearVelocity()
         sprite:setLinearVelocity( vx*ROPE_BONUS_SPEED_X, vy*ROPE_BONUS_SPEED_Y )
     end

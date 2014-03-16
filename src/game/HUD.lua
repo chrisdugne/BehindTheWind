@@ -8,26 +8,26 @@ local HUD_TOP = display.contentHeight*0.04
 
 -----------------------------------------------------------------------------------------
 
-ENERGY_ICON_LEFT             = display.contentWidth*0.04
-ENERGY_ICON_TOP             = HUD_TOP
-ENERGY_TEXT_LEFT             = display.contentWidth*0.07
-ENERGY_TEXT_TOP             = HUD_TOP
+ENERGY_ICON_LEFT                = display.contentWidth*0.04
+ENERGY_ICON_TOP                 = HUD_TOP
+ENERGY_TEXT_LEFT                = display.contentWidth*0.075
+ENERGY_TEXT_TOP                 = HUD_TOP
 
-PIECE_ICON_LEFT             = display.contentWidth*0.10
-PIECE_ICON_TOP             = HUD_TOP
-PIECE_TEXT_LEFT             = display.contentWidth*0.13
-PIECE_TEXT_TOP             = HUD_TOP
+PIECE_ICON_LEFT                 = display.contentWidth*0.13
+PIECE_ICON_TOP                  = HUD_TOP
+PIECE_TEXT_LEFT                 = display.contentWidth*0.13
+PIECE_TEXT_TOP                  = HUD_TOP
 
-SIMPLE_PIECE_ICON_LEFT     = display.contentWidth*0.15
-SIMPLE_PIECE_ICON_TOP     = HUD_TOP
-SIMPLE_PIECE_TEXT_LEFT     = display.contentWidth*0.18
-SIMPLE_PIECE_TEXT_TOP     = HUD_TOP
+SIMPLE_PIECE_ICON_LEFT          = display.contentWidth*0.16
+SIMPLE_PIECE_ICON_TOP           = HUD_TOP
+SIMPLE_PIECE_TEXT_LEFT          = display.contentWidth*0.18
+SIMPLE_PIECE_TEXT_TOP           = HUD_TOP
 
-FIRE_BUTTON_X                 = display.contentWidth*0.93
-FIRE_BUTTON_Y                 = display.contentHeight*0.88
+FIRE_BUTTON_X                   = display.contentWidth*0.93
+FIRE_BUTTON_Y                   = display.contentHeight*0.88
 
-GRAB_BUTTON_X                 = display.contentWidth*0.93
-GRAB_BUTTON_Y                 = display.contentHeight*0.67
+GRAB_BUTTON_X                   = display.contentWidth*0.93
+GRAB_BUTTON_Y                   = display.contentHeight*0.67
 
 -----------------------------------------------------------------------------------------
 
@@ -38,10 +38,20 @@ function start()
     game.hud.energy.y = ENERGY_ICON_TOP
     game.hud.energy:scale(0.5,0.5)
 
-    game.hud.energiesCaught = display.newText( game.hud, "0", 0, 0, FONT, 25 )
+
+    game.hud.energiesCaught = display.newText( {
+        parent      = game.hud,
+        text        = "0",
+        x           = ENERGY_TEXT_LEFT,
+        y           = ENERGY_TEXT_TOP,
+        font        = FONT,   
+        fontSize    = 32,
+        align       = "left"
+    } )
+
+    game.hud.energiesCaught.anchorX     = 0
+    game.hud.energiesCaught.anchorY     = 0.6
     game.hud.energiesCaught:setFillColor( 255 )    
-    game.hud.energiesCaught.x = ENERGY_TEXT_LEFT
-    game.hud.energiesCaught.y = ENERGY_TEXT_TOP
 
     buildButtons()
 
@@ -365,9 +375,12 @@ end
 
 function refreshHUD()
     if(game.hud.energiesCaught.contentWidth) then
-        game.hud.energiesCaught.text = game.energiesCaught
-        game.hud.energiesCaught.size = 25
-        game.hud.energiesCaught.x     = ENERGY_TEXT_LEFT
+        game.hud.energiesCaught.text        = game.energiesCaught
+--        game.hud.energiesCaught.size        = 20
+        game.hud.energiesCaught.x           = ENERGY_TEXT_LEFT
+--        game.hud.energiesCaught.anchorX     = 0
+--        game.hud.energiesCaught.anchorY     = 0.55
+        
     end
 end
 

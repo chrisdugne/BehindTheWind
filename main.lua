@@ -168,6 +168,7 @@ if(DEV) then
 --   end )
 
 else
+    print("playMusic")
     musicManager.playMusic()
 end
 

@@ -413,7 +413,7 @@ function drawEnergy(x, y, type)
         density = 0, 
         friction = 0, 
         bounce = 0,
-        radius = 0.1
+        radius = 5
     })
 
     game.camera:insert(energy)

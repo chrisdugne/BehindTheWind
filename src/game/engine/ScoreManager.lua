@@ -43,9 +43,6 @@ end
 ----------------------------------
 
 function ScoreManager:fillBoard()
-    print("fillBoard ------------- ")
-    utils.tprint(self.score)
-
     self:displayTime()
 end
 
@@ -55,17 +52,17 @@ function ScoreManager:displayTime()
     timeIcon.x          = display.contentWidth*0.3
     timeIcon.y          = display.contentHeight*0.32
 
-    local timeText  = display.newText( game.hud, self.score.time, 0, 0, FONT, 25 )
+    local timeText  = display.newText( game.hud, self.score.time, 0, 0, FONT, 36 )
     timeText:setFillColor( 255 )    
     timeText.anchorX    = 0
-    timeText.anchorY    = 0.5
+    timeText.anchorY    = 0.6
     timeText.x          = display.contentWidth*0.34
     timeText.y          = display.contentHeight*0.32
 
     local timePoints    = display.newText( game.hud, "", 0, 0, FONT, 38 )
     timePoints:setFillColor( 255 )    
     timePoints.anchorX  = 1
-    timePoints.anchorY  = 0.5    
+    timePoints.anchorY  = 0.6
     timePoints.x        = display.contentWidth*0.72
     timePoints.y        = display.contentHeight*0.32
 
@@ -87,10 +84,10 @@ function ScoreManager:displayEnergies()
 
     local text = self.score.energiesCaught .. " / " .. #CHAPTERS[game.chapter].levels[game.level].energies
 
-    local energiesCaughtText = display.newText( game.hud, text, 0, 0, FONT, 25 )
+    local energiesCaughtText = display.newText( game.hud, text, 0, 0, FONT, 36 )
     energiesCaughtText:setFillColor( 255 )    
     energiesCaughtText.anchorX    = 0
-    energiesCaughtText.anchorY    = 0.5
+    energiesCaughtText.anchorY    = 0.6
     energiesCaughtText.x = display.contentWidth*0.34
     energiesCaughtText.y = display.contentHeight*0.39
 
@@ -103,7 +100,7 @@ function ScoreManager:displayEnergies()
     local energyPoints = display.newText( game.hud, "", 0, 0, FONT, 38 )
     energyPoints:setFillColor( 255 )    
     energyPoints.anchorX    = 1
-    energyPoints.anchorY    = 0.5
+    energyPoints.anchorY    = 0.55
     energyPoints.x = display.contentWidth*0.72
     energyPoints.y = display.contentHeight*0.39
 
@@ -203,36 +200,41 @@ end
 
 function ScoreManager:displayButtons()
 
+    game.hud.buttons = display.newGroup()
+    game.hud:insert(game.hud.buttons)
+    
     ----------------
     -- replay button
 
     viewManager.buildEffectButton(
-    game.hud,
-    "assets/images/hud/again.png", 
-    21, 
-    0.26*aspectRatio,
-    display.contentWidth*0.3,     
-    display.contentHeight*0.65,     
-    function()
-        local thisLevel = game.level
-        game.level = 0
-        game:openLevel(thisLevel) 
-    end
+        game.hud.buttons,
+        "assets/images/hud/again.png", 
+        21, 
+        0.26*aspectRatio,
+        display.contentWidth*0.3,     
+        display.contentHeight*0.65,     
+        function()
+            game.hud:remove(game.hud.buttons)
+            local thisLevel = game.level
+            game.level = 0
+            game:openLevel(thisLevel) 
+        end
     )
 
     ----------------
     -- menu button
 
     viewManager.buildEffectButton(
-    game.hud,
-    "assets/images/hud/squares.png", 
-    21, 
-    0.26*aspectRatio,
-    display.contentWidth*0.4,     
-    display.contentHeight*0.65,     
-    function()
-        router.openLevelSelection() 
-    end
+        game.hud.buttons,
+        "assets/images/hud/squares.png", 
+        21, 
+        0.26*aspectRatio,
+        display.contentWidth*0.4,     
+        display.contentHeight*0.65,     
+        function()
+            game.hud:remove(game.hud.buttons)
+            router.openLevelSelection() 
+        end
     )
 
     ----------------
@@ -240,21 +242,23 @@ function ScoreManager:displayButtons()
 
     local nextLevel = game.level + 1
 
-    if(#CHAPTERS[game.chapter].levels >= nextLevel) then
-        viewManager.buildEffectButton(
-        game.hud,
+    viewManager.buildEffectButton(
+        game.hud.buttons,
         "assets/images/hud/play.png", 
         21, 
         0.26*aspectRatio,
         display.contentWidth*0.5,     
         display.contentHeight*0.65,     
         function()
-            game.level = 0
-            game:openLevel(nextLevel) 
+            game.hud:remove(game.hud.buttons)
+            if(#CHAPTERS[game.chapter].levels >= nextLevel) then
+                game.level = 0
+                game:openLevel(nextLevel)
+            else
+                router.openChapterSelection() 
+            end
         end
-        )
-    end
-
+    )
 
 end
 

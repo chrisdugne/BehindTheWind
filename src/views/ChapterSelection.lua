@@ -66,7 +66,7 @@ function scene:refreshScene()
 
     -----------------------------------------------------
 
-    self:createChapterContent(1, display.contentWidth*0.33, display.contentHeight*0.3, false)
+    self:createChapterContent(1, display.contentWidth*0.33, display.contentHeight*0.25, false)
     self:createFacebookChapter(2, display.contentWidth*0.33, display.contentHeight*0.6, 2000)
 
     --    self:createChapterContent(2, display.contentWidth*0.1, display.contentHeight*0.55, (not DEV) and (not GLOBALS.savedData.chapters[1].complete or not GLOBALS.savedData.fullGame))
@@ -109,14 +109,16 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
     local chapterTitle = display.newText( {
         parent = widget,
         text = CHAPTERS[chapter].title,     
-        x = display.contentWidth*0.16,
-        y = 20,
-        width = display.contentWidth*0.3,    
+        x = widget.contentWidth*0.95,
+        y = 25,
+        width = display.contentWidth*0.6,    
         font = FONT,   
-        fontSize = 27,
+        fontSize = 40,
         align = "right"
     })
     
+    chapterTitle.anchorX = 1
+
     ------------------
 
     local fb = display.newImage( widget, "assets/images/others/facebook.png")  
@@ -138,14 +140,15 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
         local likesText = display.newText( {
             parent      = widget,
             text        = GLOBALS.facebookLikes .. " / " .. requiredLikes,
-            x           = widget.contentWidth*0.4,
+            x           = widget.contentWidth*0.36,
             y           = widget.contentHeight*0.43,
             font        = FONT,   
-            fontSize    = 27,
+            fontSize    = 37,
             align       = "center"
         })
         
         likesText.anchorX = 0
+        likesText.anchorY = 0.6
     
         local likesText = display.newText( {
             parent      = widget,
@@ -153,7 +156,7 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
             x           = widget.contentWidth*0.5,
             y           = widget.contentHeight*0.7,
             font        = FONT,   
-            fontSize    = 27,
+            fontSize    = 30,
             align       = "center"
         })
 
@@ -163,7 +166,7 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
             x           = widget.contentWidth*0.5,
             y           = widget.contentHeight*0.86,
             font        = FONT,   
-            fontSize    = 27,
+            fontSize    = 30,
             align       = "center"
         })
     else
@@ -175,7 +178,7 @@ function scene:createFacebookChapter(chapter, x, y, requiredLikes)
             y           = widget.contentHeight*0.55,
             width       = widget.contentWidth*0.7,    
             font        = FONT,   
-            fontSize    = 27,
+            fontSize    = 30,
             align       = "center"
         })
     end
@@ -197,6 +200,8 @@ function scene:createChapterContent(chapter, x, y, locked)
     game.hud:insert(widget)
     widget.x = x
     widget.y = y
+    widget.contentWidth = display.contentWidth*0.33
+    widget.contentHeight = display.contentHeight*0.3
     widget.alpha = 0
 
     if(not locked) then
@@ -207,7 +212,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
     ------------------
 
-    local box = display.newRoundedRect(widget, 0, 0, display.contentWidth*0.33, 200, 10)
+    local box = display.newRoundedRect(widget, 0, 0, widget.contentWidth, widget.contentHeight, 10)
     box.x = widget.contentWidth/2
     box.y = widget.contentHeight/2
     box.alpha = 0.3
@@ -225,7 +230,7 @@ function scene:createChapterContent(chapter, x, y, locked)
         51, 
         0.67,
         x+display.contentWidth*0.2, 
-        y+display.contentHeight*0.12, 
+        y+display.contentHeight*0.145, 
         function() 
             openChapter(chapter) 
         end, 
@@ -237,11 +242,11 @@ function scene:createChapterContent(chapter, x, y, locked)
     local chapterTitle = display.newText( {
         parent = widget,
         text = CHAPTERS[chapter].title,     
-        x = widget.contentWidth*0.94,
-        y = widget.contentHeight*0.1,
+        x = widget.contentWidth*0.95,
+        y = widget.contentHeight*0.12,
         width = display.contentWidth*0.3,    
         font = FONT,   
-        fontSize = 27,
+        fontSize = 40,
         align = "right"
     } )
     
@@ -251,7 +256,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
     local energies = display.newImage( widget, "assets/images/hud/energy.png")
     energies.x = 25
-    energies.y = display.contentHeight*0.07
+    energies.y = widget.contentHeight*0.4
     energies:scale(0.5,0.5)
 
     local energiesCaught  = 0
@@ -266,11 +271,15 @@ function scene:createChapterContent(chapter, x, y, locked)
         parent = widget,
         text = energiesCaught .. "/" .. energiesToCatch,     
         x = 110,
-        y = display.contentHeight*0.068,
+        y = widget.contentHeight*0.4,
         font = FONT,   
-        fontSize = 28,
+        fontSize = 36,
         align = "left"
     } )
+    
+    energiesText.anchorX     = 0.4
+    energiesText.anchorY     = 0.6
+    energiesText:setFillColor( 255 )    
 
     ------------------
 
@@ -283,7 +292,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
     local piece = display.newSprite( widget, levelDrawer.pieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
     piece.x             = 25
-    piece.y             = display.contentHeight*0.13
+    piece.y             = widget.contentHeight*0.6
     if(piecesCaught > 0) then
         piece:play()
     else
@@ -294,10 +303,10 @@ function scene:createChapterContent(chapter, x, y, locked)
         parent = widget,
         text = piecesCaught .. "/" .. piecesToCatch,     
         x = 110,
-        y = display.contentHeight*0.128,
+        y = widget.contentHeight*0.6,
         width = 100, 
         font = FONT,   
-        fontSize = 28,
+        fontSize = 33,
         align = "left"
     } )
 
@@ -312,7 +321,7 @@ function scene:createChapterContent(chapter, x, y, locked)
 
     local ring = display.newSprite( widget, levelDrawer.simplePieceImageSheet, levelDrawer.pieceSheetConfig:newSequence() )
     ring.x         = 25
-    ring.y         = display.contentHeight*0.19
+    ring.y         = widget.contentHeight*0.8
     if(ringsCaught > 0) then
         ring:play()
     else
@@ -323,10 +332,10 @@ function scene:createChapterContent(chapter, x, y, locked)
         parent = widget,
         text = ringsCaught .. "/" .. ringsToCatch,     
         x = 110,
-        y = display.contentHeight*0.188,
+        y = widget.contentHeight*0.8,
         width = 100, 
         font = FONT,   
-        fontSize = 28,
+        fontSize = 33,
         align = "left"
     } )
 
@@ -345,15 +354,14 @@ function scene:createChapterContent(chapter, x, y, locked)
         local pointsText = display.newText( {
             parent = widget,
             text = points .. " pts",     
-            x = display.contentWidth*0.23,
-            y = 175,
-            width = 200,            --required for multiline and alignment
-            height = 40,           --required for multiline and alignment
+            x = widget.contentWidth - 10,
+            y = widget.contentHeight*0.8,
             font = FONT,   
-            fontSize = 24,
+            fontSize = 38,
             align = "right"
         } )
 
+        pointsText.anchorX = 1
     end
 
     ------------------

@@ -27,7 +27,7 @@ function start( )
     physics.setGravity( 0, GRAVITY )
     physics.setScale( 40 )
 --    physics.setDrawMode( "hybrid" )
-    --    physics.setDrawMode( "debug" )
+--    physics.setDrawMode( "debug" )
 
     trajectory = display.newGroup()
     game.camera:insert (trajectory)
