@@ -14,6 +14,7 @@ module(..., package.seeall)
 -----------------------------------------------------------------------------------------
 
 local helpVisibleLevel2 = false
+local requireHelpLevel2 = true
 
 -----------------------------------------------------------------------------------------
 -- var TUTO LEVEL 3
@@ -34,10 +35,11 @@ local requireHelpLevel4 = true
 
 function start()
 
-    --   if(game.level == 2) then
-    --       Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel2 )
-    --
-    if(game.level == 3) then
+    if(game.level == 2) then
+        requireHelpLevel2 = true
+        Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel2 )
+
+    elseif(game.level == 3) then
         requireHelpLevel3 = true
         Runtime:addEventListener( "enterFrame", refreshHUDTutoLevel3 )
         --
@@ -78,76 +80,39 @@ function destroy()
 end
 
 -----------------------------------------------------------------------------------------
--- TUTO LEVEL 1
------------------------------------------------------------------------------------------
-
---function refreshHUDTutoLevel1()
---    if(character.sprite.x < 150 and not helpVisible1) then
---        showHelpLevel1()
---    end     
---
---    if(character.sprite.x > 150 and helpVisible1) then
---        hideHelpLevel1()
---    end     
---end
---
---function showHelpLevel1()
---    helpVisible1 = true
---    game.hud.finger = display.newImage(game.hud, "assets/images/hud/touch.png", display.contentWidth*0.8, display.contentHeight*0.36)
---    game.hud.finger.alpha = 0
---    tweenLevel1On()
---end
---
---function hideHelpLevel1()
---    helpVisible1 = false
---    transition.cancel(tween11)
---    display.remove(game.hud.finger)
---end
---
---function tweenLevel1On()
---    tween11 = transition.to( game.hud.finger, { time=600, alpha=0.7, onComplete=tweenLevel1Off})
---end
---
---function tweenLevel1Off()
---    tween11 = transition.to( game.hud.finger, { time=600, alpha=0.4, onComplete=tweenLevel1On})
---end
-
-
------------------------------------------------------------------------------------------
 -- TUTO LEVEL 2
 -----------------------------------------------------------------------------------------
 
 function refreshHUDTutoLevel2()
 
-    if(character.sprite.x > 180 
+    if(character.sprite.x > 170 
     and character.sprite.x < 230 
     and character.sprite.y < 310 
-    and character.sprite.y > 250
-    and levelDrawer.level.triggers[1].remaining > 0) then
+    and character.sprite.y > 250) then
 
-        if(not helpVisibleLevel2) then
-            character.grabLocked = true
+        if(requireHelpLevel2 and not helpVisibleLevel2) then
+
             character.movesLocked = true
-            character.lookLeft()
+            game.hud.leftButton.alpha = 0
+            game.hud.rightButton.alpha = 0
+
             showHelpLevel2()
+
+        else
+            if(character.hanging) then
+                character.movesLocked = false
+                destroyTutoLevel2()
+            end
         end 
 
-    elseif(helpVisibleLevel2) then
-        character.grabLocked = false
-        character.movesLocked = false
-        destroyTutoLevel2()
     end     
 end
 
 function destroyTutoLevel2()
-
-    display.remove(game.hud.helpImage)
     helpVisibleLevel2 = false
-
-    display.remove(game.hud.rightArrow)
-    display.remove(game.hud.leftArrow)
-    display.remove(game.hud.topArrow)
-    display.remove(game.hud.bottomArrow)
+    requireHelpLevel2 = false
+    transition.cancel(game.hud.finger)
+    display.remove(game.hud.finger)
 end
 
 
@@ -155,36 +120,28 @@ end
 
 function showHelpLevel2()
     helpVisibleLevel2 = true
-    game.hud.helpImage = display.newImage(game.camera, "assets/images/tutorial/tuto2.1.png", 235, -20)
 
-    -- trigger
-    --"y":130,
-    --"x":110,
-    game.hud.rightArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.right.png")
-    game.hud.rightArrow.alpha = 0.5
-    game.hud.rightArrow:scale(0.15,0.15)
-    game.hud.rightArrow.x = 110 - 20
-    game.hud.rightArrow.y = 130
+    game.hud.finger = display.newImage(game.camera, "assets/images/hud/touch.png")
+    game.hud.finger:scale(0.3,0.3)
+    game.hud.finger.alpha = 0.9
 
-    game.hud.leftArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.left.png")
-    game.hud.leftArrow.alpha = 0.5
-    game.hud.leftArrow.x = 110 + 20
-    game.hud.leftArrow.y = 130
-    game.hud.leftArrow:scale(0.15,0.15)
+    --------------
 
-    game.hud.topArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.top.png")
-    game.hud.topArrow.alpha = 0.5
-    game.hud.topArrow.x = 110
-    game.hud.topArrow.y = 130 + 20
-    game.hud.topArrow:scale(0.15,0.15)
-
-    game.hud.bottomArrow = display.newImage(game.camera, "assets/images/tutorial/arrow.down.png")
-    game.hud.bottomArrow.alpha = 0.5
-    game.hud.bottomArrow.x = 110
-    game.hud.bottomArrow.y = 130 - 20
-    game.hud.bottomArrow:scale(0.15,0.15)
-
+    tweenLevel2On()
 end
+
+function tweenLevel2On()
+    if(not helpVisibleLevel2) then return end
+    game.hud.finger.x       = 350
+    game.hud.finger.y       = 160
+    game.hud.finger.alpha   = 0.1
+    transition.to( game.hud.finger, { time=800, alpha=0.9, transition=easing.inSine, onComplete=tweenLevel2Off })
+end
+
+function tweenLevel2Off()
+    transition.to( game.hud.finger, { time=800, alpha=0.1, onComplete=tweenLevel2On})
+end
+
 
 -----------------------------------------------------------------------------------------
 -- TUTO LEVEL 3
