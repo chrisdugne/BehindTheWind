@@ -6,6 +6,10 @@ local translations =
         ["fr"] = "Version complète",
     },
 
+    ["Use headphones for a better gaming experience"] = {
+        ["fr"] = "Utilisez un casque pour une meilleure expérience de jeu",
+    },
+
     ---------------------------------------------
 
     ["Locked. Check your internet connection to see FB likes."] = {

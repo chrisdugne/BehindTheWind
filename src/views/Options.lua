@@ -1,7 +1,9 @@
 -----------------------------------------------------------------------------------------
 --
--- KamikazeSelection
---
+-----------------------------------------------------------------------------------------
+
+widget = require "widget"
+
 -----------------------------------------------------------------------------------------
 
 local scene = storyboard.newScene()
@@ -22,10 +24,10 @@ end
 
 function scene:refreshScene()
 
-    local top = display.newRect(game.hud, display.contentWidth*0.5, -display.contentHeight/5, display.contentWidth, display.contentHeight/5)
-    top:setFillColor(0)
+    game.hud.top = display.newRect(game.hud, display.contentWidth*0.5, -display.contentHeight * 0.22, display.contentWidth, display.contentHeight * 0.22)
+    game.hud.top:setFillColor(0)
 
-    local bottom = display.newRect(game.hud, display.contentWidth*0.5, display.contentHeight, display.contentWidth, display.contentHeight/5)
+    local bottom = display.newRect(game.hud, display.contentWidth*0.5, display.contentHeight, display.contentWidth, display.contentHeight * 0.22)
     bottom:setFillColor(0)
 
     local board = display.newRoundedRect(game.hud, 0, 0, display.contentWidth*0.75, display.contentHeight/2, 20)
@@ -35,9 +37,8 @@ function scene:refreshScene()
     board:setFillColor(0)
     game.hud.board = board
 
-    transition.to( top, { time=500, y = top.contentHeight/2 })
-    transition.to( bottom, { time=500, y = display.contentHeight - top.contentHeight/2 })  
-    transition.to( board, { time=800, alpha=0.9, onComplete= function() self:displayContent() end})
+    transition.to( game.hud.top, { time=500, y = game.hud.top.contentHeight/2 })
+    transition.to( bottom, { time=500, y = display.contentHeight - game.hud.top.contentHeight/2, onComplete = function() self:displayContent() end })  
 
     ---------------------------------------------------------------
 
@@ -49,13 +50,191 @@ function scene:refreshScene()
         display.contentWidth*0.1, 
         display.contentHeight*0.1, 
         function() 
-            router.openAppHome()
+            if(viewManager.closeWebView) then
+                viewManager.closeWebView()
+                viewManager.closeWebView = nil
+            else 
+                router.openAppHome()
+            end
         end
     )
 
+    viewManager.buildEffectButton(game.hud, "Reset",  38, 0.52, display.contentWidth*0.87,     display.contentHeight*0.1, function()    self:reset() end)
+    
 end
 
+------------------------------------------------------
+
+function scene:scroll()
+    local xScroller, yScroller = game.hud.board:getContentPosition()
+    local time = ( yScroller+ display.contentHeight * 3.7) * 7.5
+    game.hud.board.scroller = game.hud.board:scrollToPosition({y = -display.contentHeight * 3.7, transition=easing.linear, time = time })
+end
+
+------------------------------------------------------
+
 function scene:displayContent()
+
+    game.hud.board = widget.newScrollView
+        {
+            id                          = "credits",
+            top                         = 0,
+            left                        = 0,
+            friction                    = 0.1,
+            width                       = display.contentWidth,
+            height                      = display.contentHeight,
+            bottomPadding               = display.contentHeight*0.85,
+            hideBackground              = true,
+            horizontalScrollDisabled    = true,
+            verticalScrollDisabled      = false,
+            hideScrollBar               = true,
+            listener                    = function(event)
+                local phase = event.phase
+                if "began" == phase then
+                    transition.cancel(game.hud.board.scroller)
+                elseif "ended" == phase then
+                    self:scroll()
+                end
+                return true
+            end
+    }
+    
+    ----------------------------
+    
+    local uralysText = display.newText(game.hud.board, "Created by ", 0, 0, FONT, 38 )
+    uralysText.x = display.contentWidth * 0.5
+    uralysText.y = display.contentWidth * 0.23
+    game.hud.board:insert(uralysText)
+
+    local uralysImage = display.newImage(game.hud.board, "assets/images/others/logo.png")
+    uralysImage.x = display.contentWidth * 0.5
+    uralysImage.y = display.contentHeight*0.53
+    uralysImage:scale(0.5,0.5)
+    game.hud.board:insert(uralysImage)
+
+    utils.onTouch(uralysImage,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://www.uralys.com" ) 
+    end)
+    
+    ----------------------------
+
+    local velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 60 )
+    velvetText.x = display.contentWidth*0.5
+    velvetText.y = display.contentHeight*1
+    game.hud.board:insert(velvetText)
+    
+    utils.onTouch(velvetText,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://soundcloud.com/velvetcoffee" ) 
+    end)
+
+    local playImage = display.newImage(game.hud, "assets/images/hud/play.png")
+    playImage.x = display.contentWidth*0.5
+    playImage.y = display.contentHeight*1.2
+    playImage:scale(0.8,0.8)
+    game.hud.board:insert(playImage)
+    
+    utils.onTouch(playImage,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://soundcloud.com/velvetcoffee" ) 
+    end)
+    
+    -----------------------------------------------------------------------------------------------
+
+    local thanksText = display.newText(game.hud.board, "Tools", 0, 0, FONT, 75 )
+    thanksText.x = display.contentWidth*0.5
+    thanksText.y = display.contentHeight*1.7
+    game.hud.board:insert(thanksText)
+    
+    local coronaImage = display.newImage(game.hud.board, "assets/images/others/corona.png")
+    coronaImage.x = display.contentWidth*0.5
+    coronaImage.y = display.contentHeight*2.1
+    game.hud.board:insert(coronaImage)
+    
+    utils.onTouch(coronaImage,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://www.coronalabs.com" ) 
+    end)
+    
+    ----------------------------
+    
+    local cbeffectsImage = display.newImage(game.hud, "assets/images/others/cbeffects.png")
+    cbeffectsImage.x = display.contentWidth*0.5
+    cbeffectsImage.y = display.contentHeight*2.55
+    cbeffectsImage:scale(0.6,0.6)
+    game.hud.board:insert(cbeffectsImage)
+    
+    utils.onTouch(cbeffectsImage,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://gymbyl.com" ) 
+    end)
+    
+    ----------------------------
+    
+    local texturepacker = display.newImage(game.hud, "assets/images/others/texturepacker.png")
+    texturepacker.x = display.contentWidth*0.5
+    texturepacker.y = display.contentHeight*2.95
+    game.hud.board:insert(texturepacker)
+    
+    utils.onTouch(texturepacker,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://www.codeandweb.com/texturepacker" ) 
+    end)
+    
+    -----------------------------------------------------------------------------------------------
+
+    local resources = display.newText(game.hud.board, "Resources", 0, 0, FONT, 60 )
+    resources.x = display.contentWidth*0.5
+    resources.y = display.contentHeight*3.3
+    game.hud.board:insert(resources)
+    
+
+    local kenney = display.newText(game.hud.board, "Tiles from Kenney", 0, 0, FONT, 45 )
+    kenney.x = display.contentWidth*0.5
+    kenney.y = display.contentHeight*3.5
+    game.hud.board:insert(kenney)
+    
+    utils.onTouch(kenney,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://www.kenney.nl/" ) 
+    end)
+    
+    
+    local reiner = display.newText(game.hud.board, "Trees from Reiner's tilesets", 0, 0, FONT, 45 )
+    reiner.x = display.contentWidth*0.5
+    reiner.y = display.contentHeight*3.65
+    game.hud.board:insert(reiner)
+    
+    utils.onTouch(reiner,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://www.reinerstilesets.de/" ) 
+    end)
+    
+    local nounproject = display.newText(game.hud.board, "Icons from The Noun Project", 0, 0, FONT, 45 )
+    nounproject.x = display.contentWidth*0.5
+    nounproject.y = display.contentHeight*3.8
+    game.hud.board:insert(nounproject)
+    
+    utils.onTouch(nounproject,  function(event) 
+        viewManager.closeWebView = viewManager.openWeb( "http://thenounproject.com/" ) 
+    end)
+    
+    
+    ----------------------------
+    
+    local ty = display.newText(game.hud.board, "Thank you for playing !", 0, 0, FONT, 70 )
+    ty.x = display.contentWidth*0.5
+    ty.y = display.contentHeight*4.2
+    game.hud.board:insert(ty)
+    
+    
+    ----------------------------
+
+    game.hud:insert(game.hud.board)
+    game.hud.board:toBack()
+
+    ----------------------------
+    
+    self:scroll()
+end
+
+
+-----------------------------------------------------------------------------------------------
+
+--function scene:displayContent_old()
 
     -----------------------------------------------------------------------------------------------
 --
@@ -68,55 +247,9 @@ function scene:displayContent()
 --    end
     
 --    viewManager.buildEffectButton(game.hud, "Reset",  38, 0.72, display.contentWidth*0.77,     display.contentHeight*0.61, function()    self:reset() end)
-    viewManager.buildEffectButton(game.hud, "Reset",  38, 0.72, display.contentWidth*0.77,     display.contentHeight*0.5, function()    self:reset() end)
 
     -----------------------------------------------------------------------------------------------
-
-    local uralysText = display.newText(game.hud, "Created by ", 0, 0, FONT, 38 )
-    uralysText.x = display.contentWidth*0.25
-    uralysText.y = display.contentHeight*0.35
-
-    local uralysImage = display.newImage(game.hud, "assets/images/others/logo.png")
-    uralysImage.anchorX = 0
-    uralysImage.x = uralysText.x + uralysText.contentWidth/2 + display.contentWidth * 0.02
-    uralysImage.y = display.contentHeight*0.35
-    uralysImage:scale(0.5,0.5)
-
-    utils.onTouch(uralysImage,  function(event) system.openURL( "http://www.uralys.com" ) end)
-
-    -----------------------------------------------------------------------------------------------
-
-    local thanksText = display.newText(game.hud, "Thanks to", 0, 0, FONT, 38 )
-    thanksText.x = display.contentWidth*0.25
-    thanksText.y = display.contentHeight*0.5
-    
-    local coronaImage = display.newImage(game.hud, "assets/images/others/corona.png")
-    coronaImage:scale(0.5,0.5)
-    coronaImage.x = display.contentWidth*0.37
-    coronaImage.y = display.contentHeight*0.5
-    utils.onTouch(coronaImage,  function(event) system.openURL( "http://www.coronalabs.com" ) end)
-    
-    local andText = display.newText(game.hud, "and", 0, 0, FONT, 38 )
-    andText.x = display.contentWidth*0.45
-    andText.y = display.contentHeight*0.5
-
-    local cbeffectsImage = display.newImage(game.hud, "assets/images/others/cbeffects.png")
-    cbeffectsImage:scale(0.4,0.4)
-    cbeffectsImage.x = display.contentWidth*0.56
-    cbeffectsImage.y = display.contentHeight*0.5
-    utils.onTouch(cbeffectsImage,  function(event) system.openURL( "http://gymbyl.com" ) end)
-
-    local velvetText = display.newText(game.hud, "Music by Velvet Coffee", 0, 0, FONT, 46 )
-    velvetText.x = display.contentWidth*0.45
-    velvetText.y = display.contentHeight*0.65
-    utils.onTouch(velvetText,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
-
-    local playImage = display.newImage(game.hud, "assets/images/hud/play.png")
-    playImage:scale(0.5,0.5)
-    playImage.x = display.contentWidth*0.22
-    playImage.y = display.contentHeight*0.655
-    utils.onTouch(playImage,  function(event) system.openURL( "http://soundcloud.com/velvetcoffee" ) end)
-end
+--end
 
 ------------------------------------------
 

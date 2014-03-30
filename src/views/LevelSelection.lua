@@ -92,6 +92,20 @@ function scene:refreshScene()
     end
 
     self.view:insert(levels)
+    
+    -------------------------------
+    
+    local musicText = display.newText(game.hud, T "Use headphones for a better gaming experience", 0, 0, FONT, 34 )
+    musicText.anchorX = 1
+    musicText.x = display.contentWidth * 0.9
+    musicText.y = display.contentHeight*0.9
+
+    local headphone = display.newImage(game.hud, "assets/images/hud/headphone.png")
+    musicText.anchorX = 1
+    headphone.x = musicText.x - musicText.contentWidth - headphone.contentWidth/2
+    headphone.y = musicText.y
+    headphone:scale(0.5,0.5)
+
 end
 
 -----------------------------------------------------------------------------------------

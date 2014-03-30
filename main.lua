@@ -152,6 +152,9 @@ CBE = require("CBEffects.Library")
 ------------------------------------------
 
 if(DEV) then
+    
+    LANG = "fr"
+    
 ---
 --   display.remove(memText)
 --   memText = display.newText( "0", 0, 0, FONT, 25 )
