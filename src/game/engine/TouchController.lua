@@ -56,19 +56,19 @@ local lastY                    = 0
 
 function start()
     display.getCurrentStage():addEventListener( "touch", touchScreen )
-    
---   currentState                 = NONE
---   swipping                        = false
-   rightTouch                    = false
-   leftTouch                    = false
---   centerTouch                    = false
-   
---    touches = {}
+
+    --   currentState                 = NONE
+    --   swipping                        = false
+    rightTouch                    = false
+    leftTouch                    = false
+    --   centerTouch                    = false
+
+    --    touches = {}
 end
 
 function stop()
     display.getCurrentStage():removeEventListener( "touch", touchScreen )
---    Runtime:removeEventListener( "enterFrame", onTouch )
+    --    Runtime:removeEventListener( "enterFrame", onTouch )
     display.getCurrentStage():setFocus( nil )
 end
 
@@ -88,51 +88,51 @@ function touchScreen( event )
     --    OUT  : dont listen action
 
     if(character.state == character.OUT) then
-       cancelAllTouches(event.id)
+        cancelAllTouches(event.id)
         return 
     end
 
     -----------------------------
-    
+
     if(currentState == DRAGGING_TILE) then return end
     if(currentState == TOUCHING_TILE) then return end
 
     -----------------------------
-    
+
     dragScreen(event)
 
---    -----------------------------
---    
---    lastX, lastY = event.x, event.y
---       
---    ---------------------------------------------
+    --    -----------------------------
+    --    
+    --    lastX, lastY = event.x, event.y
+    --       
+    --    ---------------------------------------------
 
     if event.phase == "began" then
-       
-      display.getCurrentStage():setFocus( game.camera )
---        
---       
---    ---------------------------------------------
---    
---    elseif "moved" == event.phase then
---        
---        if(event.id == throwTouchFingerId and character.throwFire) then
---            hud.placeFireSmallButton(event)
---        
---        elseif(event.id == throwTouchFingerId and character.throwGrab) then
---            hud.placeGrabSmallButton(event)
---        
---        end
---
---    ----------------------------------------------------------------------
---    
+
+        display.getCurrentStage():setFocus( game.camera )
+        --        
+        --       
+        --    ---------------------------------------------
+        --    
+        --    elseif "moved" == event.phase then
+        --        
+        --        if(event.id == throwTouchFingerId and character.throwFire) then
+        --            hud.placeFireSmallButton(event)
+        --        
+        --        elseif(event.id == throwTouchFingerId and character.throwGrab) then
+        --            hud.placeGrabSmallButton(event)
+        --        
+        --        end
+        --
+        --    ----------------------------------------------------------------------
+        --    
     elseif event.phase == "ended" or event.phase == "cancelled" then
-      
-      display.getCurrentStage():setFocus( nil )
-       cancelAllTouches(event.id)
+
+        display.getCurrentStage():setFocus( nil )
+        cancelAllTouches(event.id)
         character.stop()
         setState(NONE)
-        
+
     end
 
     return false
@@ -150,78 +150,74 @@ function cancelAllTouches(fingerId)
     leftTouch     = false
 
     -----------------------------
-    
+
     hud.releaseAllButtons(fingerId)
 end
 
 ---------------------------------------------------------------------
 
 function setState(state, toApply)
-    
+
     if(currentState ~= state) then
         xStart, yStart = lastX, lastY
---        previousState = currentState
+        --        previousState = currentState
         currentState = state
-        
+
         if(toApply ~= nil) then
             toApply()
         end
     end
-    
+
 end
 
 ---------------------------------------------------------------------
 
 function touchTile( tile, event )
-    
+
     --------------
-    
+
     if(character.grabLocked) then return end
     if(character.state == character.OUT) then return end
 
     --------------
-    
-    
+
+
     if(event.phase == "began") then
 
-       print("touch tile")
         tile.touchX = tile.x
         tile.touchY = tile.y
-    
+
         if(not tile.draggable) then
-        
-           print("focus")
-          display.getCurrentStage():setFocus( event.target )
-           setState(TOUCHING_TILE)
+
+            display.getCurrentStage():setFocus( event.target )
+            setState(TOUCHING_TILE)
         end
 
-    --------------
+        --------------
 
     elseif(event.phase == "ended" or event.phase == "cancelled" ) then
 
         tile.releaseX = tile.x
         tile.releaseY = tile.y
-        print("release")
-            
+
         if(not tile.draggable) then
-           print("not draggable")
             display.getCurrentStage():setFocus( nil )
-           setState(NONE)
-        end
-    
-        if(tile.grabbable) then
-            if(not tile.draggable or (tile.touchX == tile.releaseX or tile.touchY == tile.releaseY)) then
-               physicsManager.buildRopeTo(tile.touchX, tile.touchY, tile)
-               
-               timer.performWithDelay(20, function()
-                   if(#character.ropes > 1) then
-                       physicsManager.detachPreviousRope()    
-                   end
-               end)
-           end
+            setState(NONE)
         end
 
-    --------------
+        if(tile.grabbable) then
+            if(not tile.draggable or (tile.touchX == tile.releaseX or tile.touchY == tile.releaseY)) then
+                physicsManager.buildRopeTo(tile.touchX, tile.touchY, tile)
+
+                timer.performWithDelay(20, function()
+                    if(#character.ropes > 1) then
+                        physicsManager.detachPreviousRope()    
+                    end
+                end)
+            end
+        end
+
+        --------------
 
     end
 
@@ -231,9 +227,9 @@ end
 ---------------------------------------------------------------------
 
 function dragGroup( group, motionLimit, event )
-    
+
     if event.phase == "began" then
-       display.getCurrentStage():setFocus( event.target )
+        display.getCurrentStage():setFocus( event.target )
         setState(DRAGGING_TILE)
     elseif event.phase == "ended" or event.phase == "cancelled" then
         setState(NONE)
@@ -242,105 +238,105 @@ function dragGroup( group, motionLimit, event )
 
     for i = 1, #group do
 
-       local characterIsOnThisGroup = false
-       local xFloorOffset = 0
-       local yFloorOffset = 0
-       
-       if(group[i] == character.floor) then
-           characterIsOnThisGroup = true
-           xFloorOffset = character.floor.x
-           yFloorOffset = character.floor.y
-       end
+        local characterIsOnThisGroup = false
+        local xFloorOffset = 0
+        local yFloorOffset = 0
+
+        if(group[i] == character.floor) then
+            characterIsOnThisGroup = true
+            xFloorOffset = character.floor.x
+            yFloorOffset = character.floor.y
+        end
 
         drag(group[i], event, motionLimit)
-       
-       if(characterIsOnThisGroup) then
-           xFloorOffset = character.floor.x - xFloorOffset
-           yFloorOffset = character.floor.y - yFloorOffset
-           character.sprite.x = character.sprite.x + xFloorOffset 
-           character.sprite.y = character.sprite.y + yFloorOffset
-       end
+
+        if(characterIsOnThisGroup) then
+            xFloorOffset = character.floor.x - xFloorOffset
+            yFloorOffset = character.floor.y - yFloorOffset
+            character.sprite.x = character.sprite.x + xFloorOffset 
+            character.sprite.y = character.sprite.y + yFloorOffset
+        end
     end
-    
+
 end
-    
+
 ---------------------------------------------------------------------
 --- ici on prend en compte le game.zoom
 -- car les x,y des events sont ceux du screen
 -- or on bouge les x,y dans le monde, la camera => il faut compter le zoom
 
 function drag( tile, event, motionLimit )
-    
+
     if event.phase == "began" then
         tile.moving = true
         tile.markX = tile.x*game.zoom    -- store x location of object
         tile.markY = tile.y*game.zoom    -- store y location of object
-    
+
     elseif event.phase == "moved" and tile.moving then
         local x = ((event.x - event.xStart) + tile.markX)/game.zoom
         local y = ((event.y - event.yStart) + tile.markY)/game.zoom
-        
+
         if(motionLimit) then
             if(motionLimit.horizontal > 0) then
-              if    (x - tile.startX > motionLimit.horizontal)     then x = tile.startX + motionLimit.horizontal     end
-              if    (x < tile.startX) then x = tile.startX end
+                if    (x - tile.startX > motionLimit.horizontal)     then x = tile.startX + motionLimit.horizontal     end
+                if    (x < tile.startX) then x = tile.startX end
             elseif(motionLimit.horizontal < 0) then
-              if    (x - tile.startX < motionLimit.horizontal)     then x = tile.startX + motionLimit.horizontal     end
-              if    (x > tile.startX) then x = tile.startX end
-          else
-              x = tile.startX
-           end
+                if    (x - tile.startX < motionLimit.horizontal)     then x = tile.startX + motionLimit.horizontal     end
+                if    (x > tile.startX) then x = tile.startX end
+            else
+                x = tile.startX
+            end
 
             if(motionLimit.vertical > 0) then
-              if    (y - tile.startY > motionLimit.vertical)     then y = tile.startY + motionLimit.vertical     end
-              if    (y < tile.startY) then y = tile.startY end
+                if    (y - tile.startY > motionLimit.vertical)     then y = tile.startY + motionLimit.vertical     end
+                if    (y < tile.startY) then y = tile.startY end
             elseif(motionLimit.vertical < 0) then
-              if    (y - tile.startY < motionLimit.vertical)     then y = tile.startY + motionLimit.vertical     end
-              if    (y > tile.startY) then y = tile.startY end
-          else
-              y = tile.startY
-           end
+                if    (y - tile.startY < motionLimit.vertical)     then y = tile.startY + motionLimit.vertical     end
+                if    (y > tile.startY) then y = tile.startY end
+            else
+                y = tile.startY
+            end
 
         end
-        
+
         tile.x, tile.y = x, y    -- move object based on calculations above
-        
+
         if(tile.icons) then
-           for k,icon in pairs(tile.icons) do
-               if(icon) then
-                 icon.x, icon.y = x, y
-              end
-           end
+            for k,icon in pairs(tile.icons) do
+                if(icon) then
+                    icon.x, icon.y = x, y
+                end
+            end
         end
 
     elseif event.phase == "ended" or event.phase == "cancelled" then
         tile.moving = false
-        
+
     end
 
     return true
 end
-    
+
 ---------------------------------------------------------------------
 --- ici on prend en compte le game.zoom
 -- car les x,y des events sont ceux du screen
 -- or on bouge les x,y dans le monde, la camera => il faut compter le zoom
 
 function dragScreen( event )
-    
+
     if event.phase == "began" then
         game.camera.markX = game.camera.offsetX    -- store x location of object
         game.camera.markY = game.camera.offsetY    -- store y location of object
         setState(DRAGGING_SCREEN)
-    
+
     elseif event.phase == "moved" and currentState == DRAGGING_SCREEN then
-        
+
         local x = ((event.x - event.xStart) + game.camera.markX)
         local y = ((event.y - event.yStart) + game.camera.markY)
-        
+
         game.camera.offsetX = x
         game.camera.offsetY = y
-        
+
         if(game.camera.offsetX > display.contentWidth*0.4 ) then
             game.camera.offsetX = display.contentWidth*0.4
         end
@@ -359,7 +355,7 @@ function dragScreen( event )
 
     elseif event.phase == "ended" or event.phase == "cancelled" then
         setState(NONE)
-        
+
     end
 
     return true

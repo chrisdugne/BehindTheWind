@@ -15,11 +15,12 @@ settings = {
 			
 			FacebookAppID = "644960942204092",
 
-			CFBundleIconFile = "Icon.png",
+            CFBundleIconFile = "Icon",
             CFBundleIconFiles = {
-                    "Icon.png" , 
-                    "Icon@2x.png" , 
-                    "Icon-72.png" , 
+                "Icon57" , 
+                "Icon60" , 
+                "Icon72" , 
+                "Icon76" , 
             },
             
 	        UIAppFonts = 
