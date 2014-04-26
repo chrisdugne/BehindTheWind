@@ -370,14 +370,21 @@ end
 function displayCounter(numToReach, writer, anchorX, anchorY, x, next, nextMillis)
 
     timer.performWithDelay(5, function()
-
-        local ratio = (4 * numToReach)/(numToReach - writer.currentDisplay)
+        
+        local ratio
+        
+        if(numToReach == writer.currentDisplay) then
+            ratio = 1 
+        else
+            ratio = (4 * numToReach)/(numToReach - writer.currentDisplay)
+        end
+        
         local toAdd = math.floor(numToReach/ratio)
         if(toAdd == 0) then toAdd = 1 end
 
         writer.currentDisplay = math.round(writer.currentDisplay + toAdd)
 
-        if(writer.currentDisplay >= numToReach) then
+        if(writer.currentDisplay > numToReach) then
             writer.currentDisplay = math.round(numToReach)    
             next()
         else
