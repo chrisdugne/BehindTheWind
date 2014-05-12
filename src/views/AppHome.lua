@@ -94,9 +94,9 @@ function scene:refreshScene()
 
     ---------------------------------------------------------------
     
-   if(IOS) then
-       timer.performWithDelay(600, gameCenter.init)
-   end
+--   if(IOS) then
+--       timer.performWithDelay(600, gameCenter.init)
+--   end
    
 end
 

@@ -63,7 +63,7 @@ store                   = require "store"
 xml                     = require "src.libs.Xml"
 utils                   = require "src.libs.Utils"
 vector2D                = require "src.libs.Vector2D"
-gameCenter              = require "src.libs.GameCenter"
+--gameCenter              = require "src.libs.GameCenter"
 
 ---- Game libs
 character               = require "src.game.Character"

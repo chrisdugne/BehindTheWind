@@ -109,16 +109,17 @@ function buildButtons()
         if(event.id == touchController.throwTouchFingerId) then return false end
 
         if(event.phase == "began" or event.phase == "moved") then
-            touchController.rightTouch                 = false 
-            touchController.leftTouch                 = true
-            touchController.moveTouchFingerId    = event.id 
-            game.hud.leftButton.alpha = 1
-            game.hud.rightButton.alpha = 0.6
+            touchController.rightTouch                  = false 
+            touchController.leftTouch                   = true
+            touchController.moveTouchFingerId           = event.id 
+            game.hud.leftButton.alpha                   = 1
+            game.hud.rightButton.alpha                  = 0.6
             character.move()
         elseif(event.phase == "ended") then
+            touchController.leftTouch                   = false
+            touchController.moveTouchFingerId           = nil
+            
             game.hud.leftButton.alpha = 0.6
-            touchController.leftTouch                 = false
-            touchController.moveTouchFingerId    = nil  
             character.stop()
         end
         return true 
@@ -135,15 +136,16 @@ function buildButtons()
         if(event.id == touchController.throwTouchFingerId) then return false end
 
         if(event.phase == "began" or event.phase == "moved") then
-            touchController.leftTouch                 = false 
-            touchController.rightTouch             = true 
-            touchController.moveTouchFingerId    = event.id 
-            game.hud.rightButton.alpha = 1
-            game.hud.leftButton.alpha = 0.6
+            touchController.leftTouch               = false 
+            touchController.rightTouch              = true 
+            touchController.moveTouchFingerId       = event.id 
+            game.hud.rightButton.alpha              = 1
+            game.hud.leftButton.alpha               = 0.6
             character.move()
         elseif(event.phase == "ended") then
-            touchController.rightTouch             = false 
-            touchController.moveTouchFingerId    = nil
+            touchController.rightTouch              = false 
+            touchController.moveTouchFingerId       = nil
+
             game.hud.rightButton.alpha = 0.6
             character.stop()
         end
@@ -326,9 +328,12 @@ end
 function releaseAllButtons(fingerId)
 
     if(fingerId == touchController.moveTouchFingerId) then
-        game.hud.leftButton.alpha = 0.6
-        game.hud.rightButton.alpha = 0.6
         touchController.moveTouchFingerId = nil
+        
+        if(not character.hanging) then
+            game.hud.leftButton.alpha = 0.6
+            game.hud.rightButton.alpha = 0.6
+        end
     end
 
     if(fingerId == touchController.throwTouchFingerId) then
